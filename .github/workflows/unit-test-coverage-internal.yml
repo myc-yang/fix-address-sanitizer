@@ -1,0 +1,10 @@
+name: Internal Unit Test and Coverage
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  unit-test-coverage:
+    name: Run unit test and coverage
+    uses: cFS/workflows/.github/workflows/unit-test-coverage-reusable-internal.yml@dev
