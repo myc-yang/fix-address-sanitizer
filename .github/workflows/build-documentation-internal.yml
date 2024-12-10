@@ -1,0 +1,15 @@
+name: Internal Build and Deploy Documentation
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build-documentation:
+    name: Build and deploy cFS documents
+    uses: cFS/workflows/.github/workflows/build-doc-reusable-internal.yml@dev
+    with:
+      target: "[\"cs-usersguide\"]"
+      app-name: cs
+      buildpdf: ${{ github.event_name == 'push' && contains(github.ref, 'main')}}
+      deploy: ${{ github.event_name == 'push' && contains(github.ref, 'main')}}
