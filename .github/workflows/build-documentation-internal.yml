@@ -11,5 +11,5 @@ jobs:
     with:
       target: "[\"cs-usersguide\"]"
       app-name: cs
-      buildpdf: ${{ github.event_name == 'push' && contains(github.ref, 'main')}}
-      deploy: ${{ github.event_name == 'push' && contains(github.ref, 'main')}}
+      buildpdf: ${{ github.event_name == 'push' && contains(github.ref, 'dev')}}
+      deploy: ${{ github.event_name == 'push' && contains(github.ref, 'dev')}}
