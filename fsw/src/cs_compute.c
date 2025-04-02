@@ -48,15 +48,21 @@
 CFE_Status_t CS_ComputeEepromMemory(CS_Res_EepromMemory_Table_Entry_t *ResultsEntry, uint32 *ComputedCSValue,
                                     bool *DoneWithEntry)
 {
-    uint32       OffsetIntoCurrEntry     = 0;
+    size_t       OffsetIntoCurrEntry     = 0;
     cpuaddr      FirstAddrThisCycle      = 0;
-    uint32       NumBytesThisCycle       = 0;
-    int32        NumBytesRemainingCycles = 0;
+    size_t       NumBytesThisCycle       = 0;
+    size_t       NumBytesRemainingCycles = 0;
     uint32       NewChecksumValue        = 0;
     CFE_Status_t Status                  = CFE_SUCCESS;
     *DoneWithEntry                       = false;
 
     /* By the time we get here, we know we have an enabled entry */
+    
+    if(ResultsEntry->ByteOffset > ResultsEntry->NumBytesToChecksum)
+    {
+        /* Something went wrong. Start at beginning */
+        ResultsEntry->ByteOffset = 0; 
+    }
 
     OffsetIntoCurrEntry     = ResultsEntry->ByteOffset;
     FirstAddrThisCycle      = ResultsEntry->StartAddress + OffsetIntoCurrEntry;
@@ -118,10 +124,10 @@ CFE_Status_t CS_ComputeEepromMemory(CS_Res_EepromMemory_Table_Entry_t *ResultsEn
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 CFE_Status_t CS_ComputeTables(CS_Res_Tables_Table_Entry_t *ResultsEntry, uint32 *ComputedCSValue, bool *DoneWithEntry)
 {
-    uint32       OffsetIntoCurrEntry     = 0;
+    size_t       OffsetIntoCurrEntry     = 0;
     cpuaddr      FirstAddrThisCycle      = 0;
-    uint32       NumBytesThisCycle       = 0;
-    int32        NumBytesRemainingCycles = 0;
+    size_t       NumBytesThisCycle       = 0;
+    size_t       NumBytesRemainingCycles = 0;
     uint32       NewChecksumValue        = 0;
     CFE_Status_t Status                  = CFE_SUCCESS;
     CFE_Status_t Result                  = CFE_SUCCESS;
@@ -208,6 +214,12 @@ CFE_Status_t CS_ComputeTables(CS_Res_Tables_Table_Entry_t *ResultsEntry, uint32 
         if (Result == CFE_TBL_INFO_UPDATED)
         {
             CS_ResetTablesTblResultEntry(ResultsEntry);
+        }
+
+        if(ResultsEntry->ByteOffset > ResultsEntry->NumBytesToChecksum)
+        {
+            /* Something went wrong. Start at beginning */
+            ResultsEntry->ByteOffset = 0; 
         }
 
         OffsetIntoCurrEntry     = ResultsEntry->ByteOffset;
@@ -306,10 +318,10 @@ CFE_Status_t CS_ComputeTables(CS_Res_Tables_Table_Entry_t *ResultsEntry, uint32 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 CFE_Status_t CS_ComputeApp(CS_Res_App_Table_Entry_t *ResultsEntry, uint32 *ComputedCSValue, bool *DoneWithEntry)
 {
-    uint32       OffsetIntoCurrEntry     = 0;
+    size_t       OffsetIntoCurrEntry     = 0;
     cpuaddr      FirstAddrThisCycle      = 0;
-    uint32       NumBytesThisCycle       = 0;
-    int32        NumBytesRemainingCycles = 0;
+    size_t       NumBytesThisCycle       = 0;
+    size_t       NumBytesRemainingCycles = 0;
     uint32       NewChecksumValue        = 0;
     CFE_Status_t Status                  = CFE_SUCCESS;
     CFE_Status_t ResultGetResourceID     = CS_ERROR;
@@ -361,6 +373,12 @@ CFE_Status_t CS_ComputeApp(CS_Res_App_Table_Entry_t *ResultsEntry, uint32 *Compu
     if (ResultGetResourceInfo == CFE_SUCCESS)
     {
         /* We got valid ResourceID, good info, and valid addresses, so run the checksum */
+
+        if(ResultsEntry->ByteOffset > ResultsEntry->NumBytesToChecksum)
+        {
+            /* Something went wrong. Start at beginning */
+            ResultsEntry->ByteOffset = 0; 
+        }
 
         OffsetIntoCurrEntry     = ResultsEntry->ByteOffset;
         FirstAddrThisCycle      = ResultsEntry->StartAddress + OffsetIntoCurrEntry;
@@ -777,10 +795,10 @@ void CS_RecomputeTablesChildTask(void)
 void CS_OneShotChildTask(void)
 {
     uint32  NewChecksumValue        = 0;
-    uint32  NumBytesRemainingCycles = 0;
-    uint32  NumBytesThisCycle       = 0;
+    size_t  NumBytesRemainingCycles = 0;
+    size_t  NumBytesThisCycle       = 0;
     cpuaddr FirstAddrThisCycle      = 0;
-    uint32  MaxBytesPerCycle        = 0;
+    size_t  MaxBytesPerCycle        = 0;
 
     NewChecksumValue        = 0;
     NumBytesRemainingCycles = CS_AppData.HkPacket.Payload.LastOneShotSize;
