@@ -62,7 +62,6 @@
  * \{
  */
 #define CS_CMD_PIPE_NAME     "CS_CMD_PIPE"
-#define CS_CMD_PIPE_NAME_LEN 16
 /**\}*/
 
 /**
@@ -107,14 +106,11 @@ typedef struct
 {
     CS_HkPacket_t HkPacket; /**< \brief Housekeeping telemetry packet */
 
-    char   PipeName[CS_CMD_PIPE_NAME_LEN]; /**< \brief Command pipe name */
-    uint16 PipeDepth;                      /**< \brief Command pipe depth */
-
     uint16          ChildTaskTable;   /**< \brief Table for the child task to process */
     uint16          ChildTaskEntryID; /**< \brief Entry in table for child task to process */
     CFE_ES_TaskId_t ChildTaskID;      /**< \brief Task ID for the child task */
 
-    uint32 MaxBytesPerCycle; /**< \brief Max number of bytes to process in a cycle */
+    size_t MaxBytesPerCycle; /**< \brief Max number of bytes to process in a cycle */
 
     uint32 RunStatus; /**< \brief Application run status */
 
