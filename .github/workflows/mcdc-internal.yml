@@ -1,0 +1,12 @@
+name: Internal MCDC Analysis
+
+on:
+  push:
+  pull_request_target:
+
+jobs:
+  mcdc:
+    name: Run MCDC Analysis
+    uses: cFS/workflows/.github/workflows/mcdc-reusable-internal.yml@dev
+    with:
+      app-name: 'cs'

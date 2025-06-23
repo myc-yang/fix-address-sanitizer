@@ -1,0 +1,10 @@
+name: Internal Build and Run
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build-run:
+    name: Build and run with startup msg verification
+    uses: cFS/workflows/.github/workflows/build-run-app-reusable-internal.yml@dev

@@ -41,17 +41,12 @@ CFE_Status_t CS_SbInit(void)
 {
     CFE_Status_t Result = CFE_SUCCESS;
 
-    /* Initialize app configuration data */
-    snprintf(CS_AppData.PipeName, sizeof(CS_AppData.PipeName), "%s", CS_CMD_PIPE_NAME);
-
-    CS_AppData.PipeDepth = CS_PIPE_DEPTH;
-
     /* Initialize housekeeping packet */
     CFE_MSG_Init(CFE_MSG_PTR(CS_AppData.HkPacket.TelemetryHeader), CFE_SB_ValueToMsgId(CS_HK_TLM_MID),
                  sizeof(CS_HkPacket_t));
 
     /* Create Software Bus message pipe */
-    Result = CFE_SB_CreatePipe(&CS_AppData.CmdPipe, CS_AppData.PipeDepth, CS_AppData.PipeName);
+    Result = CFE_SB_CreatePipe(&CS_AppData.CmdPipe, CS_PIPE_DEPTH, CS_CMD_PIPE_NAME);
     if (Result != CFE_SUCCESS)
     {
         CFE_EVS_SendEvent(CS_CR_PIPE_ERR_EID, CFE_EVS_EventType_ERROR,

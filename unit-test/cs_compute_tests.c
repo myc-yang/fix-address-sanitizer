@@ -198,6 +198,31 @@ void CS_ComputeEepromMemory_Test_NotFinished(void)
     UtAssert_STUB_COUNT(CFE_EVS_SendEvent, 0);
 }
 
+void CS_ComputeEepromMemory_Test_OffsetlargerThanBytesCheck(void)
+{
+    CS_Res_EepromMemory_Table_Entry_t ResultsEntry;
+    uint32                            ComputedCSValue = 0;
+    bool                              DoneWithEntry   = false;
+
+    memset(&ResultsEntry, 0, sizeof(ResultsEntry));
+
+    ResultsEntry.NumBytesToChecksum = 2;
+    ResultsEntry.ByteOffset = 3;
+    CS_AppData.MaxBytesPerCycle = 5;
+
+    ResultsEntry.ComputedYet = false;
+
+    /* ComputedCSValue and ResultsEntry.TempChecksumValue will be set to value returned by this function */
+    UT_SetDeferredRetcode(UT_KEY(CFE_ES_CalculateCRC), 1, 1);
+
+    /* Execute the function being tested */
+    UtAssert_UINT32_EQ(CS_ComputeEepromMemory(&ResultsEntry, &ComputedCSValue, &DoneWithEntry), CFE_SUCCESS);
+
+    UtAssert_UINT32_EQ(ResultsEntry.ByteOffset, 0);
+    UtAssert_UINT32_EQ(ResultsEntry.ComparisonValue, 1);
+    UtAssert_BOOL_TRUE(DoneWithEntry);
+}
+
 void CS_ComputeTables_Test_TableNeverLoaded(void)
 {
     CS_Res_Tables_Table_Entry_t ResultsEntry;
@@ -710,6 +735,35 @@ void CS_ComputeTables_Test_ComputeTablesError(void)
     UtAssert_STUB_COUNT(CFE_EVS_SendEvent, 1);
 }
 
+void CS_ComputeTables_Test_OffsetlargerThanBytesCheck(void)
+{
+    CS_Res_Tables_Table_Entry_t ResultsEntry;
+    uint32                      ComputedCSValue = 0;
+    bool                        DoneWithEntry   = false;
+    CFE_TBL_Info_t              TblInfo;
+
+    memset(&TblInfo, 0, sizeof(TblInfo));
+    memset(&ResultsEntry, 0, sizeof(ResultsEntry));
+    
+    CS_AppData.MaxBytesPerCycle = 5;
+
+    ResultsEntry.ComputedYet = true;
+
+    /* Sets TblInfo.Size = 5 and returns CFE_SUCCESS */
+    TblInfo.Size = 5;
+    UT_SetDataBuffer(UT_KEY(CFE_TBL_GetInfo), &TblInfo, sizeof(TblInfo), false);
+
+    ResultsEntry.ByteOffset = 6; /* Set Byte offset larger than CodeSize.  */
+
+    /* Execute the function being tested */
+    UtAssert_UINT32_EQ(CS_ComputeTables(&ResultsEntry, &ComputedCSValue, &DoneWithEntry), CFE_SUCCESS);
+
+    /* Verify results */
+    UtAssert_BOOL_TRUE(DoneWithEntry);
+    UtAssert_UINT32_EQ(ResultsEntry.NumBytesToChecksum, 5);
+    UtAssert_UINT32_EQ(ResultsEntry.ByteOffset, 0);
+}
+
 void CS_ComputeApp_Test_NominalApp(void)
 {
     CS_Res_App_Table_Entry_t ResultsEntry;
@@ -969,6 +1023,33 @@ void CS_ComputeApp_Test_FirstTimeThrough(void)
     UtAssert_UINT32_EQ(ResultsEntry.TempChecksumValue, 0);
 
     UtAssert_STUB_COUNT(CFE_EVS_SendEvent, 0);
+}
+
+void CS_ComputeApp_Test_OffsetlargerThanBytesCheck(void)
+{
+    CS_Res_App_Table_Entry_t ResultsEntry;
+    uint32                   ComputedCSValue = 0;
+    bool                     DoneWithEntry   = false;
+
+    memset(&ResultsEntry, 0, sizeof(ResultsEntry));
+
+    CS_AppData.MaxBytesPerCycle = 5;
+
+    ResultsEntry.ComputedYet = false;
+
+    /* Sets AppInfo.CodeSize = 5, sets AppInfo.CodeAddress = 1, AppInfo.AddressesAreValid = true, and returns
+     * CFE_SUCCESS */
+    UT_SetHandlerFunction(UT_KEY(CFE_ES_GetModuleInfo), CS_COMPUTE_TEST_CFE_ES_GetModuleInfoHandler1, NULL);
+    ResultsEntry.ByteOffset = 6; /* offset larger than codesize */
+
+    /* Execute the function being tested */
+    UtAssert_UINT32_EQ(CS_ComputeApp(&ResultsEntry, &ComputedCSValue, &DoneWithEntry), CFE_SUCCESS);
+
+    /* Verify results */
+    UtAssert_BOOL_TRUE(DoneWithEntry);
+    UtAssert_UINT32_EQ(ResultsEntry.ByteOffset, 0);
+    UtAssert_UINT32_EQ(ResultsEntry.NumBytesToChecksum, 5);
+
 }
 
 void CS_ComputeApp_Test_EntryNotFinished(void)
@@ -1798,6 +1879,8 @@ void UtTest_Setup(void)
                "CS_ComputeEepromMemory_Test_FirstTimeThrough");
     UtTest_Add(CS_ComputeEepromMemory_Test_NotFinished, CS_Test_Setup, CS_Test_TearDown,
                "CS_ComputeEepromMemory_Test_NotFinished");
+    UtTest_Add(CS_ComputeEepromMemory_Test_OffsetlargerThanBytesCheck, CS_Test_Setup, CS_Test_TearDown,
+                "CS_ComputeEepromMemory_Test_OffsetlargerThanBytesCheck");
 
     UtTest_Add(CS_ComputeTables_Test_TableNeverLoaded, CS_Test_Setup, CS_Test_TearDown,
                "CS_ComputeTables_Test_TableNeverLoaded");
@@ -1820,6 +1903,8 @@ void UtTest_Setup(void)
                "CS_ComputeTables_Test_ComputeTablesReleaseError");
     UtTest_Add(CS_ComputeTables_Test_ComputeTablesError, CS_Test_Setup, CS_Test_TearDown,
                "CS_ComputeTables_Test_ComputeTablesError");
+    UtTest_Add(CS_ComputeTables_Test_OffsetlargerThanBytesCheck, CS_Test_Setup, CS_Test_TearDown,
+                "CS_ComputeTables_Test_OffsetlargerThanBytesCheck");
 
     UtTest_Add(CS_ComputeApp_Test_NominalApp, CS_Test_Setup, CS_Test_TearDown, "CS_ComputeApp_Test_NominalApp");
     UtTest_Add(CS_ComputeApp_Test_NominalLib, CS_Test_Setup, CS_Test_TearDown, "CS_ComputeApp_Test_NominalLib");
@@ -1835,6 +1920,8 @@ void UtTest_Setup(void)
                "CS_ComputeApp_Test_FirstTimeThrough");
     UtTest_Add(CS_ComputeApp_Test_EntryNotFinished, CS_Test_Setup, CS_Test_TearDown,
                "CS_ComputeApp_Test_EntryNotFinished");
+    UtTest_Add(CS_ComputeApp_Test_OffsetlargerThanBytesCheck, CS_Test_Setup, CS_Test_TearDown,
+                "CS_ComputeApp_Test_OffsetlargerThanBytesCheck");
 
     UtTest_Add(CS_RecomputeEepromMemoryChildTask_Test_EEPROMTable, CS_Test_Setup, CS_Test_TearDown,
                "CS_RecomputeEepromMemoryChildTask_Test_EEPROMTable");

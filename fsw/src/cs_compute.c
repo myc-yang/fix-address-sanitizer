@@ -48,15 +48,21 @@
 CFE_Status_t CS_ComputeEepromMemory(CS_Res_EepromMemory_Table_Entry_t *ResultsEntry, uint32 *ComputedCSValue,
                                     bool *DoneWithEntry)
 {
-    uint32       OffsetIntoCurrEntry     = 0;
+    size_t       OffsetIntoCurrEntry     = 0;
     cpuaddr      FirstAddrThisCycle      = 0;
-    uint32       NumBytesThisCycle       = 0;
-    int32        NumBytesRemainingCycles = 0;
+    size_t       NumBytesThisCycle       = 0;
+    size_t       NumBytesRemainingCycles = 0;
     uint32       NewChecksumValue        = 0;
     CFE_Status_t Status                  = CFE_SUCCESS;
     *DoneWithEntry                       = false;
 
     /* By the time we get here, we know we have an enabled entry */
+    
+    if(ResultsEntry->ByteOffset > ResultsEntry->NumBytesToChecksum)
+    {
+        /* Something went wrong. Start at beginning */
+        ResultsEntry->ByteOffset = 0; 
+    }
 
     OffsetIntoCurrEntry     = ResultsEntry->ByteOffset;
     FirstAddrThisCycle      = ResultsEntry->StartAddress + OffsetIntoCurrEntry;
@@ -118,10 +124,10 @@ CFE_Status_t CS_ComputeEepromMemory(CS_Res_EepromMemory_Table_Entry_t *ResultsEn
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 CFE_Status_t CS_ComputeTables(CS_Res_Tables_Table_Entry_t *ResultsEntry, uint32 *ComputedCSValue, bool *DoneWithEntry)
 {
-    uint32       OffsetIntoCurrEntry     = 0;
+    size_t       OffsetIntoCurrEntry     = 0;
     cpuaddr      FirstAddrThisCycle      = 0;
-    uint32       NumBytesThisCycle       = 0;
-    int32        NumBytesRemainingCycles = 0;
+    size_t       NumBytesThisCycle       = 0;
+    size_t       NumBytesRemainingCycles = 0;
     uint32       NewChecksumValue        = 0;
     CFE_Status_t Status                  = CFE_SUCCESS;
     CFE_Status_t Result                  = CFE_SUCCESS;
@@ -208,6 +214,12 @@ CFE_Status_t CS_ComputeTables(CS_Res_Tables_Table_Entry_t *ResultsEntry, uint32 
         if (Result == CFE_TBL_INFO_UPDATED)
         {
             CS_ResetTablesTblResultEntry(ResultsEntry);
+        }
+
+        if(ResultsEntry->ByteOffset > ResultsEntry->NumBytesToChecksum)
+        {
+            /* Something went wrong. Start at beginning */
+            ResultsEntry->ByteOffset = 0; 
         }
 
         OffsetIntoCurrEntry     = ResultsEntry->ByteOffset;
@@ -306,16 +318,15 @@ CFE_Status_t CS_ComputeTables(CS_Res_Tables_Table_Entry_t *ResultsEntry, uint32 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 CFE_Status_t CS_ComputeApp(CS_Res_App_Table_Entry_t *ResultsEntry, uint32 *ComputedCSValue, bool *DoneWithEntry)
 {
-    uint32       OffsetIntoCurrEntry     = 0;
+    size_t       OffsetIntoCurrEntry     = 0;
     cpuaddr      FirstAddrThisCycle      = 0;
-    uint32       NumBytesThisCycle       = 0;
-    int32        NumBytesRemainingCycles = 0;
+    size_t       NumBytesThisCycle       = 0;
+    size_t       NumBytesRemainingCycles = 0;
     uint32       NewChecksumValue        = 0;
     CFE_Status_t Status                  = CFE_SUCCESS;
-    CFE_Status_t Result;
-    CFE_Status_t ResultGetResourceID   = CS_ERROR;
-    CFE_Status_t ResultGetResourceInfo = CS_ERROR;
-    bool         ResultAddressValid    = false;
+    CFE_Status_t ResultGetResourceID     = CS_ERROR;
+    CFE_Status_t ResultGetResourceInfo   = CS_ERROR;
+    bool         ResultAddressValid      = false;
 
     /* variables to get applications address */
     CFE_ResourceId_t ResourceID = CFE_RESOURCEID_UNDEFINED;
@@ -332,17 +343,15 @@ CFE_Status_t CS_ComputeApp(CS_Res_App_Table_Entry_t *ResultsEntry, uint32 *Compu
         /* Also check for a matching library name */
         ResultGetResourceID = CFE_ES_GetLibIDByName((CFE_ES_LibId_t *)&ResourceID, ResultsEntry->Name);
     }
-    Result = ResultGetResourceID;
 
-    if (Result == CFE_SUCCESS)
+    if (ResultGetResourceID == CFE_SUCCESS)
     {
         /* We got a valid ResourceID, so get the Resource info */
 
         ResultGetResourceInfo = CFE_ES_GetModuleInfo(&AppInfo, ResourceID);
-        Result                = ResultGetResourceInfo;
     }
 
-    if (Result == CFE_SUCCESS)
+    if (ResultGetResourceInfo == CFE_SUCCESS)
     {
         /* We got a valid ResourceID and good App info, so check the for valid addresses */
 
@@ -350,21 +359,26 @@ CFE_Status_t CS_ComputeApp(CS_Res_App_Table_Entry_t *ResultsEntry, uint32 *Compu
         {
             CFE_EVS_SendEvent(CS_COMPUTE_APP_PLATFORM_DBG_EID, CFE_EVS_EventType_DEBUG,
                               "CS cannot get a valid address for %s, due to the platform", ResultsEntry->Name);
-            Result = CS_ERROR;
+            ResultGetResourceInfo = CS_ERROR;
         }
         else
         {
             /* Push in the data from the module info */
             ResultsEntry->NumBytesToChecksum = AppInfo.CodeSize;
             ResultsEntry->StartAddress       = AppInfo.CodeAddress;
-            Result                           = CFE_SUCCESS;
             ResultAddressValid               = true;
         }
     }
 
-    if (Result == CFE_SUCCESS)
+    if (ResultGetResourceInfo == CFE_SUCCESS)
     {
         /* We got valid ResourceID, good info, and valid addresses, so run the checksum */
+
+        if(ResultsEntry->ByteOffset > ResultsEntry->NumBytesToChecksum)
+        {
+            /* Something went wrong. Start at beginning */
+            ResultsEntry->ByteOffset = 0; 
+        }
 
         OffsetIntoCurrEntry     = ResultsEntry->ByteOffset;
         FirstAddrThisCycle      = ResultsEntry->StartAddress + OffsetIntoCurrEntry;
@@ -781,10 +795,10 @@ void CS_RecomputeTablesChildTask(void)
 void CS_OneShotChildTask(void)
 {
     uint32  NewChecksumValue        = 0;
-    uint32  NumBytesRemainingCycles = 0;
-    uint32  NumBytesThisCycle       = 0;
+    size_t  NumBytesRemainingCycles = 0;
+    size_t  NumBytesThisCycle       = 0;
     cpuaddr FirstAddrThisCycle      = 0;
-    uint32  MaxBytesPerCycle        = 0;
+    size_t  MaxBytesPerCycle        = 0;
 
     NewChecksumValue        = 0;
     NumBytesRemainingCycles = CS_AppData.HkPacket.Payload.LastOneShotSize;
