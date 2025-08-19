@@ -85,6 +85,7 @@ CFE_Status_t CS_ValidateEepromChecksumDefinitionTable(void *TblPtr)
                                           "CFE_PSP_MemValidateRange returned: 0x%08X",
                                           (int)OuterLoop, (unsigned int)Status);
                         Result = CS_TABLE_ERROR;
+                        CS_AppData.HkPacket.Payload.EepromCSState = CS_STATE_DISABLED;
                     }
                 }
                 else
@@ -109,6 +110,7 @@ CFE_Status_t CS_ValidateEepromChecksumDefinitionTable(void *TblPtr)
                                   "EEPROM Table Validate: Illegal State Field (0x%04X) found in Entry ID %d",
                                   (unsigned short)StateField, (int)OuterLoop);
                 Result = CS_TABLE_ERROR;
+                CS_AppData.HkPacket.Payload.EepromCSState = CS_STATE_DISABLED;
             }
         }
     } /* for (OuterLoop = 0; OuterLoop < CS_MAX_NUM_EEPROM_TABLE_ENTRIES; OuterLoop++) */
@@ -167,6 +169,7 @@ CFE_Status_t CS_ValidateMemoryChecksumDefinitionTable(void *TblPtr)
                                           "CFE_PSP_MemValidateRange returned: 0x%08X",
                                           (int)OuterLoop, (unsigned int)Status);
                         Result = CS_TABLE_ERROR;
+                        CS_AppData.HkPacket.Payload.MemoryCSState = CS_STATE_DISABLED;
                     }
                 }
                 else
@@ -192,6 +195,7 @@ CFE_Status_t CS_ValidateMemoryChecksumDefinitionTable(void *TblPtr)
                                   (unsigned short)StateField, (int)OuterLoop);
 
                 Result = CS_TABLE_ERROR;
+                CS_AppData.HkPacket.Payload.MemoryCSState = CS_STATE_DISABLED;
             }
         }
 
@@ -259,6 +263,7 @@ CFE_Status_t CS_ValidateTablesChecksumDefinitionTable(void *TblPtr)
                                 OuterEntry->Name, (int)InnerLoop, (int)OuterLoop);
 
                             Result = CS_TABLE_ERROR;
+                            CS_AppData.HkPacket.Payload.TablesCSState = CS_STATE_DISABLED;
                         }
                     }
                 }
@@ -286,6 +291,7 @@ CFE_Status_t CS_ValidateTablesChecksumDefinitionTable(void *TblPtr)
 
                     Result = CS_TABLE_ERROR;
                     BadCount++;
+                    CS_AppData.HkPacket.Payload.TablesCSState = CS_STATE_DISABLED;
                 }
             }
         }
@@ -303,6 +309,7 @@ CFE_Status_t CS_ValidateTablesChecksumDefinitionTable(void *TblPtr)
 
                     Result = CS_TABLE_ERROR;
                     BadCount++;
+                    CS_AppData.HkPacket.Payload.TablesCSState = CS_STATE_DISABLED;
                 }
             }
             else
@@ -354,6 +361,7 @@ CFE_Status_t CS_ValidateAppChecksumDefinitionTable(void *TblPtr)
                 CFE_EVS_SendEvent(CS_VAL_APP_DEF_TBL_LONG_NAME_ERR_EID, CFE_EVS_EventType_ERROR,
                                   "CS Apps Table Validate: Unterminated Name found at entry %d", (int)OuterLoop);
                 Result = CS_TABLE_ERROR;
+                CS_AppData.HkPacket.Payload.AppCSState = CS_STATE_DISABLED;
             }
             BadCount++;
         }
@@ -384,6 +392,7 @@ CFE_Status_t CS_ValidateAppChecksumDefinitionTable(void *TblPtr)
                                               OuterEntry->Name, (int)InnerLoop, (int)OuterLoop);
 
                             Result = CS_TABLE_ERROR;
+                            CS_AppData.HkPacket.Payload.AppCSState = CS_STATE_DISABLED;
                         }
                     }
                 }
@@ -411,6 +420,7 @@ CFE_Status_t CS_ValidateAppChecksumDefinitionTable(void *TblPtr)
 
                     Result = CS_TABLE_ERROR;
                     BadCount++;
+                    CS_AppData.HkPacket.Payload.AppCSState = CS_STATE_DISABLED;
                 }
             }
         }
@@ -428,6 +438,7 @@ CFE_Status_t CS_ValidateAppChecksumDefinitionTable(void *TblPtr)
 
                     Result = CS_TABLE_ERROR;
                     BadCount++;
+                    CS_AppData.HkPacket.Payload.AppCSState = CS_STATE_DISABLED;
                 }
             }
             else
