@@ -1408,18 +1408,13 @@ void CS_ProcessNewEepromMemoryDefinitionTable_Test_EEPROMTableNominal(void)
     uint16 NumEntries = 1;
     uint16 Table      = CS_EEPROM_TABLE;
 
-    CS_AppData.HkPacket.Payload.EepromCSState                = 99;
+    CS_AppData.HkPacket.Payload.EepromCSState        = 99;
     CS_AppData.DefEepromTblPtr[0].State              = 1;
     CS_AppData.DefEepromTblPtr[0].NumBytesToChecksum = 2;
     CS_AppData.DefEepromTblPtr[0].StartAddress       = 3;
 
     /* Execute the function being tested */
-    /* Note: first 2 arguments are passed in as addresses of pointers in the source code, even though the variable
-       types of the arguments are just pointers and the variable names of the arguments suggest that they're just
-       pointers */
-    CS_ProcessNewEepromMemoryDefinitionTable((CS_Def_EepromMemory_Table_Entry_t *)&CS_AppData.DefEepromTblPtr,
-                                             (CS_Res_EepromMemory_Table_Entry_t *)&CS_AppData.ResEepromTblPtr,
-                                             NumEntries, Table);
+    CS_ProcessNewEepromMemoryDefinitionTable(CS_AppData.DefEepromTblPtr, CS_AppData.ResEepromTblPtr, NumEntries, Table);
 
     /* Verify results */
     UtAssert_True(CS_AppData.HkPacket.Payload.EepromCSState == 99, "CS_AppData.HkPacket.Payload.EepromCSState == 99");
@@ -1462,18 +1457,13 @@ void CS_ProcessNewEepromMemoryDefinitionTable_Test_MemoryTableNominal(void)
     uint16 NumEntries = 1;
     uint16 Table      = CS_MEMORY_TABLE;
 
-    CS_AppData.HkPacket.Payload.MemoryCSState                = 99;
+    CS_AppData.HkPacket.Payload.MemoryCSState        = 99;
     CS_AppData.DefMemoryTblPtr[0].State              = 1;
     CS_AppData.DefMemoryTblPtr[0].NumBytesToChecksum = 2;
     CS_AppData.DefMemoryTblPtr[0].StartAddress       = 3;
 
     /* Execute the function being tested */
-    /* Note: first 2 arguments are passed in as addresses of pointers in the source code, even though the variable
-       types of the arguments are just pointers and the variable names of the arguments suggest that they're just
-       pointers */
-    CS_ProcessNewEepromMemoryDefinitionTable((CS_Def_EepromMemory_Table_Entry_t *)&CS_AppData.DefMemoryTblPtr,
-                                             (CS_Res_EepromMemory_Table_Entry_t *)&CS_AppData.ResMemoryTblPtr,
-                                             NumEntries, Table);
+    CS_ProcessNewEepromMemoryDefinitionTable(CS_AppData.DefMemoryTblPtr, CS_AppData.ResMemoryTblPtr, NumEntries, Table);
 
     /* Verify results */
     UtAssert_True(CS_AppData.HkPacket.Payload.MemoryCSState == 99, "CS_AppData.HkPacket.Payload.MemoryCSState == 99");
@@ -1524,12 +1514,7 @@ void CS_ProcessNewEepromMemoryDefinitionTable_Test_EEPROMTableNoValidEntries(voi
     CS_AppData.HkPacket.Payload.MemoryCSState = 99;
 
     /* Execute the function being tested */
-    /* Note: first 2 arguments are passed in as addresses of pointers in the source code, even though the variable
-       types of the arguments are just pointers and the variable names of the arguments suggest that they're just
-       pointers */
-    CS_ProcessNewEepromMemoryDefinitionTable((CS_Def_EepromMemory_Table_Entry_t *)&CS_AppData.DefMemoryTblPtr,
-                                             (CS_Res_EepromMemory_Table_Entry_t *)&CS_AppData.ResMemoryTblPtr,
-                                             NumEntries, Table);
+    CS_ProcessNewEepromMemoryDefinitionTable(CS_AppData.DefMemoryTblPtr, CS_AppData.ResMemoryTblPtr, NumEntries, Table);
 
     /* Verify results */
     UtAssert_True(CS_AppData.HkPacket.Payload.MemoryCSState == 99, "CS_AppData.HkPacket.Payload.MemoryCSState == 99");
@@ -1562,12 +1547,7 @@ void CS_ProcessNewEepromMemoryDefinitionTable_Test_MemoryTableNoValidEntries(voi
     CS_AppData.HkPacket.Payload.MemoryCSState = 99;
 
     /* Execute the function being tested */
-    /* Note: first 2 arguments are passed in as addresses of pointers in the source code, even though the variable
-       types of the arguments are just pointers and the variable names of the arguments suggest that they're just
-       pointers */
-    CS_ProcessNewEepromMemoryDefinitionTable((CS_Def_EepromMemory_Table_Entry_t *)&CS_AppData.DefMemoryTblPtr,
-                                             (CS_Res_EepromMemory_Table_Entry_t *)&CS_AppData.ResMemoryTblPtr,
-                                             NumEntries, Table);
+    CS_ProcessNewEepromMemoryDefinitionTable(CS_AppData.DefMemoryTblPtr, CS_AppData.ResMemoryTblPtr, NumEntries, Table);
 
     /* Verify results */
     UtAssert_True(CS_AppData.HkPacket.Payload.MemoryCSState == 99, "CS_AppData.HkPacket.Payload.MemoryCSState == 99");
@@ -1587,8 +1567,8 @@ void CS_ProcessNewEepromMemoryDefinitionTable_Test_MemoryTableNoValidEntries(voi
 
 void CS_ProcessNewTablesDefinitionTable_Test_DefEepromTableHandle(void)
 {
-    CS_AppData.HkPacket.Payload.TablesCSState   = 99;
-    CS_AppData.DefTablesTblPtr[0].State = 88;
+    CS_AppData.HkPacket.Payload.TablesCSState = 99;
+    CS_AppData.DefTablesTblPtr[0].State       = 88;
 
     strncpy(CS_AppData.DefTablesTblPtr[0].Name, "CS.DefEepromTbl", 20);
 
@@ -1598,11 +1578,7 @@ void CS_ProcessNewTablesDefinitionTable_Test_DefEepromTableHandle(void)
     UT_SetHandlerFunction(UT_KEY(CFE_ES_GetAppName), CS_TABLE_PROCESSING_TEST_CFE_ES_GetAppNameHandler1, NULL);
 
     /* Execute the function being tested */
-    /* Note: first 2 arguments are passed in as addresses of pointers in the source code, even though the variable
-       types of the arguments are just pointers and the variable names of the arguments suggest that they're just
-       pointers */
-    CS_ProcessNewTablesDefinitionTable((CS_Def_Tables_Table_Entry_t *)&CS_AppData.DefTablesTblPtr,
-                                       (CS_Res_Tables_Table_Entry_t *)&CS_AppData.ResTablesTblPtr);
+    CS_ProcessNewTablesDefinitionTable(CS_AppData.DefTablesTblPtr, CS_AppData.ResTablesTblPtr);
 
     /* Verify results */
     UtAssert_True(CS_AppData.MemResTablesTblPtr == NULL, "CS_AppData.MemResTablesTblPtr == NULL");
@@ -1639,8 +1615,8 @@ void CS_ProcessNewTablesDefinitionTable_Test_DefEepromTableHandle(void)
 
 void CS_ProcessNewTablesDefinitionTable_Test_DefMemoryTableHandle(void)
 {
-    CS_AppData.HkPacket.Payload.TablesCSState   = 99;
-    CS_AppData.DefTablesTblPtr[0].State = 88;
+    CS_AppData.HkPacket.Payload.TablesCSState = 99;
+    CS_AppData.DefTablesTblPtr[0].State       = 88;
 
     strncpy(CS_AppData.DefTablesTblPtr[0].Name, "CS.DefMemoryTbl", 20);
 
@@ -1650,11 +1626,7 @@ void CS_ProcessNewTablesDefinitionTable_Test_DefMemoryTableHandle(void)
     UT_SetHandlerFunction(UT_KEY(CFE_ES_GetAppName), CS_TABLE_PROCESSING_TEST_CFE_ES_GetAppNameHandler1, NULL);
 
     /* Execute the function being tested */
-    /* Note: first 2 arguments are passed in as addresses of pointers in the source code, even though the variable
-       types of the arguments are just pointers and the variable names of the arguments suggest that they're just
-       pointers */
-    CS_ProcessNewTablesDefinitionTable((CS_Def_Tables_Table_Entry_t *)&CS_AppData.DefTablesTblPtr,
-                                       (CS_Res_Tables_Table_Entry_t *)&CS_AppData.ResTablesTblPtr);
+    CS_ProcessNewTablesDefinitionTable(CS_AppData.DefTablesTblPtr, CS_AppData.ResTablesTblPtr);
 
     /* Verify results */
     UtAssert_True(CS_AppData.EepResTablesTblPtr == NULL, "CS_AppData.EepResTablesTblPtr == NULL");
@@ -1691,8 +1663,8 @@ void CS_ProcessNewTablesDefinitionTable_Test_DefMemoryTableHandle(void)
 
 void CS_ProcessNewTablesDefinitionTable_Test_DefTablesTableHandle(void)
 {
-    CS_AppData.HkPacket.Payload.TablesCSState   = 99;
-    CS_AppData.DefTablesTblPtr[0].State = 88;
+    CS_AppData.HkPacket.Payload.TablesCSState = 99;
+    CS_AppData.DefTablesTblPtr[0].State       = 88;
 
     strncpy(CS_AppData.DefTablesTblPtr[0].Name, "CS.DefTablesTbl", 20);
 
@@ -1702,11 +1674,7 @@ void CS_ProcessNewTablesDefinitionTable_Test_DefTablesTableHandle(void)
     UT_SetHandlerFunction(UT_KEY(CFE_ES_GetAppName), CS_TABLE_PROCESSING_TEST_CFE_ES_GetAppNameHandler1, NULL);
 
     /* Execute the function being tested */
-    /* Note: first 2 arguments are passed in as addresses of pointers in the source code, even though the variable
-       types of the arguments are just pointers and the variable names of the arguments suggest that they're just
-       pointers */
-    CS_ProcessNewTablesDefinitionTable((CS_Def_Tables_Table_Entry_t *)&CS_AppData.DefTablesTblPtr,
-                                       (CS_Res_Tables_Table_Entry_t *)&CS_AppData.ResTablesTblPtr);
+    CS_ProcessNewTablesDefinitionTable(CS_AppData.DefTablesTblPtr, CS_AppData.ResTablesTblPtr);
 
     /* Verify results */
     UtAssert_True(CS_AppData.EepResTablesTblPtr == NULL, "CS_AppData.EepResTablesTblPtr == NULL");
@@ -1743,8 +1711,8 @@ void CS_ProcessNewTablesDefinitionTable_Test_DefTablesTableHandle(void)
 
 void CS_ProcessNewTablesDefinitionTable_Test_DefAppTableHandle(void)
 {
-    CS_AppData.HkPacket.Payload.TablesCSState   = 99;
-    CS_AppData.DefTablesTblPtr[0].State = 88;
+    CS_AppData.HkPacket.Payload.TablesCSState = 99;
+    CS_AppData.DefTablesTblPtr[0].State       = 88;
 
     strncpy(CS_AppData.DefTablesTblPtr[0].Name, "CS.DefAppTbl", 20);
 
@@ -1754,11 +1722,7 @@ void CS_ProcessNewTablesDefinitionTable_Test_DefAppTableHandle(void)
     UT_SetHandlerFunction(UT_KEY(CFE_ES_GetAppName), CS_TABLE_PROCESSING_TEST_CFE_ES_GetAppNameHandler1, NULL);
 
     /* Execute the function being tested */
-    /* Note: first 2 arguments are passed in as addresses of pointers in the source code, even though the variable
-       types of the arguments are just pointers and the variable names of the arguments suggest that they're just
-       pointers */
-    CS_ProcessNewTablesDefinitionTable((CS_Def_Tables_Table_Entry_t *)&CS_AppData.DefTablesTblPtr,
-                                       (CS_Res_Tables_Table_Entry_t *)&CS_AppData.ResTablesTblPtr);
+    CS_ProcessNewTablesDefinitionTable(CS_AppData.DefTablesTblPtr, CS_AppData.ResTablesTblPtr);
 
     /* Verify results */
     UtAssert_True(CS_AppData.EepResTablesTblPtr == NULL, "CS_AppData.EepResTablesTblPtr == NULL");
@@ -1795,8 +1759,8 @@ void CS_ProcessNewTablesDefinitionTable_Test_DefAppTableHandle(void)
 
 void CS_ProcessNewTablesDefinitionTable_Test_ResEepromTableHandle(void)
 {
-    CS_AppData.HkPacket.Payload.TablesCSState   = 99;
-    CS_AppData.DefTablesTblPtr[0].State = 88;
+    CS_AppData.HkPacket.Payload.TablesCSState = 99;
+    CS_AppData.DefTablesTblPtr[0].State       = 88;
 
     strncpy(CS_AppData.DefTablesTblPtr[0].Name, "CS.ResEepromTbl", 20);
 
@@ -1806,11 +1770,7 @@ void CS_ProcessNewTablesDefinitionTable_Test_ResEepromTableHandle(void)
     UT_SetHandlerFunction(UT_KEY(CFE_ES_GetAppName), CS_TABLE_PROCESSING_TEST_CFE_ES_GetAppNameHandler1, NULL);
 
     /* Execute the function being tested */
-    /* Note: first 2 arguments are passed in as addresses of pointers in the source code, even though the variable
-       types of the arguments are just pointers and the variable names of the arguments suggest that they're just
-       pointers */
-    CS_ProcessNewTablesDefinitionTable((CS_Def_Tables_Table_Entry_t *)&CS_AppData.DefTablesTblPtr,
-                                       (CS_Res_Tables_Table_Entry_t *)&CS_AppData.ResTablesTblPtr);
+    CS_ProcessNewTablesDefinitionTable(CS_AppData.DefTablesTblPtr, CS_AppData.ResTablesTblPtr);
 
     /* Verify results */
     UtAssert_True(CS_AppData.EepResTablesTblPtr == NULL, "CS_AppData.EepResTablesTblPtr == NULL");
@@ -1845,8 +1805,8 @@ void CS_ProcessNewTablesDefinitionTable_Test_ResEepromTableHandle(void)
 
 void CS_ProcessNewTablesDefinitionTable_Test_ResMemoryTableHandle(void)
 {
-    CS_AppData.HkPacket.Payload.TablesCSState   = 99;
-    CS_AppData.DefTablesTblPtr[0].State = 88;
+    CS_AppData.HkPacket.Payload.TablesCSState = 99;
+    CS_AppData.DefTablesTblPtr[0].State       = 88;
 
     strncpy(CS_AppData.DefTablesTblPtr[0].Name, "CS.ResMemoryTbl", 20);
 
@@ -1856,11 +1816,7 @@ void CS_ProcessNewTablesDefinitionTable_Test_ResMemoryTableHandle(void)
     UT_SetHandlerFunction(UT_KEY(CFE_ES_GetAppName), CS_TABLE_PROCESSING_TEST_CFE_ES_GetAppNameHandler1, NULL);
 
     /* Execute the function being tested */
-    /* Note: first 2 arguments are passed in as addresses of pointers in the source code, even though the variable
-       types of the arguments are just pointers and the variable names of the arguments suggest that they're just
-       pointers */
-    CS_ProcessNewTablesDefinitionTable((CS_Def_Tables_Table_Entry_t *)&CS_AppData.DefTablesTblPtr,
-                                       (CS_Res_Tables_Table_Entry_t *)&CS_AppData.ResTablesTblPtr);
+    CS_ProcessNewTablesDefinitionTable(CS_AppData.DefTablesTblPtr, CS_AppData.ResTablesTblPtr);
 
     /* Verify results */
     UtAssert_True(CS_AppData.EepResTablesTblPtr == NULL, "CS_AppData.EepResTablesTblPtr == NULL");
@@ -1895,8 +1851,8 @@ void CS_ProcessNewTablesDefinitionTable_Test_ResMemoryTableHandle(void)
 
 void CS_ProcessNewTablesDefinitionTable_Test_ResTablesTableHandle(void)
 {
-    CS_AppData.HkPacket.Payload.TablesCSState   = 99;
-    CS_AppData.DefTablesTblPtr[0].State = 88;
+    CS_AppData.HkPacket.Payload.TablesCSState = 99;
+    CS_AppData.DefTablesTblPtr[0].State       = 88;
 
     strncpy(CS_AppData.DefTablesTblPtr[0].Name, "CS.ResTablesTbl", 20);
 
@@ -1906,11 +1862,7 @@ void CS_ProcessNewTablesDefinitionTable_Test_ResTablesTableHandle(void)
     UT_SetHandlerFunction(UT_KEY(CFE_ES_GetAppName), CS_TABLE_PROCESSING_TEST_CFE_ES_GetAppNameHandler1, NULL);
 
     /* Execute the function being tested */
-    /* Note: first 2 arguments are passed in as addresses of pointers in the source code, even though the variable
-       types of the arguments are just pointers and the variable names of the arguments suggest that they're just
-       pointers */
-    CS_ProcessNewTablesDefinitionTable((CS_Def_Tables_Table_Entry_t *)&CS_AppData.DefTablesTblPtr,
-                                       (CS_Res_Tables_Table_Entry_t *)&CS_AppData.ResTablesTblPtr);
+    CS_ProcessNewTablesDefinitionTable(CS_AppData.DefTablesTblPtr, CS_AppData.ResTablesTblPtr);
 
     /* Verify results */
     UtAssert_True(CS_AppData.EepResTablesTblPtr == NULL, "CS_AppData.EepResTablesTblPtr == NULL");
@@ -1945,8 +1897,8 @@ void CS_ProcessNewTablesDefinitionTable_Test_ResTablesTableHandle(void)
 
 void CS_ProcessNewTablesDefinitionTable_Test_ResAppTableHandle(void)
 {
-    CS_AppData.HkPacket.Payload.TablesCSState   = 99;
-    CS_AppData.DefTablesTblPtr[0].State = 88;
+    CS_AppData.HkPacket.Payload.TablesCSState = 99;
+    CS_AppData.DefTablesTblPtr[0].State       = 88;
 
     strncpy(CS_AppData.DefTablesTblPtr[0].Name, "CS.ResAppTbl", 20);
 
@@ -1956,11 +1908,7 @@ void CS_ProcessNewTablesDefinitionTable_Test_ResAppTableHandle(void)
     UT_SetHandlerFunction(UT_KEY(CFE_ES_GetAppName), CS_TABLE_PROCESSING_TEST_CFE_ES_GetAppNameHandler1, NULL);
 
     /* Execute the function being tested */
-    /* Note: first 2 arguments are passed in as addresses of pointers in the source code, even though the variable
-       types of the arguments are just pointers and the variable names of the arguments suggest that they're just
-       pointers */
-    CS_ProcessNewTablesDefinitionTable((CS_Def_Tables_Table_Entry_t *)&CS_AppData.DefTablesTblPtr,
-                                       (CS_Res_Tables_Table_Entry_t *)&CS_AppData.ResTablesTblPtr);
+    CS_ProcessNewTablesDefinitionTable(CS_AppData.DefTablesTblPtr, CS_AppData.ResTablesTblPtr);
 
     /* Verify results */
     UtAssert_True(CS_AppData.EepResTablesTblPtr == NULL, "CS_AppData.EepResTablesTblPtr == NULL");
@@ -2000,18 +1948,14 @@ void CS_ProcessNewTablesDefinitionTable_Test_StateEmptyNoValidEntries(void)
 
     snprintf(ExpectedEventString, CFE_MISSION_EVS_MAX_MESSAGE_LENGTH, "CS Tables Table: No valid entries in the table");
 
-    CS_AppData.HkPacket.Payload.TablesCSState   = 99;
-    CS_AppData.DefTablesTblPtr[0].State = CS_STATE_EMPTY;
+    CS_AppData.HkPacket.Payload.TablesCSState = 99;
+    CS_AppData.DefTablesTblPtr[0].State       = CS_STATE_EMPTY;
 
     /* Sets AppName to "CS" */
     UT_SetHandlerFunction(UT_KEY(CFE_ES_GetAppName), CS_TABLE_PROCESSING_TEST_CFE_ES_GetAppNameHandler1, NULL);
 
     /* Execute the function being tested */
-    /* Note: first 2 arguments are passed in as addresses of pointers in the source code, even though the variable
-       types of the arguments are just pointers and the variable names of the arguments suggest that they're just
-       pointers */
-    CS_ProcessNewTablesDefinitionTable((CS_Def_Tables_Table_Entry_t *)&CS_AppData.DefTablesTblPtr,
-                                       (CS_Res_Tables_Table_Entry_t *)&CS_AppData.ResTablesTblPtr);
+    CS_ProcessNewTablesDefinitionTable(CS_AppData.DefTablesTblPtr, CS_AppData.ResTablesTblPtr);
 
     /* Verify results */
     UtAssert_True(CS_AppData.EepResTablesTblPtr == NULL, "CS_AppData.EepResTablesTblPtr == NULL");
@@ -2057,8 +2001,8 @@ void CS_ProcessNewTablesDefinitionTable_Test_LimitApplicationNameLength(void)
     uint16     i;
     const char AppNameX[] = "X";
 
-    CS_AppData.HkPacket.Payload.TablesCSState   = 99;
-    CS_AppData.DefTablesTblPtr[0].State = 88;
+    CS_AppData.HkPacket.Payload.TablesCSState = 99;
+    CS_AppData.DefTablesTblPtr[0].State       = 88;
 
     /* String name chosen to be of length OS_MAX_API_NAME in order to satisfy condition "AppNameIndex ==
      * OS_MAX_API_NAME" */
@@ -2076,11 +2020,7 @@ void CS_ProcessNewTablesDefinitionTable_Test_LimitApplicationNameLength(void)
     UT_SetDataBuffer(UT_KEY(CFE_ES_GetAppName), (uint8 *)AppNameX, sizeof(AppNameX), false);
 
     /* Execute the function being tested */
-    /* Note: first 2 arguments are passed in as addresses of pointers in the source code, even though the variable
-       types of the arguments are just pointers and the variable names of the arguments suggest that they're just
-       pointers */
-    CS_ProcessNewTablesDefinitionTable((CS_Def_Tables_Table_Entry_t *)&CS_AppData.DefTablesTblPtr,
-                                       (CS_Res_Tables_Table_Entry_t *)&CS_AppData.ResTablesTblPtr);
+    CS_ProcessNewTablesDefinitionTable(CS_AppData.DefTablesTblPtr, CS_AppData.ResTablesTblPtr);
 
     /* Verify results */
     /* Note: This test is a special case where we're only interested in seeing that one branch was taken: "if
@@ -2100,8 +2040,8 @@ void CS_ProcessNewTablesDefinitionTable_Test_LimitTableNameLength(void)
 {
     uint16 i;
 
-    CS_AppData.HkPacket.Payload.TablesCSState   = 99;
-    CS_AppData.DefTablesTblPtr[0].State = 88;
+    CS_AppData.HkPacket.Payload.TablesCSState = 99;
+    CS_AppData.DefTablesTblPtr[0].State       = 88;
 
     strncat(CS_AppData.DefTablesTblPtr[0].Name, "CS.", CFE_TBL_MAX_FULL_NAME_LEN);
 
@@ -2119,11 +2059,7 @@ void CS_ProcessNewTablesDefinitionTable_Test_LimitTableNameLength(void)
     UT_SetHandlerFunction(UT_KEY(CFE_ES_GetAppName), CS_TABLE_PROCESSING_TEST_CFE_ES_GetAppNameHandler1, NULL);
 
     /* Execute the function being tested */
-    /* Note: first 2 arguments are passed in as addresses of pointers in the source code, even though the variable
-       types of the arguments are just pointers and the variable names of the arguments suggest that they're just
-       pointers */
-    CS_ProcessNewTablesDefinitionTable((CS_Def_Tables_Table_Entry_t *)&CS_AppData.DefTablesTblPtr,
-                                       (CS_Res_Tables_Table_Entry_t *)&CS_AppData.ResTablesTblPtr);
+    CS_ProcessNewTablesDefinitionTable(CS_AppData.DefTablesTblPtr, CS_AppData.ResTablesTblPtr);
 
     /* Verify results */
     /* Note: This test is a special case where we're only interested in seeing that one branch was taken: "if
@@ -2143,8 +2079,8 @@ void CS_ProcessNewTablesDefinitionTable_Test_MaxTableNameLength(void)
 {
     uint16 i;
 
-    CS_AppData.HkPacket.Payload.TablesCSState   = 99;
-    CS_AppData.DefTablesTblPtr[0].State = 88;
+    CS_AppData.HkPacket.Payload.TablesCSState = 99;
+    CS_AppData.DefTablesTblPtr[0].State       = 88;
 
     strncat(CS_AppData.DefTablesTblPtr[0].Name, "CS", CFE_TBL_MAX_FULL_NAME_LEN);
 
@@ -2162,11 +2098,7 @@ void CS_ProcessNewTablesDefinitionTable_Test_MaxTableNameLength(void)
     UT_SetHandlerFunction(UT_KEY(CFE_ES_GetAppName), CS_TABLE_PROCESSING_TEST_CFE_ES_GetAppNameHandler1, NULL);
 
     /* Execute the function being tested */
-    /* Note: first 2 arguments are passed in as addresses of pointers in the source code, even though the variable
-       types of the arguments are just pointers and the variable names of the arguments suggest that they're just
-       pointers */
-    CS_ProcessNewTablesDefinitionTable((CS_Def_Tables_Table_Entry_t *)&CS_AppData.DefTablesTblPtr,
-                                       (CS_Res_Tables_Table_Entry_t *)&CS_AppData.ResTablesTblPtr);
+    CS_ProcessNewTablesDefinitionTable(CS_AppData.DefTablesTblPtr, CS_AppData.ResTablesTblPtr);
 
     /* Verify results */
     /* Note: This test is a special case where we're only interested in seeing that one branch was taken: "if
@@ -2184,17 +2116,13 @@ void CS_ProcessNewTablesDefinitionTable_Test_MaxTableNameLength(void)
 
 void CS_ProcessNewAppDefinitionTable_Test_Nominal(void)
 {
-    CS_AppData.HkPacket.Payload.AppCSState   = 99;
-    CS_AppData.DefAppTblPtr[0].State = 88;
+    CS_AppData.HkPacket.Payload.AppCSState = 99;
+    CS_AppData.DefAppTblPtr[0].State       = 88;
 
     strncpy(CS_AppData.DefAppTblPtr[0].Name, "name", 20);
 
     /* Execute the function being tested */
-    /* Note: first 2 arguments are passed in as addresses of pointers in the source code, even though the variable
-       types of the arguments are just pointers and the variable names of the arguments suggest that they're just
-       pointers */
-    CS_ProcessNewAppDefinitionTable((CS_Def_App_Table_Entry_t *)&CS_AppData.DefAppTblPtr,
-                                    (CS_Res_App_Table_Entry_t *)&CS_AppData.ResAppTblPtr);
+    CS_ProcessNewAppDefinitionTable(CS_AppData.DefAppTblPtr, CS_AppData.ResAppTblPtr);
 
     /* Verify results */
     UtAssert_True(CS_AppData.ResAppTblPtr[0].State == 88, "CS_AppData.ResAppTblPtr[0].State == 88");
@@ -2224,15 +2152,11 @@ void CS_ProcessNewAppDefinitionTable_Test_StateEmptyNoValidEntries(void)
 
     snprintf(ExpectedEventString, CFE_MISSION_EVS_MAX_MESSAGE_LENGTH, "CS Apps Table: No valid entries in the table");
 
-    CS_AppData.HkPacket.Payload.AppCSState   = 99;
-    CS_AppData.DefAppTblPtr[0].State = CS_STATE_EMPTY;
+    CS_AppData.HkPacket.Payload.AppCSState = 99;
+    CS_AppData.DefAppTblPtr[0].State       = CS_STATE_EMPTY;
 
     /* Execute the function being tested */
-    /* Note: first 2 arguments are passed in as addresses of pointers in the source code, even though the variable
-       types of the arguments are just pointers and the variable names of the arguments suggest that they're just
-       pointers */
-    CS_ProcessNewAppDefinitionTable((CS_Def_App_Table_Entry_t *)&CS_AppData.DefAppTblPtr,
-                                    (CS_Res_App_Table_Entry_t *)&CS_AppData.ResAppTblPtr);
+    CS_ProcessNewAppDefinitionTable(CS_AppData.DefAppTblPtr, CS_AppData.ResAppTblPtr);
 
     /* Verify results */
     UtAssert_True(CS_AppData.ResAppTblPtr[0].State == CS_STATE_EMPTY,
@@ -2277,11 +2201,8 @@ void CS_TableInit_Test_DefaultDefinitionTableLoadErrorEEPROM(void)
     UT_SetDefaultReturnValue(UT_KEY(CFE_TBL_Load), -1);
 
     /* Execute the function being tested */
-    /* Note: first 2 arguments are passed in as addresses of pointers in the source code, even though the variable
-       types of the arguments are just pointers and the variable names of the arguments suggest that they're just
-       pointers */
-    Result = CS_TableInit(&DefinitionTableHandle, &ResultsTableHandle, &CS_AppData.DefEepromTblPtr,
-                          &CS_AppData.ResEepromTblPtr, CS_EEPROM_TABLE, CS_DEF_EEPROM_TABLE_NAME,
+    Result = CS_TableInit(&DefinitionTableHandle, &ResultsTableHandle, (void **)&CS_AppData.DefEepromTblPtr,
+                          (void **)&CS_AppData.ResEepromTblPtr, CS_EEPROM_TABLE, CS_DEF_EEPROM_TABLE_NAME,
                           CS_RESULTS_EEPROM_TABLE_NAME, CS_MAX_NUM_EEPROM_TABLE_ENTRIES, CS_DEF_EEPROM_TABLE_FILENAME,
                           &CS_AppData.DefaultEepromDefTable, sizeof(CS_Def_EepromMemory_Table_Entry_t),
                           sizeof(CS_Res_EepromMemory_Table_Entry_t), NULL);
@@ -2320,11 +2241,8 @@ void CS_TableInit_Test_DefinitionTableGetAddressErrorEEPROM(void)
     UT_SetDeferredRetcode(UT_KEY(CFE_TBL_GetAddress), 2, -1);
 
     /* Execute the function being tested */
-    /* Note: first 2 arguments are passed in as addresses of pointers in the source code, even though the variable
-       types of the arguments are just pointers and the variable names of the arguments suggest that they're just
-       pointers */
-    Result = CS_TableInit(&DefinitionTableHandle, &ResultsTableHandle, &CS_AppData.DefEepromTblPtr,
-                          &CS_AppData.ResEepromTblPtr, CS_EEPROM_TABLE, CS_DEF_EEPROM_TABLE_NAME,
+    Result = CS_TableInit(&DefinitionTableHandle, &ResultsTableHandle, (void **)&CS_AppData.DefEepromTblPtr,
+                          (void **)&CS_AppData.ResEepromTblPtr, CS_EEPROM_TABLE, CS_DEF_EEPROM_TABLE_NAME,
                           CS_RESULTS_EEPROM_TABLE_NAME, CS_MAX_NUM_EEPROM_TABLE_ENTRIES, CS_DEF_EEPROM_TABLE_FILENAME,
                           &CS_AppData.DefaultEepromDefTable, sizeof(CS_Def_EepromMemory_Table_Entry_t),
                           sizeof(CS_Res_EepromMemory_Table_Entry_t), NULL);
@@ -2363,11 +2281,8 @@ void CS_TableInit_Test_DefinitionTableGetAddressErrorMemory(void)
     UT_SetDeferredRetcode(UT_KEY(CFE_TBL_GetAddress), 2, -1);
 
     /* Execute the function being tested */
-    /* Note: first 2 arguments are passed in as addresses of pointers in the source code, even though the variable
-       types of the arguments are just pointers and the variable names of the arguments suggest that they're just
-       pointers */
-    Result = CS_TableInit(&DefinitionTableHandle, &ResultsTableHandle, &CS_AppData.DefMemoryTblPtr,
-                          &CS_AppData.ResMemoryTblPtr, CS_MEMORY_TABLE, CS_DEF_MEMORY_TABLE_NAME,
+    Result = CS_TableInit(&DefinitionTableHandle, &ResultsTableHandle, (void **)&CS_AppData.DefMemoryTblPtr,
+                          (void **)&CS_AppData.ResMemoryTblPtr, CS_MEMORY_TABLE, CS_DEF_MEMORY_TABLE_NAME,
                           CS_RESULTS_MEMORY_TABLE_NAME, CS_MAX_NUM_MEMORY_TABLE_ENTRIES, CS_DEF_MEMORY_TABLE_FILENAME,
                           &CS_AppData.DefaultMemoryDefTable, sizeof(CS_Def_EepromMemory_Table_Entry_t),
                           sizeof(CS_Res_EepromMemory_Table_Entry_t), NULL);
@@ -2406,11 +2321,8 @@ void CS_TableInit_Test_DefinitionTableGetAddressErrorTables(void)
     UT_SetDeferredRetcode(UT_KEY(CFE_TBL_GetAddress), 2, -1);
 
     /* Execute the function being tested */
-    /* Note: first 2 arguments are passed in as addresses of pointers in the source code, even though the variable
-       types of the arguments are just pointers and the variable names of the arguments suggest that they're just
-       pointers */
-    Result = CS_TableInit(&DefinitionTableHandle, &ResultsTableHandle, &CS_AppData.DefTablesTblPtr,
-                          &CS_AppData.ResTablesTblPtr, CS_TABLES_TABLE, CS_DEF_TABLES_TABLE_NAME,
+    Result = CS_TableInit(&DefinitionTableHandle, &ResultsTableHandle, (void **)&CS_AppData.DefTablesTblPtr,
+                          (void **)&CS_AppData.ResTablesTblPtr, CS_TABLES_TABLE, CS_DEF_TABLES_TABLE_NAME,
                           CS_RESULTS_TABLES_TABLE_NAME, CS_MAX_NUM_TABLES_TABLE_ENTRIES, CS_DEF_TABLES_TABLE_FILENAME,
                           &CS_AppData.DefaultTablesDefTable, sizeof(CS_Def_Tables_Table_Entry_t),
                           sizeof(CS_Res_Tables_Table_Entry_t), NULL);
@@ -2449,13 +2361,11 @@ void CS_TableInit_Test_DefinitionTableGetAddressErrorApps(void)
     UT_SetDeferredRetcode(UT_KEY(CFE_TBL_GetAddress), 2, -1);
 
     /* Execute the function being tested */
-    /* Note: first 2 arguments are passed in as addresses of pointers in the source code, even though the variable
-       types of the arguments are just pointers and the variable names of the arguments suggest that they're just
-       pointers */
-    Result = CS_TableInit(&DefinitionTableHandle, &ResultsTableHandle, &CS_AppData.DefAppTblPtr,
-                          &CS_AppData.ResAppTblPtr, CS_APP_TABLE, CS_DEF_APP_TABLE_NAME, CS_RESULTS_APP_TABLE_NAME,
-                          CS_MAX_NUM_APP_TABLE_ENTRIES, CS_DEF_APP_TABLE_FILENAME, &CS_AppData.DefaultAppDefTable,
-                          sizeof(CS_Def_App_Table_Entry_t), sizeof(CS_Res_App_Table_Entry_t), NULL);
+    Result =
+        CS_TableInit(&DefinitionTableHandle, &ResultsTableHandle, (void **)&CS_AppData.DefAppTblPtr,
+                     (void **)&CS_AppData.ResAppTblPtr, CS_APP_TABLE, CS_DEF_APP_TABLE_NAME, CS_RESULTS_APP_TABLE_NAME,
+                     CS_MAX_NUM_APP_TABLE_ENTRIES, CS_DEF_APP_TABLE_FILENAME, &CS_AppData.DefaultAppDefTable,
+                     sizeof(CS_Def_App_Table_Entry_t), sizeof(CS_Res_App_Table_Entry_t), NULL);
 
     /* Verify results */
     UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventID, CS_TBL_INIT_ERR_EID);
@@ -2486,11 +2396,8 @@ void CS_TableInit_Test_EepromTableAndNotLoadedFromMemory(void)
     UT_SetDeferredRetcode(UT_KEY(CFE_TBL_GetAddress), 2, CFE_TBL_INFO_UPDATED);
 
     /* Execute the function being tested */
-    /* Note: first 2 arguments are passed in as addresses of pointers in the source code, even though the variable
-       types of the arguments are just pointers and the variable names of the arguments suggest that they're just
-       pointers */
-    Result = CS_TableInit(&DefinitionTableHandle, &ResultsTableHandle, &CS_AppData.DefEepromTblPtr,
-                          &CS_AppData.ResEepromTblPtr, CS_EEPROM_TABLE, CS_DEF_EEPROM_TABLE_NAME,
+    Result = CS_TableInit(&DefinitionTableHandle, &ResultsTableHandle, (void **)&CS_AppData.DefEepromTblPtr,
+                          (void **)&CS_AppData.ResEepromTblPtr, CS_EEPROM_TABLE, CS_DEF_EEPROM_TABLE_NAME,
                           CS_RESULTS_EEPROM_TABLE_NAME, CS_MAX_NUM_EEPROM_TABLE_ENTRIES, CS_DEF_EEPROM_TABLE_FILENAME,
                           &CS_AppData.DefaultEepromDefTable, sizeof(CS_Def_EepromMemory_Table_Entry_t),
                           sizeof(CS_Res_EepromMemory_Table_Entry_t), NULL);
@@ -2521,25 +2428,16 @@ void CS_TableInit_Test_EepromTableAndLoadedFromMemoryAfterResultsTableRegisterEr
     UT_SetDefaultReturnValue(UT_KEY(CFE_TBL_GetAddress), CFE_SUCCESS);
 
     /* Execute the function being tested */
-    /* Note: first 2 arguments are passed in as addresses of pointers in the source code, even though the variable
-       types of the arguments are just pointers and the variable names of the arguments suggest that they're just
-       pointers */
-    Result = CS_TableInit(&DefinitionTableHandle, &ResultsTableHandle, &CS_AppData.DefEepromTblPtr,
-                          &CS_AppData.ResEepromTblPtr, CS_EEPROM_TABLE, CS_DEF_EEPROM_TABLE_NAME,
+    Result = CS_TableInit(&DefinitionTableHandle, &ResultsTableHandle, (void **)&CS_AppData.DefEepromTblPtr,
+                          (void **)&CS_AppData.ResEepromTblPtr, CS_EEPROM_TABLE, CS_DEF_EEPROM_TABLE_NAME,
                           CS_RESULTS_EEPROM_TABLE_NAME, CS_MAX_NUM_EEPROM_TABLE_ENTRIES, CS_DEF_EEPROM_TABLE_FILENAME,
                           &CS_AppData.DefaultEepromDefTable, sizeof(CS_Def_EepromMemory_Table_Entry_t),
                           sizeof(CS_Res_EepromMemory_Table_Entry_t), NULL);
 
     /* Verify results */
-    UtAssert_True(CS_AppData.HkPacket.Payload.EepromCSState == CS_STATE_DISABLED,
-                  "CS_AppData.HkPacket.Payload.EepromCSState == CS_STATE_DISABLED");
-
-    UtAssert_True(Result == CFE_SUCCESS, "Result == CFE_SUCCESS");
-
-    call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
-
-    UtAssert_True(call_count_CFE_EVS_SendEvent == 0, "CFE_EVS_SendEvent was called %u time(s), expected 0",
-                  call_count_CFE_EVS_SendEvent);
+    UtAssert_INT32_EQ(Result, -1);
+    UtAssert_STUB_COUNT(CFE_EVS_SendEvent, 1);
+    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventID, CS_TBL_INIT_ERR_EID);
 }
 
 void CS_TableInit_Test_EepromTableAndLoadedFromMemoryAfterResultsTableGetAddressError(void)
@@ -2555,25 +2453,16 @@ void CS_TableInit_Test_EepromTableAndLoadedFromMemoryAfterResultsTableGetAddress
     UT_SetDeferredRetcode(UT_KEY(CFE_TBL_GetAddress), 1, -1);
 
     /* Execute the function being tested */
-    /* Note: first 2 arguments are passed in as addresses of pointers in the source code, even though the variable
-       types of the arguments are just pointers and the variable names of the arguments suggest that they're just
-       pointers */
-    Result = CS_TableInit(&DefinitionTableHandle, &ResultsTableHandle, &CS_AppData.DefEepromTblPtr,
-                          &CS_AppData.ResEepromTblPtr, CS_EEPROM_TABLE, CS_DEF_EEPROM_TABLE_NAME,
+    Result = CS_TableInit(&DefinitionTableHandle, &ResultsTableHandle, (void **)&CS_AppData.DefEepromTblPtr,
+                          (void **)&CS_AppData.ResEepromTblPtr, CS_EEPROM_TABLE, CS_DEF_EEPROM_TABLE_NAME,
                           CS_RESULTS_EEPROM_TABLE_NAME, CS_MAX_NUM_EEPROM_TABLE_ENTRIES, CS_DEF_EEPROM_TABLE_FILENAME,
                           &CS_AppData.DefaultEepromDefTable, sizeof(CS_Def_EepromMemory_Table_Entry_t),
                           sizeof(CS_Res_EepromMemory_Table_Entry_t), NULL);
 
     /* Verify results */
-    UtAssert_True(CS_AppData.HkPacket.Payload.EepromCSState == CS_STATE_DISABLED,
-                  "CS_AppData.HkPacket.Payload.EepromCSState == CS_STATE_DISABLED");
-
-    UtAssert_True(Result == CFE_SUCCESS, "Result == CFE_SUCCESS");
-
-    call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
-
-    UtAssert_True(call_count_CFE_EVS_SendEvent == 0, "CFE_EVS_SendEvent was called %u time(s), expected 0",
-                  call_count_CFE_EVS_SendEvent);
+    UtAssert_INT32_EQ(Result, -1);
+    UtAssert_STUB_COUNT(CFE_EVS_SendEvent, 1);
+    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventID, CS_TBL_INIT_ERR_EID);
 }
 
 void CS_TableInit_Test_EepromTableAndLoadedFromMemoryAfterDefinitionTableRegisterError(void)
@@ -2592,25 +2481,16 @@ void CS_TableInit_Test_EepromTableAndLoadedFromMemoryAfterDefinitionTableRegiste
     UT_SetDefaultReturnValue(UT_KEY(CFE_TBL_GetAddress), CFE_SUCCESS);
 
     /* Execute the function being tested */
-    /* Note: first 2 arguments are passed in as addresses of pointers in the source code, even though the variable
-       types of the arguments are just pointers and the variable names of the arguments suggest that they're just
-       pointers */
-    Result = CS_TableInit(&DefinitionTableHandle, &ResultsTableHandle, &CS_AppData.DefEepromTblPtr,
-                          &CS_AppData.ResEepromTblPtr, CS_EEPROM_TABLE, CS_DEF_EEPROM_TABLE_NAME,
+    Result = CS_TableInit(&DefinitionTableHandle, &ResultsTableHandle, (void **)&CS_AppData.DefEepromTblPtr,
+                          (void **)&CS_AppData.ResEepromTblPtr, CS_EEPROM_TABLE, CS_DEF_EEPROM_TABLE_NAME,
                           CS_RESULTS_EEPROM_TABLE_NAME, CS_MAX_NUM_EEPROM_TABLE_ENTRIES, CS_DEF_EEPROM_TABLE_FILENAME,
                           &CS_AppData.DefaultEepromDefTable, sizeof(CS_Def_EepromMemory_Table_Entry_t),
                           sizeof(CS_Res_EepromMemory_Table_Entry_t), NULL);
 
     /* Verify results */
-    UtAssert_True(CS_AppData.HkPacket.Payload.EepromCSState == CS_STATE_DISABLED,
-                  "CS_AppData.HkPacket.Payload.EepromCSState == CS_STATE_DISABLED");
-
-    UtAssert_True(Result == CFE_SUCCESS, "Result == CFE_SUCCESS");
-
-    call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
-
-    UtAssert_True(call_count_CFE_EVS_SendEvent == 0, "CFE_EVS_SendEvent was called %u time(s), expected 0",
-                  call_count_CFE_EVS_SendEvent);
+    UtAssert_INT32_EQ(Result, -1);
+    UtAssert_STUB_COUNT(CFE_EVS_SendEvent, 1);
+    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventID, CS_TBL_INIT_ERR_EID);
 }
 
 void CS_TableInit_Test_EepromTableAndLoadedFromMemoryAfterDefinitionTableFileLoadError(void)
@@ -2618,6 +2498,9 @@ void CS_TableInit_Test_EepromTableAndLoadedFromMemoryAfterDefinitionTableFileLoa
     CFE_Status_t     Result;
     CFE_TBL_Handle_t DefinitionTableHandle = 0;
     CFE_TBL_Handle_t ResultsTableHandle    = 0;
+
+    /* So this can detect the switch to DISABLED */
+    CS_AppData.HkPacket.Payload.EepromCSState = CS_STATE_ENABLED;
 
     /* On 1st call, return -1 to satisfy condition "ResultFromLoad != CFE_SUCCESS".  On 2nd call, return CFE_SUCCESS to
      * prevent error */
@@ -2627,25 +2510,16 @@ void CS_TableInit_Test_EepromTableAndLoadedFromMemoryAfterDefinitionTableFileLoa
     UT_SetDefaultReturnValue(UT_KEY(CFE_TBL_GetAddress), CFE_SUCCESS);
 
     /* Execute the function being tested */
-    /* Note: first 2 arguments are passed in as addresses of pointers in the source code, even though the variable
-       types of the arguments are just pointers and the variable names of the arguments suggest that they're just
-       pointers */
-    Result = CS_TableInit(&DefinitionTableHandle, &ResultsTableHandle, &CS_AppData.DefEepromTblPtr,
-                          &CS_AppData.ResEepromTblPtr, CS_EEPROM_TABLE, CS_DEF_EEPROM_TABLE_NAME,
+    Result = CS_TableInit(&DefinitionTableHandle, &ResultsTableHandle, (void **)&CS_AppData.DefEepromTblPtr,
+                          (void **)&CS_AppData.ResEepromTblPtr, CS_EEPROM_TABLE, CS_DEF_EEPROM_TABLE_NAME,
                           CS_RESULTS_EEPROM_TABLE_NAME, CS_MAX_NUM_EEPROM_TABLE_ENTRIES, CS_DEF_EEPROM_TABLE_FILENAME,
                           &CS_AppData.DefaultEepromDefTable, sizeof(CS_Def_EepromMemory_Table_Entry_t),
                           sizeof(CS_Res_EepromMemory_Table_Entry_t), NULL);
 
     /* Verify results */
-    UtAssert_True(CS_AppData.HkPacket.Payload.EepromCSState == CS_STATE_DISABLED,
-                  "CS_AppData.HkPacket.Payload.EepromCSState == CS_STATE_DISABLED");
-
-    UtAssert_True(Result == CFE_SUCCESS, "Result == CFE_SUCCESS");
-
-    call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
-
-    UtAssert_True(call_count_CFE_EVS_SendEvent == 0, "CFE_EVS_SendEvent was called %u time(s), expected 0",
-                  call_count_CFE_EVS_SendEvent);
+    UtAssert_UINT8_EQ(CS_AppData.HkPacket.Payload.EepromCSState, CS_STATE_DISABLED);
+    UtAssert_INT32_EQ(Result, CFE_SUCCESS);
+    UtAssert_STUB_COUNT(CFE_EVS_SendEvent, 0);
 }
 
 void CS_TableInit_Test_MemoryTableAndNotLoadedFromMemory(void)
@@ -2654,6 +2528,9 @@ void CS_TableInit_Test_MemoryTableAndNotLoadedFromMemory(void)
     CFE_TBL_Handle_t DefinitionTableHandle = 0;
     CFE_TBL_Handle_t ResultsTableHandle    = 0;
 
+    /* So this can detect a switch */
+    CS_AppData.HkPacket.Payload.MemoryCSState = CS_STATE_ENABLED;
+
     /* Set to prevent unintended errors */
     UT_SetDefaultReturnValue(UT_KEY(CFE_TBL_Load), CFE_SUCCESS);
 
@@ -2661,23 +2538,17 @@ void CS_TableInit_Test_MemoryTableAndNotLoadedFromMemory(void)
     UT_SetDeferredRetcode(UT_KEY(CFE_TBL_GetAddress), 2, CFE_TBL_INFO_UPDATED);
 
     /* Execute the function being tested */
-    /* Note: first 2 arguments are passed in as addresses of pointers in the source code, even though the variable
-       types of the arguments are just pointers and the variable names of the arguments suggest that they're just
-       pointers */
-    Result = CS_TableInit(&DefinitionTableHandle, &ResultsTableHandle, &CS_AppData.DefMemoryTblPtr,
-                          &CS_AppData.ResMemoryTblPtr, CS_MEMORY_TABLE, CS_DEF_MEMORY_TABLE_NAME,
+    Result = CS_TableInit(&DefinitionTableHandle, &ResultsTableHandle, (void **)&CS_AppData.DefMemoryTblPtr,
+                          (void **)&CS_AppData.ResMemoryTblPtr, CS_MEMORY_TABLE, CS_DEF_MEMORY_TABLE_NAME,
                           CS_RESULTS_MEMORY_TABLE_NAME, CS_MAX_NUM_MEMORY_TABLE_ENTRIES, CS_DEF_MEMORY_TABLE_FILENAME,
                           &CS_AppData.DefaultMemoryDefTable, sizeof(CS_Def_EepromMemory_Table_Entry_t),
                           sizeof(CS_Res_EepromMemory_Table_Entry_t), NULL);
 
     /* Verify results */
-    UtAssert_True(Result == CFE_SUCCESS, "Result == CFE_SUCCESS");
+    UtAssert_UINT8_EQ(CS_AppData.HkPacket.Payload.MemoryCSState, CS_STATE_ENABLED);
+    UtAssert_INT32_EQ(Result, CFE_SUCCESS);
 
-    call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
-
-    UtAssert_True(call_count_CFE_EVS_SendEvent == 1, "CFE_EVS_SendEvent was called %u time(s), expected 1",
-                  call_count_CFE_EVS_SendEvent);
-    /* Generates 1 error message we don't care about in this test */
+    /* Note this may generate an event in the new table processing, checked in other test */
 }
 
 void CS_TableInit_Test_MemoryTableAndLoadedFromMemory(void)
@@ -2686,8 +2557,11 @@ void CS_TableInit_Test_MemoryTableAndLoadedFromMemory(void)
     CFE_TBL_Handle_t DefinitionTableHandle = 0;
     CFE_TBL_Handle_t ResultsTableHandle    = 0;
 
-    /* Set to satisfy condition "ResultFromLoad != CFE_SUCCESS" */
-    UT_SetDeferredRetcode(UT_KEY(CFE_TBL_Register), 1, -1);
+    /* So this can detect a switch */
+    CS_AppData.HkPacket.Payload.MemoryCSState = CS_STATE_ENABLED;
+
+    /* First call fails so it proceeds to load from memory */
+    UT_SetDeferredRetcode(UT_KEY(CFE_TBL_Load), 1, -1);
 
     /* Set to prevent unintended errors */
     UT_SetDefaultReturnValue(UT_KEY(CFE_TBL_Load), CFE_SUCCESS);
@@ -2696,25 +2570,16 @@ void CS_TableInit_Test_MemoryTableAndLoadedFromMemory(void)
     UT_SetDefaultReturnValue(UT_KEY(CFE_TBL_GetAddress), CFE_SUCCESS);
 
     /* Execute the function being tested */
-    /* Note: first 2 arguments are passed in as addresses of pointers in the source code, even though the variable
-       types of the arguments are just pointers and the variable names of the arguments suggest that they're just
-       pointers */
-    Result = CS_TableInit(&DefinitionTableHandle, &ResultsTableHandle, &CS_AppData.DefMemoryTblPtr,
-                          &CS_AppData.ResMemoryTblPtr, CS_MEMORY_TABLE, CS_DEF_MEMORY_TABLE_NAME,
+    Result = CS_TableInit(&DefinitionTableHandle, &ResultsTableHandle, (void **)&CS_AppData.DefMemoryTblPtr,
+                          (void **)&CS_AppData.ResMemoryTblPtr, CS_MEMORY_TABLE, CS_DEF_MEMORY_TABLE_NAME,
                           CS_RESULTS_MEMORY_TABLE_NAME, CS_MAX_NUM_MEMORY_TABLE_ENTRIES, CS_DEF_MEMORY_TABLE_FILENAME,
                           &CS_AppData.DefaultMemoryDefTable, sizeof(CS_Def_EepromMemory_Table_Entry_t),
                           sizeof(CS_Res_EepromMemory_Table_Entry_t), NULL);
 
     /* Verify results */
-    UtAssert_True(CS_AppData.HkPacket.Payload.MemoryCSState == CS_STATE_DISABLED,
-                  "CS_AppData.HkPacket.Payload.MemoryCSState == CS_STATE_DISABLED");
-
-    UtAssert_True(Result == CFE_SUCCESS, "Result == CFE_SUCCESS");
-
-    call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
-
-    UtAssert_True(call_count_CFE_EVS_SendEvent == 0, "CFE_EVS_SendEvent was called %u time(s), expected 0",
-                  call_count_CFE_EVS_SendEvent);
+    UtAssert_UINT8_EQ(CS_AppData.HkPacket.Payload.MemoryCSState, CS_STATE_DISABLED);
+    UtAssert_INT32_EQ(Result, CFE_SUCCESS);
+    UtAssert_STUB_COUNT(CFE_EVS_SendEvent, 0);
 }
 
 void CS_TableInit_Test_AppTableAndNotLoadedFromMemory(void)
@@ -2723,6 +2588,9 @@ void CS_TableInit_Test_AppTableAndNotLoadedFromMemory(void)
     CFE_TBL_Handle_t DefinitionTableHandle = 0;
     CFE_TBL_Handle_t ResultsTableHandle    = 0;
 
+    /* So this can detect a switch */
+    CS_AppData.HkPacket.Payload.AppCSState = CS_STATE_ENABLED;
+
     /* Set to prevent unintended errors */
     UT_SetDefaultReturnValue(UT_KEY(CFE_TBL_Load), CFE_SUCCESS);
 
@@ -2730,22 +2598,16 @@ void CS_TableInit_Test_AppTableAndNotLoadedFromMemory(void)
     UT_SetDeferredRetcode(UT_KEY(CFE_TBL_GetAddress), 2, CFE_TBL_INFO_UPDATED);
 
     /* Execute the function being tested */
-    /* Note: first 2 arguments are passed in as addresses of pointers in the source code, even though the variable
-       types of the arguments are just pointers and the variable names of the arguments suggest that they're just
-       pointers */
-    Result = CS_TableInit(&DefinitionTableHandle, &ResultsTableHandle, &CS_AppData.DefAppTblPtr,
-                          &CS_AppData.ResAppTblPtr, CS_APP_TABLE, CS_DEF_APP_TABLE_NAME, CS_RESULTS_APP_TABLE_NAME,
-                          CS_MAX_NUM_APP_TABLE_ENTRIES, CS_DEF_APP_TABLE_FILENAME, &CS_AppData.DefaultAppDefTable,
-                          sizeof(CS_Def_App_Table_Entry_t), sizeof(CS_Res_App_Table_Entry_t), NULL);
+    Result =
+        CS_TableInit(&DefinitionTableHandle, &ResultsTableHandle, (void **)&CS_AppData.DefAppTblPtr,
+                     (void **)&CS_AppData.ResAppTblPtr, CS_APP_TABLE, CS_DEF_APP_TABLE_NAME, CS_RESULTS_APP_TABLE_NAME,
+                     CS_MAX_NUM_APP_TABLE_ENTRIES, CS_DEF_APP_TABLE_FILENAME, &CS_AppData.DefaultAppDefTable,
+                     sizeof(CS_Def_App_Table_Entry_t), sizeof(CS_Res_App_Table_Entry_t), NULL);
 
     /* Verify results */
-    UtAssert_True(Result == CFE_SUCCESS, "Result == CFE_SUCCESS");
-
-    call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
-
-    UtAssert_True(call_count_CFE_EVS_SendEvent == 1, "CFE_EVS_SendEvent was called %u time(s), expected 1",
-                  call_count_CFE_EVS_SendEvent);
-    /* Generates 1 event message we don't care about in this test */
+    UtAssert_UINT8_EQ(CS_AppData.HkPacket.Payload.AppCSState, CS_STATE_ENABLED);
+    UtAssert_INT32_EQ(Result, CFE_SUCCESS);
+    /* Note this may generate an event in the new table processing, checked in other test */
 }
 
 void CS_TableInit_Test_AppTableAndLoadedFromMemory(void)
@@ -2754,8 +2616,11 @@ void CS_TableInit_Test_AppTableAndLoadedFromMemory(void)
     CFE_TBL_Handle_t DefinitionTableHandle = 0;
     CFE_TBL_Handle_t ResultsTableHandle    = 0;
 
+    /* So this can detect a switch */
+    CS_AppData.HkPacket.Payload.AppCSState = CS_STATE_ENABLED;
+
     /* Set to satisfy condition "ResultFromLoad != CFE_SUCCESS" */
-    UT_SetDeferredRetcode(UT_KEY(CFE_TBL_Register), 1, -1);
+    UT_SetDeferredRetcode(UT_KEY(CFE_TBL_Load), 1, -1);
 
     /* Set to prevent unintended errors */
     UT_SetDefaultReturnValue(UT_KEY(CFE_TBL_Load), CFE_SUCCESS);
@@ -2764,24 +2629,16 @@ void CS_TableInit_Test_AppTableAndLoadedFromMemory(void)
     UT_SetDefaultReturnValue(UT_KEY(CFE_TBL_GetAddress), CFE_SUCCESS);
 
     /* Execute the function being tested */
-    /* Note: first 2 arguments are passed in as addresses of pointers in the source code, even though the variable
-       types of the arguments are just pointers and the variable names of the arguments suggest that they're just
-       pointers */
-    Result = CS_TableInit(&DefinitionTableHandle, &ResultsTableHandle, &CS_AppData.DefAppTblPtr,
-                          &CS_AppData.ResAppTblPtr, CS_APP_TABLE, CS_DEF_APP_TABLE_NAME, CS_RESULTS_APP_TABLE_NAME,
-                          CS_MAX_NUM_APP_TABLE_ENTRIES, CS_DEF_APP_TABLE_FILENAME, &CS_AppData.DefaultAppDefTable,
-                          sizeof(CS_Def_App_Table_Entry_t), sizeof(CS_Res_App_Table_Entry_t), NULL);
+    Result =
+        CS_TableInit(&DefinitionTableHandle, &ResultsTableHandle, (void **)&CS_AppData.DefAppTblPtr,
+                     (void **)&CS_AppData.ResAppTblPtr, CS_APP_TABLE, CS_DEF_APP_TABLE_NAME, CS_RESULTS_APP_TABLE_NAME,
+                     CS_MAX_NUM_APP_TABLE_ENTRIES, CS_DEF_APP_TABLE_FILENAME, &CS_AppData.DefaultAppDefTable,
+                     sizeof(CS_Def_App_Table_Entry_t), sizeof(CS_Res_App_Table_Entry_t), NULL);
 
     /* Verify results */
-    UtAssert_True(CS_AppData.HkPacket.Payload.AppCSState == CS_STATE_DISABLED,
-                  "CS_AppData.HkPacket.Payload.AppCSState == CS_STATE_DISABLED");
-
-    UtAssert_True(Result == CFE_SUCCESS, "Result == CFE_SUCCESS");
-
-    call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
-
-    UtAssert_True(call_count_CFE_EVS_SendEvent == 0, "CFE_EVS_SendEvent was called %u time(s), expected 0",
-                  call_count_CFE_EVS_SendEvent);
+    UtAssert_UINT8_EQ(CS_AppData.HkPacket.Payload.AppCSState, CS_STATE_DISABLED);
+    UtAssert_INT32_EQ(Result, CFE_SUCCESS);
+    UtAssert_STUB_COUNT(CFE_EVS_SendEvent, 0);
 }
 
 void CS_TableInit_Test_TablesTableAndNotLoadedFromMemory(void)
@@ -2790,6 +2647,9 @@ void CS_TableInit_Test_TablesTableAndNotLoadedFromMemory(void)
     CFE_TBL_Handle_t DefinitionTableHandle = 0;
     CFE_TBL_Handle_t ResultsTableHandle    = 0;
 
+    /* So this can detect a switch */
+    CS_AppData.HkPacket.Payload.TablesCSState = CS_STATE_ENABLED;
+
     /* Set to prevent unintended errors */
     UT_SetDefaultReturnValue(UT_KEY(CFE_TBL_Load), CFE_SUCCESS);
 
@@ -2797,23 +2657,16 @@ void CS_TableInit_Test_TablesTableAndNotLoadedFromMemory(void)
     UT_SetDeferredRetcode(UT_KEY(CFE_TBL_GetAddress), 2, CFE_TBL_INFO_UPDATED);
 
     /* Execute the function being tested */
-    /* Note: first 2 arguments are passed in as addresses of pointers in the source code, even though the variable
-       types of the arguments are just pointers and the variable names of the arguments suggest that they're just
-       pointers */
-    Result = CS_TableInit(&DefinitionTableHandle, &ResultsTableHandle, &CS_AppData.DefTablesTblPtr,
-                          &CS_AppData.ResTablesTblPtr, CS_TABLES_TABLE, CS_DEF_TABLES_TABLE_NAME,
+    Result = CS_TableInit(&DefinitionTableHandle, &ResultsTableHandle, (void **)&CS_AppData.DefTablesTblPtr,
+                          (void **)&CS_AppData.ResTablesTblPtr, CS_TABLES_TABLE, CS_DEF_TABLES_TABLE_NAME,
                           CS_RESULTS_TABLES_TABLE_NAME, CS_MAX_NUM_TABLES_TABLE_ENTRIES, CS_DEF_TABLES_TABLE_FILENAME,
                           &CS_AppData.DefaultTablesDefTable, sizeof(CS_Def_Tables_Table_Entry_t),
                           sizeof(CS_Res_Tables_Table_Entry_t), NULL);
 
     /* Verify results */
-    UtAssert_True(Result == CFE_SUCCESS, "Result == CFE_SUCCESS");
-
-    call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
-
-    UtAssert_True(call_count_CFE_EVS_SendEvent == 1, "CFE_EVS_SendEvent was called %u time(s), expected 1",
-                  call_count_CFE_EVS_SendEvent);
-    /* Generates 1 error message we don't care about in this test */
+    UtAssert_UINT8_EQ(CS_AppData.HkPacket.Payload.TablesCSState, CS_STATE_ENABLED);
+    UtAssert_INT32_EQ(Result, CFE_SUCCESS);
+    /* Note this may generate an event in the new table processing, checked in other test */
 }
 
 void CS_TableInit_Test_TablesTableAndLoadedFromMemory(void)
@@ -2822,8 +2675,11 @@ void CS_TableInit_Test_TablesTableAndLoadedFromMemory(void)
     CFE_TBL_Handle_t DefinitionTableHandle = 0;
     CFE_TBL_Handle_t ResultsTableHandle    = 0;
 
+    /* So this can detect a switch */
+    CS_AppData.HkPacket.Payload.TablesCSState = CS_STATE_ENABLED;
+
     /* Set to satisfy condition "ResultFromLoad != CFE_SUCCESS" */
-    UT_SetDeferredRetcode(UT_KEY(CFE_TBL_Register), 1, -1);
+    UT_SetDeferredRetcode(UT_KEY(CFE_TBL_Load), 1, -1);
 
     /* Set to prevent unintended errors */
     UT_SetDefaultReturnValue(UT_KEY(CFE_TBL_Load), CFE_SUCCESS);
@@ -2832,25 +2688,16 @@ void CS_TableInit_Test_TablesTableAndLoadedFromMemory(void)
     UT_SetDefaultReturnValue(UT_KEY(CFE_TBL_GetAddress), CFE_SUCCESS);
 
     /* Execute the function being tested */
-    /* Note: first 2 arguments are passed in as addresses of pointers in the source code, even though the variable
-       types of the arguments are just pointers and the variable names of the arguments suggest that they're just
-       pointers */
-    Result = CS_TableInit(&DefinitionTableHandle, &ResultsTableHandle, &CS_AppData.DefTablesTblPtr,
-                          &CS_AppData.ResTablesTblPtr, CS_TABLES_TABLE, CS_DEF_TABLES_TABLE_NAME,
+    Result = CS_TableInit(&DefinitionTableHandle, &ResultsTableHandle, (void **)&CS_AppData.DefTablesTblPtr,
+                          (void **)&CS_AppData.ResTablesTblPtr, CS_TABLES_TABLE, CS_DEF_TABLES_TABLE_NAME,
                           CS_RESULTS_TABLES_TABLE_NAME, CS_MAX_NUM_TABLES_TABLE_ENTRIES, CS_DEF_TABLES_TABLE_FILENAME,
                           &CS_AppData.DefaultTablesDefTable, sizeof(CS_Def_Tables_Table_Entry_t),
                           sizeof(CS_Res_Tables_Table_Entry_t), NULL);
 
     /* Verify results */
-    UtAssert_True(CS_AppData.HkPacket.Payload.TablesCSState == CS_STATE_DISABLED,
-                  "CS_AppData.HkPacket.Payload.TablesCSState == CS_STATE_DISABLED");
-
-    UtAssert_True(Result == CFE_SUCCESS, "Result == CFE_SUCCESS");
-
-    call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
-
-    UtAssert_True(call_count_CFE_EVS_SendEvent == 0, "CFE_EVS_SendEvent was called %u time(s), expected 0",
-                  call_count_CFE_EVS_SendEvent);
+    UtAssert_UINT8_EQ(CS_AppData.HkPacket.Payload.TablesCSState, CS_STATE_DISABLED);
+    UtAssert_INT32_EQ(Result, CFE_SUCCESS);
+    UtAssert_STUB_COUNT(CFE_EVS_SendEvent, 0);
 }
 
 void CS_TableInit_Test_DefaultAndLoadedFromMemory(void)
@@ -2859,8 +2706,12 @@ void CS_TableInit_Test_DefaultAndLoadedFromMemory(void)
     CFE_TBL_Handle_t DefinitionTableHandle = 0;
     CFE_TBL_Handle_t ResultsTableHandle    = 0;
 
+    /* Note this is not really a valid case; this only covers a possible path
+     * where the table ID value is not one of the expected values.  It exists
+     * to satisfy branch coverage */
+
     /* Set to satisfy condition "ResultFromLoad != CFE_SUCCESS" */
-    UT_SetDeferredRetcode(UT_KEY(CFE_TBL_Register), 1, -1);
+    UT_SetDeferredRetcode(UT_KEY(CFE_TBL_Load), 1, -1);
 
     /* Set to prevent unintended errors */
     UT_SetDefaultReturnValue(UT_KEY(CFE_TBL_Load), CFE_SUCCESS);
@@ -2869,64 +2720,15 @@ void CS_TableInit_Test_DefaultAndLoadedFromMemory(void)
     UT_SetDefaultReturnValue(UT_KEY(CFE_TBL_GetAddress), CFE_SUCCESS);
 
     /* Execute the function being tested */
-    /* Note: first 2 arguments are passed in as addresses of pointers in the source code, even though the variable
-       types of the arguments are just pointers and the variable names of the arguments suggest that they're just
-       pointers */
     Result =
-        CS_TableInit(&DefinitionTableHandle, &ResultsTableHandle, &CS_AppData.DefTablesTblPtr,
-                     &CS_AppData.ResTablesTblPtr, 99, CS_DEF_TABLES_TABLE_NAME, CS_RESULTS_TABLES_TABLE_NAME,
+        CS_TableInit(&DefinitionTableHandle, &ResultsTableHandle, (void **)&CS_AppData.DefTablesTblPtr,
+                     (void **)&CS_AppData.ResTablesTblPtr, 99, CS_DEF_TABLES_TABLE_NAME, CS_RESULTS_TABLES_TABLE_NAME,
                      CS_MAX_NUM_TABLES_TABLE_ENTRIES, CS_DEF_TABLES_TABLE_FILENAME, &CS_AppData.DefaultTablesDefTable,
                      sizeof(CS_Def_Tables_Table_Entry_t), sizeof(CS_Res_Tables_Table_Entry_t), NULL);
 
     /* Verify results */
-    UtAssert_True(CS_AppData.HkPacket.Payload.TablesCSState == CS_STATE_EMPTY,
-                  "CS_AppData.HkPacket.Payload.TablesCSState == CS_STATE_EMPTY");
-
-    UtAssert_True(Result == CFE_SUCCESS, "Result == CFE_SUCCESS");
-
-    call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
-
-    UtAssert_True(call_count_CFE_EVS_SendEvent == 0, "CFE_EVS_SendEvent was called %u time(s), expected 0",
-                  call_count_CFE_EVS_SendEvent);
-}
-
-void CS_TableInit_Test_OpenCreateError(void)
-{
-    CFE_Status_t     Result;
-    CFE_TBL_Handle_t DefinitionTableHandle = 0;
-    CFE_TBL_Handle_t ResultsTableHandle    = 0;
-
-    /* Set to satisfy condition "ResultFromLoad != CFE_SUCCESS" */
-    UT_SetDeferredRetcode(UT_KEY(CFE_TBL_Register), 1, CFE_SUCCESS);
-
-    /* Set to prevent unintended errors */
-    UT_SetDefaultReturnValue(UT_KEY(CFE_TBL_Load), CFE_SUCCESS);
-
-    /* Set to prevent unintended errors */
-    UT_SetDefaultReturnValue(UT_KEY(CFE_TBL_GetAddress), CFE_SUCCESS);
-
-    UT_SetDefaultReturnValue(UT_KEY(OS_OpenCreate), -1);
-
-    /* Execute the function being tested */
-    /* Note: first 2 arguments are passed in as addresses of pointers in the source code, even though the variable
-       types of the arguments are just pointers and the variable names of the arguments suggest that they're just
-       pointers */
-    Result =
-        CS_TableInit(&DefinitionTableHandle, &ResultsTableHandle, &CS_AppData.DefTablesTblPtr,
-                     &CS_AppData.ResTablesTblPtr, 99, CS_DEF_TABLES_TABLE_NAME, CS_RESULTS_TABLES_TABLE_NAME,
-                     CS_MAX_NUM_TABLES_TABLE_ENTRIES, CS_DEF_TABLES_TABLE_FILENAME, &CS_AppData.DefaultTablesDefTable,
-                     sizeof(CS_Def_Tables_Table_Entry_t), sizeof(CS_Res_Tables_Table_Entry_t), NULL);
-
-    /* Verify results */
-    UtAssert_True(CS_AppData.HkPacket.Payload.TablesCSState == CS_STATE_EMPTY,
-                  "CS_AppData.HkPacket.Payload.TablesCSState == CS_STATE_EMPTY");
-
-    UtAssert_True(Result == CFE_SUCCESS, "Result == CFE_SUCCESS");
-
-    call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
-
-    UtAssert_True(call_count_CFE_EVS_SendEvent == 0, "CFE_EVS_SendEvent was called %u time(s), expected 0",
-                  call_count_CFE_EVS_SendEvent);
+    UtAssert_INT32_EQ(Result, CFE_SUCCESS);
+    UtAssert_STUB_COUNT(CFE_EVS_SendEvent, 0);
 }
 
 void CS_HandleTableUpdate_Test_ProcessNewTablesDefinitionTable(void)
@@ -2936,6 +2738,9 @@ void CS_HandleTableUpdate_Test_ProcessNewTablesDefinitionTable(void)
     CFE_TBL_Handle_t ResultsTableHandle    = 0;
     uint16           Table                 = CS_TABLES_TABLE;
 
+    void *DefTblPtr    = CS_AppData.DefTablesTblPtr;
+    void *ResultTblPtr = CS_AppData.ResTablesTblPtr;
+
     /* On 1st call, return CFE_SUCCESS to prevent error.  On 2nd call, return UT_CFE_TBL_GETADDRESS_INDEX to satisfy
      * condition "Result == CFE_TBL_INFO_UPDATED". */
     UT_SetDeferredRetcode(UT_KEY(CFE_TBL_GetAddress), 2, CFE_TBL_INFO_UPDATED);
@@ -2944,11 +2749,8 @@ void CS_HandleTableUpdate_Test_ProcessNewTablesDefinitionTable(void)
     CS_AppData.ResTablesTblPtr[0].IsCSOwner = false;
 
     /* Execute the function being tested */
-    /* Note: first 2 arguments are passed in as addresses of pointers in the source code, even though the variable
-       types of the arguments are just pointers and the variable names of the arguments suggest that they're just
-       pointers */
-    Result = CS_HandleTableUpdate(&CS_AppData.DefTablesTblPtr, &CS_AppData.ResTablesTblPtr, DefinitionTableHandle,
-                                  ResultsTableHandle, Table, CS_MAX_NUM_TABLES_TABLE_ENTRIES);
+    Result = CS_HandleTableUpdate(&DefTblPtr, &ResultTblPtr, DefinitionTableHandle, ResultsTableHandle, Table,
+                                  CS_MAX_NUM_TABLES_TABLE_ENTRIES);
 
     /* Verify results */
     UtAssert_True(Result == CFE_SUCCESS, "Result == CFE_SUCCESS");
@@ -2968,16 +2770,16 @@ void CS_HandleTableUpdate_Test_ProcessNewAppDefinitionTable(void)
     uint16           Table                 = CS_APP_TABLE;
     uint16           NumEntries            = 0;
 
+    void *DefTblPtr    = CS_AppData.DefAppTblPtr;
+    void *ResultTblPtr = CS_AppData.ResAppTblPtr;
+
     /* On 1st call, return CFE_SUCCESS to prevent error.  On 2nd call, return UT_CFE_TBL_GETADDRESS_INDEX to satisfy
      * condition "Result == CFE_TBL_INFO_UPDATED". */
     UT_SetDeferredRetcode(UT_KEY(CFE_TBL_GetAddress), 2, CFE_TBL_INFO_UPDATED);
 
     /* Execute the function being tested */
-    /* Note: first 2 arguments are passed in as addresses of pointers in the source code, even though the variable
-       types of the arguments are just pointers and the variable names of the arguments suggest that they're just
-       pointers */
-    Result = CS_HandleTableUpdate(&CS_AppData.DefAppTblPtr, &CS_AppData.ResAppTblPtr, DefinitionTableHandle,
-                                  ResultsTableHandle, Table, NumEntries);
+    Result =
+        CS_HandleTableUpdate(&DefTblPtr, &ResultTblPtr, DefinitionTableHandle, ResultsTableHandle, Table, NumEntries);
 
     /* Verify results */
     UtAssert_True(Result == CFE_SUCCESS, "Result == CFE_SUCCESS");
@@ -2997,16 +2799,16 @@ void CS_HandleTableUpdate_Test_ProcessNewEepromMemoryDefinitionTable(void)
     uint16           Table                 = CS_EEPROM_TABLE;
     uint16           NumEntries            = CS_MAX_NUM_EEPROM_TABLE_ENTRIES;
 
+    void *DefTblPtr    = CS_AppData.DefEepromTblPtr;
+    void *ResultTblPtr = CS_AppData.ResEepromTblPtr;
+
     /* On 1st call, return CFE_SUCCESS to prevent error.  On 2nd call, return UT_CFE_TBL_GETADDRESS_INDEX to satisfy
      * condition "Result == CFE_TBL_INFO_UPDATED". */
     UT_SetDeferredRetcode(UT_KEY(CFE_TBL_GetAddress), 2, CFE_TBL_INFO_UPDATED);
 
     /* Execute the function being tested */
-    /* Note: first 2 arguments are passed in as addresses of pointers in the source code, even though the variable
-       types of the arguments are just pointers and the variable names of the arguments suggest that they're just
-       pointers */
-    Result = CS_HandleTableUpdate(&CS_AppData.DefEepromTblPtr, &CS_AppData.ResEepromTblPtr, DefinitionTableHandle,
-                                  ResultsTableHandle, Table, NumEntries);
+    Result =
+        CS_HandleTableUpdate(&DefTblPtr, &ResultTblPtr, DefinitionTableHandle, ResultsTableHandle, Table, NumEntries);
 
     /* Verify results */
     UtAssert_True(Result == CFE_SUCCESS, "Result == CFE_SUCCESS");
@@ -3028,6 +2830,9 @@ void CS_HandleTableUpdate_Test_ResultsTableGetAddressErrorEEPROM(void)
     int32            strCmpResult;
     char             ExpectedEventString[CFE_MISSION_EVS_MAX_MESSAGE_LENGTH * 2];
 
+    void *DefTblPtr    = CS_AppData.DefEepromTblPtr;
+    void *ResultTblPtr = CS_AppData.ResEepromTblPtr;
+
     snprintf(ExpectedEventString, CFE_MISSION_EVS_MAX_MESSAGE_LENGTH * 2,
              "CS had problems updating table. Res Release: 0x%%08X Def Release:0x%%08X Res Manage:0x%%08X Def Manage: "
              "0x%%08X Get:0x%%08X for table %%s");
@@ -3036,11 +2841,8 @@ void CS_HandleTableUpdate_Test_ResultsTableGetAddressErrorEEPROM(void)
     UT_SetDeferredRetcode(UT_KEY(CFE_TBL_GetAddress), 1, -1);
 
     /* Execute the function being tested */
-    /* Note: first 2 arguments are passed in as addresses of pointers in the source code, even though the variable
-       types of the arguments are just pointers and the variable names of the arguments suggest that they're just
-       pointers */
-    Result = CS_HandleTableUpdate(&CS_AppData.DefEepromTblPtr, &CS_AppData.ResEepromTblPtr, DefinitionTableHandle,
-                                  ResultsTableHandle, Table, NumEntries);
+    Result =
+        CS_HandleTableUpdate(&DefTblPtr, &ResultTblPtr, DefinitionTableHandle, ResultsTableHandle, Table, NumEntries);
 
     /* Verify results */
     UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventID, CS_TBL_UPDATE_ERR_EID);
@@ -3071,6 +2873,9 @@ void CS_HandleTableUpdate_Test_DefinitionTableGetAddressErrorEEPROM(void)
     int32            strCmpResult;
     char             ExpectedEventString[CFE_MISSION_EVS_MAX_MESSAGE_LENGTH * 2];
 
+    void *DefTblPtr    = NULL;
+    void *ResultTblPtr = NULL;
+
     snprintf(ExpectedEventString, CFE_MISSION_EVS_MAX_MESSAGE_LENGTH * 2,
              "CS had problems updating table. Res Release: 0x%%08X Def Release:0x%%08X Res Manage:0x%%08X Def Manage: "
              "0x%%08X Get:0x%%08X for table %%s");
@@ -3080,11 +2885,8 @@ void CS_HandleTableUpdate_Test_DefinitionTableGetAddressErrorEEPROM(void)
     UT_SetDeferredRetcode(UT_KEY(CFE_TBL_GetAddress), 2, -1);
 
     /* Execute the function being tested */
-    /* Note: first 2 arguments are passed in as addresses of pointers in the source code, even though the variable
-       types of the arguments are just pointers and the variable names of the arguments suggest that they're just
-       pointers */
-    Result = CS_HandleTableUpdate(&CS_AppData.DefEepromTblPtr, &CS_AppData.ResEepromTblPtr, DefinitionTableHandle,
-                                  ResultsTableHandle, Table, NumEntries);
+    Result =
+        CS_HandleTableUpdate(&DefTblPtr, &ResultTblPtr, DefinitionTableHandle, ResultsTableHandle, Table, NumEntries);
 
     /* Verify results */
     UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventID, CS_TBL_UPDATE_ERR_EID);
@@ -3115,6 +2917,9 @@ void CS_HandleTableUpdate_Test_DefinitionTableGetAddressErrorMemory(void)
     int32            strCmpResult;
     char             ExpectedEventString[CFE_MISSION_EVS_MAX_MESSAGE_LENGTH * 2];
 
+    void *DefTblPtr    = CS_AppData.DefMemoryTblPtr;
+    void *ResultTblPtr = CS_AppData.ResMemoryTblPtr;
+
     snprintf(ExpectedEventString, CFE_MISSION_EVS_MAX_MESSAGE_LENGTH * 2,
              "CS had problems updating table. Res Release: 0x%%08X Def Release:0x%%08X Res Manage:0x%%08X Def Manage: "
              "0x%%08X Get:0x%%08X for table %%s");
@@ -3124,11 +2929,8 @@ void CS_HandleTableUpdate_Test_DefinitionTableGetAddressErrorMemory(void)
     UT_SetDeferredRetcode(UT_KEY(CFE_TBL_GetAddress), 2, -1);
 
     /* Execute the function being tested */
-    /* Note: first 2 arguments are passed in as addresses of pointers in the source code, even though the variable
-       types of the arguments are just pointers and the variable names of the arguments suggest that they're just
-       pointers */
-    Result = CS_HandleTableUpdate(&CS_AppData.DefMemoryTblPtr, &CS_AppData.ResMemoryTblPtr, DefinitionTableHandle,
-                                  ResultsTableHandle, Table, NumEntries);
+    Result =
+        CS_HandleTableUpdate(&DefTblPtr, &ResultTblPtr, DefinitionTableHandle, ResultsTableHandle, Table, NumEntries);
 
     /* Verify results */
     UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventID, CS_TBL_UPDATE_ERR_EID);
@@ -3159,6 +2961,9 @@ void CS_HandleTableUpdate_Test_DefinitionTableGetAddressErrorTables(void)
     int32            strCmpResult;
     char             ExpectedEventString[CFE_MISSION_EVS_MAX_MESSAGE_LENGTH * 2];
 
+    void *DefTblPtr    = CS_AppData.DefTablesTblPtr;
+    void *ResultTblPtr = CS_AppData.ResTablesTblPtr;
+
     snprintf(ExpectedEventString, CFE_MISSION_EVS_MAX_MESSAGE_LENGTH * 2,
              "CS had problems updating table. Res Release: 0x%%08X Def Release:0x%%08X Res Manage:0x%%08X Def Manage: "
              "0x%%08X Get:0x%%08X for table %%s");
@@ -3168,11 +2973,8 @@ void CS_HandleTableUpdate_Test_DefinitionTableGetAddressErrorTables(void)
     UT_SetDeferredRetcode(UT_KEY(CFE_TBL_GetAddress), 2, -1);
 
     /* Execute the function being tested */
-    /* Note: first 2 arguments are passed in as addresses of pointers in the source code, even though the variable
-       types of the arguments are just pointers and the variable names of the arguments suggest that they're just
-       pointers */
-    Result = CS_HandleTableUpdate(&CS_AppData.DefTablesTblPtr, &CS_AppData.ResTablesTblPtr, DefinitionTableHandle,
-                                  ResultsTableHandle, Table, NumEntries);
+    Result =
+        CS_HandleTableUpdate(&DefTblPtr, &ResultTblPtr, DefinitionTableHandle, ResultsTableHandle, Table, NumEntries);
 
     /* Verify results */
     UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventID, CS_TBL_UPDATE_ERR_EID);
@@ -3203,6 +3005,9 @@ void CS_HandleTableUpdate_Test_DefinitionTableGetAddressErrorApps(void)
     int32            strCmpResult;
     char             ExpectedEventString[CFE_MISSION_EVS_MAX_MESSAGE_LENGTH * 2];
 
+    void *DefTblPtr    = CS_AppData.DefAppTblPtr;
+    void *ResultTblPtr = CS_AppData.ResAppTblPtr;
+
     snprintf(ExpectedEventString, CFE_MISSION_EVS_MAX_MESSAGE_LENGTH * 2,
              "CS had problems updating table. Res Release: 0x%%08X Def Release:0x%%08X Res Manage:0x%%08X Def Manage: "
              "0x%%08X Get:0x%%08X for table %%s");
@@ -3212,11 +3017,8 @@ void CS_HandleTableUpdate_Test_DefinitionTableGetAddressErrorApps(void)
     UT_SetDeferredRetcode(UT_KEY(CFE_TBL_GetAddress), 2, -1);
 
     /* Execute the function being tested */
-    /* Note: first 2 arguments are passed in as addresses of pointers in the source code, even though the variable
-       types of the arguments are just pointers and the variable names of the arguments suggest that they're just
-       pointers */
-    Result = CS_HandleTableUpdate(&CS_AppData.DefAppTblPtr, &CS_AppData.ResAppTblPtr, DefinitionTableHandle,
-                                  ResultsTableHandle, Table, NumEntries);
+    Result =
+        CS_HandleTableUpdate(&DefTblPtr, &ResultTblPtr, DefinitionTableHandle, ResultsTableHandle, Table, NumEntries);
 
     /* Verify results */
     UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventID, CS_TBL_UPDATE_ERR_EID);
@@ -3244,6 +3046,9 @@ void CS_HandleTableUpdate_Test_BadTableHandle(void)
     CFE_TBL_Handle_t ResultsTableHandle    = 0;
     uint16           Table                 = CS_TABLES_TABLE;
 
+    void *DefTblPtr    = CS_AppData.DefTablesTblPtr;
+    void *ResultTblPtr = CS_AppData.ResTablesTblPtr;
+
     /* On 1st call, return CFE_SUCCESS to prevent error.  On 2nd call, return UT_CFE_TBL_GETADDRESS_INDEX to satisfy
      * condition "Result == CFE_TBL_INFO_UPDATED". */
     UT_SetDeferredRetcode(UT_KEY(CFE_TBL_GetAddress), 2, CFE_TBL_INFO_UPDATED);
@@ -3252,11 +3057,8 @@ void CS_HandleTableUpdate_Test_BadTableHandle(void)
     CS_AppData.ResTablesTblPtr[0].IsCSOwner = true;
 
     /* Execute the function being tested */
-    /* Note: first 2 arguments are passed in as addresses of pointers in the source code, even though the variable
-       types of the arguments are just pointers and the variable names of the arguments suggest that they're just
-       pointers */
-    Result = CS_HandleTableUpdate(&CS_AppData.DefTablesTblPtr, &CS_AppData.ResTablesTblPtr, DefinitionTableHandle,
-                                  ResultsTableHandle, Table, CS_MAX_NUM_TABLES_TABLE_ENTRIES);
+    Result = CS_HandleTableUpdate(&DefTblPtr, &ResultTblPtr, DefinitionTableHandle, ResultsTableHandle, Table,
+                                  CS_MAX_NUM_TABLES_TABLE_ENTRIES);
 
     /* Verify results */
     UtAssert_True(Result == CFE_SUCCESS, "Result == CFE_SUCCESS");
@@ -3275,6 +3077,9 @@ void CS_HandleTableUpdate_Test_CsOwner(void)
     CFE_TBL_Handle_t ResultsTableHandle    = 0;
     uint16           Table                 = CS_TABLES_TABLE;
 
+    void *DefTblPtr    = CS_AppData.DefTablesTblPtr;
+    void *ResultTblPtr = CS_AppData.ResTablesTblPtr;
+
     /* On 1st call, return CFE_SUCCESS to prevent error.  On 2nd call, return UT_CFE_TBL_GETADDRESS_INDEX to satisfy
      * condition "Result == CFE_TBL_INFO_UPDATED". */
     UT_SetDeferredRetcode(UT_KEY(CFE_TBL_GetAddress), 2, CFE_TBL_INFO_UPDATED);
@@ -3283,11 +3088,8 @@ void CS_HandleTableUpdate_Test_CsOwner(void)
     CS_AppData.ResTablesTblPtr[0].IsCSOwner = true;
 
     /* Execute the function being tested */
-    /* Note: first 2 arguments are passed in as addresses of pointers in the source code, even though the variable
-       types of the arguments are just pointers and the variable names of the arguments suggest that they're just
-       pointers */
-    Result = CS_HandleTableUpdate(&CS_AppData.DefTablesTblPtr, &CS_AppData.ResTablesTblPtr, DefinitionTableHandle,
-                                  ResultsTableHandle, Table, CS_MAX_NUM_TABLES_TABLE_ENTRIES);
+    Result = CS_HandleTableUpdate(&DefTblPtr, &ResultTblPtr, DefinitionTableHandle, ResultsTableHandle, Table,
+                                  CS_MAX_NUM_TABLES_TABLE_ENTRIES);
 
     /* Verify results */
     UtAssert_True(Result == CFE_SUCCESS, "Result == CFE_SUCCESS");
@@ -3306,17 +3108,17 @@ void CS_HandleTableUpdate_Test_GetAddressError(void)
     CFE_TBL_Handle_t ResultsTableHandle    = 0;
     uint16           Table                 = CS_TABLES_TABLE;
 
+    void *DefTblPtr    = CS_AppData.DefTablesTblPtr;
+    void *ResultTblPtr = CS_AppData.ResTablesTblPtr;
+
     UT_SetDeferredRetcode(UT_KEY(CFE_TBL_GetAddress), 1, 1);
 
     CS_AppData.ResTablesTblPtr[0].TblHandle = 99;
     CS_AppData.ResTablesTblPtr[0].IsCSOwner = true;
 
     /* Execute the function being tested */
-    /* Note: first 2 arguments are passed in as addresses of pointers in the source code, even though the variable
-       types of the arguments are just pointers and the variable names of the arguments suggest that they're just
-       pointers */
-    Result = CS_HandleTableUpdate(&CS_AppData.DefTablesTblPtr, &CS_AppData.ResTablesTblPtr, DefinitionTableHandle,
-                                  ResultsTableHandle, Table, CS_MAX_NUM_TABLES_TABLE_ENTRIES);
+    Result = CS_HandleTableUpdate(&DefTblPtr, &ResultTblPtr, DefinitionTableHandle, ResultsTableHandle, Table,
+                                  CS_MAX_NUM_TABLES_TABLE_ENTRIES);
 
     /* Verify results */
     UtAssert_True(Result == 1, "Result == 1");
@@ -3325,6 +3127,25 @@ void CS_HandleTableUpdate_Test_GetAddressError(void)
 
     UtAssert_True(call_count_CFE_EVS_SendEvent == 0, "CFE_EVS_SendEvent was called %u time(s), expected 0",
                   call_count_CFE_EVS_SendEvent);
+}
+
+void CS_HandleTableUpdate_Test_InvalidTable(void)
+{
+    CFE_TBL_Handle_t DefinitionTableHandle = CFE_TBL_BAD_TABLE_HANDLE;
+    CFE_TBL_Handle_t ResultsTableHandle    = CFE_TBL_BAD_TABLE_HANDLE;
+    uint16           Table                 = CS_NUM_TABLES + 1;
+    uint32           Temp1;
+    uint32           Temp2;
+
+    void *DefTblPtr    = &Temp1;
+    void *ResultTblPtr = &Temp2;
+
+    UT_SetDeferredRetcode(UT_KEY(CFE_TBL_GetAddress), 2, CFE_TBL_INFO_UPDATED);
+
+    /* Execute the function being tested */
+    UtAssert_INT32_EQ(
+        CS_HandleTableUpdate(&DefTblPtr, &ResultTblPtr, DefinitionTableHandle, ResultsTableHandle, Table, 1),
+        CFE_SUCCESS);
 }
 
 void UtTest_Setup(void)
@@ -3468,7 +3289,6 @@ void UtTest_Setup(void)
                "CS_TableInit_Test_TablesTableAndLoadedFromMemory");
     UtTest_Add(CS_TableInit_Test_DefaultAndLoadedFromMemory, CS_Test_Setup, CS_Test_TearDown,
                "CS_TableInit_Test_DefaultAndLoadedFromMemory");
-    UtTest_Add(CS_TableInit_Test_OpenCreateError, CS_Test_Setup, CS_Test_TearDown, "CS_TableInit_Test_OpenCreateError");
 
     UtTest_Add(CS_HandleTableUpdate_Test_ProcessNewTablesDefinitionTable, CS_Test_Setup, CS_Test_TearDown,
                "CS_HandleTableUpdate_Test_ProcessNewTablesDefinitionTable");
@@ -3491,4 +3311,6 @@ void UtTest_Setup(void)
     UtTest_Add(CS_HandleTableUpdate_Test_CsOwner, CS_Test_Setup, CS_Test_TearDown, "CS_HandleTableUpdate_Test_CsOwner");
     UtTest_Add(CS_HandleTableUpdate_Test_GetAddressError, CS_Test_Setup, CS_Test_TearDown,
                "CS_HandleTableUpdate_Test_GetAddressError");
+    UtTest_Add(CS_HandleTableUpdate_Test_InvalidTable, CS_Test_Setup, CS_Test_TearDown,
+               "CS_HandleTableUpdate_Test_InvalidTable");
 }

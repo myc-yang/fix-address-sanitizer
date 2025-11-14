@@ -33,6 +33,15 @@
 #include "cs_tbldefs.h"
 
 /**
+ * \brief Converts the numeric table ID to a string for logging
+ *
+ * \param [in] TableId          Numeric identifier of table
+ *
+ * \return Pointer to printable string (never NULL)
+ */
+const char *CS_GetTableTypeAsString(uint32 TableId);
+
+/**
  * \brief Zeros out temporary checksum values of EEPROM table entries
  *
  *  \par Description

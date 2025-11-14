@@ -17,55 +17,95 @@
  * limitations under the License.
  ************************************************************************/
 
-/*
- * Includes
+/**
+ * @file
+ *
+ * Auto-Generated stub implementations for functions defined in cs_eeprom_cmds header
  */
 
 #include "cs_eeprom_cmds.h"
+#include "utgenstub.h"
 
-/* UT includes */
-#include "uttest.h"
-#include "utassert.h"
-#include "utstubs.h"
-
+/*
+ * ----------------------------------------------------
+ * Generated stub function for CS_DisableEepromCmd()
+ * ----------------------------------------------------
+ */
 void CS_DisableEepromCmd(const CS_NoArgsCmd_t *CmdPtr)
 {
-    UT_Stub_RegisterContext(UT_KEY(CS_DisableEepromCmd), CmdPtr);
-    UT_DEFAULT_IMPL(CS_DisableEepromCmd);
+    UT_GenStub_AddParam(CS_DisableEepromCmd, const CS_NoArgsCmd_t *, CmdPtr);
+
+    UT_GenStub_Execute(CS_DisableEepromCmd, Basic, NULL);
 }
 
-void CS_EnableEepromCmd(const CS_NoArgsCmd_t *CmdPtr)
-{
-    UT_Stub_RegisterContext(UT_KEY(CS_EnableEepromCmd), CmdPtr);
-    UT_DEFAULT_IMPL(CS_EnableEepromCmd);
-}
-
-void CS_ReportBaselineEntryIDEepromCmd(const CS_EntryCmd_t *CmdPtr)
-{
-    UT_Stub_RegisterContext(UT_KEY(CS_ReportBaselineEntryIDEepromCmd), CmdPtr);
-    UT_DEFAULT_IMPL(CS_ReportBaselineEntryIDEepromCmd);
-}
-
+/*
+ * ----------------------------------------------------
+ * Generated stub function for CS_DisableEntryIDEepromCmd()
+ * ----------------------------------------------------
+ */
 void CS_DisableEntryIDEepromCmd(const CS_EntryCmd_t *CmdPtr)
 {
-    UT_Stub_RegisterContext(UT_KEY(CS_DisableEntryIDEepromCmd), CmdPtr);
-    UT_DEFAULT_IMPL(CS_DisableEntryIDEepromCmd);
+    UT_GenStub_AddParam(CS_DisableEntryIDEepromCmd, const CS_EntryCmd_t *, CmdPtr);
+
+    UT_GenStub_Execute(CS_DisableEntryIDEepromCmd, Basic, NULL);
 }
 
-void CS_RecomputeBaselineEepromCmd(const CS_EntryCmd_t *CmdPtr)
+/*
+ * ----------------------------------------------------
+ * Generated stub function for CS_EnableEepromCmd()
+ * ----------------------------------------------------
+ */
+void CS_EnableEepromCmd(const CS_NoArgsCmd_t *CmdPtr)
 {
-    UT_Stub_RegisterContext(UT_KEY(CS_RecomputeBaselineEepromCmd), CmdPtr);
-    UT_DEFAULT_IMPL(CS_RecomputeBaselineEepromCmd);
+    UT_GenStub_AddParam(CS_EnableEepromCmd, const CS_NoArgsCmd_t *, CmdPtr);
+
+    UT_GenStub_Execute(CS_EnableEepromCmd, Basic, NULL);
 }
 
+/*
+ * ----------------------------------------------------
+ * Generated stub function for CS_EnableEntryIDEepromCmd()
+ * ----------------------------------------------------
+ */
 void CS_EnableEntryIDEepromCmd(const CS_EntryCmd_t *CmdPtr)
 {
-    UT_Stub_RegisterContext(UT_KEY(CS_EnableEntryIDEepromCmd), CmdPtr);
-    UT_DEFAULT_IMPL(CS_EnableEntryIDEepromCmd);
+    UT_GenStub_AddParam(CS_EnableEntryIDEepromCmd, const CS_EntryCmd_t *, CmdPtr);
+
+    UT_GenStub_Execute(CS_EnableEntryIDEepromCmd, Basic, NULL);
 }
 
+/*
+ * ----------------------------------------------------
+ * Generated stub function for CS_GetEntryIDEepromCmd()
+ * ----------------------------------------------------
+ */
 void CS_GetEntryIDEepromCmd(const CS_GetEntryIDCmd_t *CmdPtr)
 {
-    UT_Stub_RegisterContext(UT_KEY(CS_GetEntryIDEepromCmd), CmdPtr);
-    UT_DEFAULT_IMPL(CS_GetEntryIDEepromCmd);
+    UT_GenStub_AddParam(CS_GetEntryIDEepromCmd, const CS_GetEntryIDCmd_t *, CmdPtr);
+
+    UT_GenStub_Execute(CS_GetEntryIDEepromCmd, Basic, NULL);
+}
+
+/*
+ * ----------------------------------------------------
+ * Generated stub function for CS_RecomputeBaselineEepromCmd()
+ * ----------------------------------------------------
+ */
+void CS_RecomputeBaselineEepromCmd(const CS_EntryCmd_t *CmdPtr)
+{
+    UT_GenStub_AddParam(CS_RecomputeBaselineEepromCmd, const CS_EntryCmd_t *, CmdPtr);
+
+    UT_GenStub_Execute(CS_RecomputeBaselineEepromCmd, Basic, NULL);
+}
+
+/*
+ * ----------------------------------------------------
+ * Generated stub function for CS_ReportBaselineEntryIDEepromCmd()
+ * ----------------------------------------------------
+ */
+void CS_ReportBaselineEntryIDEepromCmd(const CS_EntryCmd_t *CmdPtr)
+{
+    UT_GenStub_AddParam(CS_ReportBaselineEntryIDEepromCmd, const CS_EntryCmd_t *, CmdPtr);
+
+    UT_GenStub_Execute(CS_ReportBaselineEntryIDEepromCmd, Basic, NULL);
 }

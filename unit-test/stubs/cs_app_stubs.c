@@ -17,22 +17,101 @@
  * limitations under the License.
  ************************************************************************/
 
-/*
- * Includes
+/**
+ * @file
+ *
+ * Auto-Generated stub implementations for functions defined in cs_app header
  */
 
 #include "cs_app.h"
+#include "utgenstub.h"
 
-/* UT includes */
-#include "uttest.h"
-#include "utassert.h"
-#include "utstubs.h"
+/*
+ * ----------------------------------------------------
+ * Generated stub function for CS_AppInit()
+ * ----------------------------------------------------
+ */
+CFE_Status_t CS_AppInit(void)
+{
+    UT_GenStub_SetupReturnBuffer(CS_AppInit, CFE_Status_t);
 
-CS_AppData_t CS_AppData;
+    UT_GenStub_Execute(CS_AppInit, Basic, NULL);
 
-#if (CS_PRESERVE_STATES_ON_PROCESSOR_RESET == true)
+    return UT_GenStub_GetReturnValue(CS_AppInit, CFE_Status_t);
+}
+
+/*
+ * ----------------------------------------------------
+ * Generated stub function for CS_AppMain()
+ * ----------------------------------------------------
+ */
+void CS_AppMain(void)
+{
+
+    UT_GenStub_Execute(CS_AppMain, Basic, NULL);
+}
+
+/*
+ * ----------------------------------------------------
+ * Generated stub function for CS_AppPipe()
+ * ----------------------------------------------------
+ */
+CFE_Status_t CS_AppPipe(const CFE_SB_Buffer_t *BufPtr)
+{
+    UT_GenStub_SetupReturnBuffer(CS_AppPipe, CFE_Status_t);
+
+    UT_GenStub_AddParam(CS_AppPipe, const CFE_SB_Buffer_t *, BufPtr);
+
+    UT_GenStub_Execute(CS_AppPipe, Basic, NULL);
+
+    return UT_GenStub_GetReturnValue(CS_AppPipe, CFE_Status_t);
+}
+
+/*
+ * ----------------------------------------------------
+ * Generated stub function for CS_CreateRestoreStatesFromCDS()
+ * ----------------------------------------------------
+ */
+CFE_Status_t CS_CreateRestoreStatesFromCDS(void)
+{
+    UT_GenStub_SetupReturnBuffer(CS_CreateRestoreStatesFromCDS, CFE_Status_t);
+
+    UT_GenStub_Execute(CS_CreateRestoreStatesFromCDS, Basic, NULL);
+
+    return UT_GenStub_GetReturnValue(CS_CreateRestoreStatesFromCDS, CFE_Status_t);
+}
+
+/*
+ * ----------------------------------------------------
+ * Generated stub function for CS_HousekeepingCmd()
+ * ----------------------------------------------------
+ */
+void CS_HousekeepingCmd(const CS_NoArgsCmd_t *CmdPtr)
+{
+    UT_GenStub_AddParam(CS_HousekeepingCmd, const CS_NoArgsCmd_t *, CmdPtr);
+
+    UT_GenStub_Execute(CS_HousekeepingCmd, Basic, NULL);
+}
+
+/*
+ * ----------------------------------------------------
+ * Generated stub function for CS_ProcessCmd()
+ * ----------------------------------------------------
+ */
+void CS_ProcessCmd(const CFE_SB_Buffer_t *BufPtr)
+{
+    UT_GenStub_AddParam(CS_ProcessCmd, const CFE_SB_Buffer_t *, BufPtr);
+
+    UT_GenStub_Execute(CS_ProcessCmd, Basic, NULL);
+}
+
+/*
+ * ----------------------------------------------------
+ * Generated stub function for CS_UpdateCDS()
+ * ----------------------------------------------------
+ */
 void CS_UpdateCDS(void)
 {
-    UT_DEFAULT_IMPL(CS_UpdateCDS);
+
+    UT_GenStub_Execute(CS_UpdateCDS, Basic, NULL);
 }
-#endif /* #if (CS_PRESERVE_STATES_ON_PROCESSOR_RESET == true) */

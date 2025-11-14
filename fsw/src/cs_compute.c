@@ -452,8 +452,7 @@ CFE_Status_t CS_ComputeApp(CS_Res_App_Table_Entry_t *ResultsEntry, uint32 *Compu
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 void CS_RecomputeEepromMemoryChildTask(void)
 {
-    uint32                             NewChecksumValue = 0;
-    char                               TableType[CS_TABLETYPE_NAME_SIZE];
+    uint32                             NewChecksumValue     = 0;
     CS_Res_EepromMemory_Table_Entry_t *ResultsEntry         = NULL;
     uint16                             Table                = 0;
     uint16                             EntryID              = 0;
@@ -466,8 +465,6 @@ void CS_RecomputeEepromMemoryChildTask(void)
     uint16                             MaxDefEntries        = 0;
     CFE_TBL_Handle_t                   DefTblHandle         = CFE_TBL_BAD_TABLE_HANDLE;
     CS_Res_Tables_Table_Entry_t *      TablesTblResultEntry = NULL;
-
-    strncpy(TableType, "Undef Tbl", CS_TABLETYPE_NAME_SIZE); /* Initialize table type string */
 
     Table        = CS_AppData.ChildTaskTable;
     EntryID      = CS_AppData.ChildTaskEntryID;
@@ -546,29 +543,19 @@ void CS_RecomputeEepromMemoryChildTask(void)
         CFE_TBL_Modified(DefTblHandle);
     }
 
-    /* send event message */
-
-    if (Table == CS_EEPROM_TABLE)
-    {
-        snprintf(TableType, CS_TABLETYPE_NAME_SIZE, "%s", "EEPROM");
-    }
-    if (Table == CS_MEMORY_TABLE)
-    {
-        snprintf(TableType, CS_TABLETYPE_NAME_SIZE, "%s", "Memory");
-    }
+    /* Update reported value in HK TLM, if applicable */
     if (Table == CS_CFECORE)
     {
-        snprintf(TableType, CS_TABLETYPE_NAME_SIZE, "%s", "cFE Core");
         CS_AppData.HkPacket.Payload.CfeCoreBaseline = NewChecksumValue;
     }
     if (Table == CS_OSCORE)
     {
-        snprintf(TableType, CS_TABLETYPE_NAME_SIZE, "%s", "OS");
         CS_AppData.HkPacket.Payload.OSBaseline = NewChecksumValue;
     }
 
+    /* send event message */
     CFE_EVS_SendEvent(CS_RECOMPUTE_FINISH_EEPROM_MEMORY_INF_EID, CFE_EVS_EventType_INFORMATION,
-                      "%s entry %d recompute finished. New baseline is 0X%08X", TableType, EntryID,
+                      "%s entry %d recompute finished. New baseline is 0X%08X", CS_GetTableTypeAsString(Table), EntryID,
                       (unsigned int)NewChecksumValue);
 
     CS_AppData.HkPacket.Payload.RecomputeInProgress = false;
@@ -832,7 +819,7 @@ void CS_OneShotChildTask(void)
                       (unsigned int)(CS_AppData.HkPacket.Payload.LastOneShotChecksum));
 
     CS_AppData.HkPacket.Payload.OneShotInProgress = false;
-    CS_AppData.ChildTaskID                = CFE_ES_TASKID_UNDEFINED;
+    CS_AppData.ChildTaskID                        = CFE_ES_TASKID_UNDEFINED;
 
     CFE_ES_ExitChildTask();
 }

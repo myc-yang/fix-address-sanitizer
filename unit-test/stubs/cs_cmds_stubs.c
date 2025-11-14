@@ -17,104 +17,191 @@
  * limitations under the License.
  ************************************************************************/
 
-/*
- * Includes
+/**
+ * @file
+ *
+ * Auto-Generated stub implementations for functions defined in cs_cmds header
  */
 
-#include "cfe.h"
 #include "cs_cmds.h"
+#include "utgenstub.h"
 
-/* UT includes */
-#include "uttest.h"
-#include "utassert.h"
-#include "utstubs.h"
-
-void CS_NoopCmd(const CS_NoArgsCmd_t *CmdPtr)
-{
-    UT_Stub_RegisterContext(UT_KEY(CS_NoopCmd), CmdPtr);
-    UT_DEFAULT_IMPL(CS_NoopCmd);
-}
-
-void CS_ResetCmd(const CS_NoArgsCmd_t *CmdPtr)
-{
-    UT_Stub_RegisterContext(UT_KEY(CS_ResetCmd), CmdPtr);
-    UT_DEFAULT_IMPL(CS_ResetCmd);
-}
-
+/*
+ * ----------------------------------------------------
+ * Generated stub function for CS_BackgroundCheckCycle()
+ * ----------------------------------------------------
+ */
 void CS_BackgroundCheckCycle(const CS_NoArgsCmd_t *CmdPtr)
 {
-    UT_Stub_RegisterContext(UT_KEY(CS_BackgroundCheckCycle), CmdPtr);
-    UT_DEFAULT_IMPL(CS_BackgroundCheckCycle);
+    UT_GenStub_AddParam(CS_BackgroundCheckCycle, const CS_NoArgsCmd_t *, CmdPtr);
+
+    UT_GenStub_Execute(CS_BackgroundCheckCycle, Basic, NULL);
 }
 
-void CS_DisableAllCSCmd(const CS_NoArgsCmd_t *CmdPtr)
-{
-    UT_Stub_RegisterContext(UT_KEY(CS_DisableAllCSCmd), CmdPtr);
-    UT_DEFAULT_IMPL(CS_DisableAllCSCmd);
-}
-
-void CS_EnableAllCSCmd(const CS_NoArgsCmd_t *CmdPtr)
-{
-    UT_Stub_RegisterContext(UT_KEY(CS_EnableAllCSCmd), CmdPtr);
-    UT_DEFAULT_IMPL(CS_EnableAllCSCmd);
-}
-
-void CS_DisableCfeCoreCmd(const CS_NoArgsCmd_t *CmdPtr)
-{
-    UT_Stub_RegisterContext(UT_KEY(CS_DisableCfeCoreCmd), CmdPtr);
-    UT_DEFAULT_IMPL(CS_DisableCfeCoreCmd);
-}
-
-void CS_EnableCfeCoreCmd(const CS_NoArgsCmd_t *CmdPtr)
-{
-    UT_Stub_RegisterContext(UT_KEY(CS_EnableCfeCoreCmd), CmdPtr);
-    UT_DEFAULT_IMPL(CS_EnableCfeCoreCmd);
-}
-
-void CS_DisableOSCmd(const CS_NoArgsCmd_t *CmdPtr)
-{
-    UT_Stub_RegisterContext(UT_KEY(CS_DisableOSCmd), CmdPtr);
-    UT_DEFAULT_IMPL(CS_DisableOSCmd);
-}
-
-void CS_EnableOSCmd(const CS_NoArgsCmd_t *CmdPtr)
-{
-    UT_Stub_RegisterContext(UT_KEY(CS_EnableOSCmd), CmdPtr);
-    UT_DEFAULT_IMPL(CS_EnableOSCmd);
-}
-
-void CS_ReportBaselineCfeCoreCmd(const CS_NoArgsCmd_t *CmdPtr)
-{
-    UT_Stub_RegisterContext(UT_KEY(CS_ReportBaselineCfeCoreCmd), CmdPtr);
-    UT_DEFAULT_IMPL(CS_ReportBaselineCfeCoreCmd);
-}
-
-void CS_ReportBaselineOSCmd(const CS_NoArgsCmd_t *CmdPtr)
-{
-    UT_Stub_RegisterContext(UT_KEY(CS_ReportBaselineOSCmd), CmdPtr);
-    UT_DEFAULT_IMPL(CS_ReportBaselineOSCmd);
-}
-
-void CS_RecomputeBaselineCfeCoreCmd(const CS_NoArgsCmd_t *CmdPtr)
-{
-    UT_Stub_RegisterContext(UT_KEY(CS_RecomputeBaselineCfeCoreCmd), CmdPtr);
-    UT_DEFAULT_IMPL(CS_RecomputeBaselineCfeCoreCmd);
-}
-
-void CS_RecomputeBaselineOSCmd(const CS_NoArgsCmd_t *CmdPtr)
-{
-    UT_Stub_RegisterContext(UT_KEY(CS_RecomputeBaselineOSCmd), CmdPtr);
-    UT_DEFAULT_IMPL(CS_RecomputeBaselineOSCmd);
-}
-
-void CS_OneShotCmd(const CS_OneShotCmd_t *CmdPtr)
-{
-    UT_Stub_RegisterContext(UT_KEY(CS_OneShotCmd), CmdPtr);
-    UT_DEFAULT_IMPL(CS_OneShotCmd);
-}
-
+/*
+ * ----------------------------------------------------
+ * Generated stub function for CS_CancelOneShotCmd()
+ * ----------------------------------------------------
+ */
 void CS_CancelOneShotCmd(const CS_NoArgsCmd_t *CmdPtr)
 {
-    UT_Stub_RegisterContext(UT_KEY(CS_CancelOneShotCmd), CmdPtr);
-    UT_DEFAULT_IMPL(CS_CancelOneShotCmd);
+    UT_GenStub_AddParam(CS_CancelOneShotCmd, const CS_NoArgsCmd_t *, CmdPtr);
+
+    UT_GenStub_Execute(CS_CancelOneShotCmd, Basic, NULL);
+}
+
+/*
+ * ----------------------------------------------------
+ * Generated stub function for CS_DisableAllCSCmd()
+ * ----------------------------------------------------
+ */
+void CS_DisableAllCSCmd(const CS_NoArgsCmd_t *CmdPtr)
+{
+    UT_GenStub_AddParam(CS_DisableAllCSCmd, const CS_NoArgsCmd_t *, CmdPtr);
+
+    UT_GenStub_Execute(CS_DisableAllCSCmd, Basic, NULL);
+}
+
+/*
+ * ----------------------------------------------------
+ * Generated stub function for CS_DisableCfeCoreCmd()
+ * ----------------------------------------------------
+ */
+void CS_DisableCfeCoreCmd(const CS_NoArgsCmd_t *CmdPtr)
+{
+    UT_GenStub_AddParam(CS_DisableCfeCoreCmd, const CS_NoArgsCmd_t *, CmdPtr);
+
+    UT_GenStub_Execute(CS_DisableCfeCoreCmd, Basic, NULL);
+}
+
+/*
+ * ----------------------------------------------------
+ * Generated stub function for CS_DisableOSCmd()
+ * ----------------------------------------------------
+ */
+void CS_DisableOSCmd(const CS_NoArgsCmd_t *CmdPtr)
+{
+    UT_GenStub_AddParam(CS_DisableOSCmd, const CS_NoArgsCmd_t *, CmdPtr);
+
+    UT_GenStub_Execute(CS_DisableOSCmd, Basic, NULL);
+}
+
+/*
+ * ----------------------------------------------------
+ * Generated stub function for CS_EnableAllCSCmd()
+ * ----------------------------------------------------
+ */
+void CS_EnableAllCSCmd(const CS_NoArgsCmd_t *CmdPtr)
+{
+    UT_GenStub_AddParam(CS_EnableAllCSCmd, const CS_NoArgsCmd_t *, CmdPtr);
+
+    UT_GenStub_Execute(CS_EnableAllCSCmd, Basic, NULL);
+}
+
+/*
+ * ----------------------------------------------------
+ * Generated stub function for CS_EnableCfeCoreCmd()
+ * ----------------------------------------------------
+ */
+void CS_EnableCfeCoreCmd(const CS_NoArgsCmd_t *CmdPtr)
+{
+    UT_GenStub_AddParam(CS_EnableCfeCoreCmd, const CS_NoArgsCmd_t *, CmdPtr);
+
+    UT_GenStub_Execute(CS_EnableCfeCoreCmd, Basic, NULL);
+}
+
+/*
+ * ----------------------------------------------------
+ * Generated stub function for CS_EnableOSCmd()
+ * ----------------------------------------------------
+ */
+void CS_EnableOSCmd(const CS_NoArgsCmd_t *CmdPtr)
+{
+    UT_GenStub_AddParam(CS_EnableOSCmd, const CS_NoArgsCmd_t *, CmdPtr);
+
+    UT_GenStub_Execute(CS_EnableOSCmd, Basic, NULL);
+}
+
+/*
+ * ----------------------------------------------------
+ * Generated stub function for CS_NoopCmd()
+ * ----------------------------------------------------
+ */
+void CS_NoopCmd(const CS_NoArgsCmd_t *CmdPtr)
+{
+    UT_GenStub_AddParam(CS_NoopCmd, const CS_NoArgsCmd_t *, CmdPtr);
+
+    UT_GenStub_Execute(CS_NoopCmd, Basic, NULL);
+}
+
+/*
+ * ----------------------------------------------------
+ * Generated stub function for CS_OneShotCmd()
+ * ----------------------------------------------------
+ */
+void CS_OneShotCmd(const CS_OneShotCmd_t *CmdPtr)
+{
+    UT_GenStub_AddParam(CS_OneShotCmd, const CS_OneShotCmd_t *, CmdPtr);
+
+    UT_GenStub_Execute(CS_OneShotCmd, Basic, NULL);
+}
+
+/*
+ * ----------------------------------------------------
+ * Generated stub function for CS_RecomputeBaselineCfeCoreCmd()
+ * ----------------------------------------------------
+ */
+void CS_RecomputeBaselineCfeCoreCmd(const CS_NoArgsCmd_t *CmdPtr)
+{
+    UT_GenStub_AddParam(CS_RecomputeBaselineCfeCoreCmd, const CS_NoArgsCmd_t *, CmdPtr);
+
+    UT_GenStub_Execute(CS_RecomputeBaselineCfeCoreCmd, Basic, NULL);
+}
+
+/*
+ * ----------------------------------------------------
+ * Generated stub function for CS_RecomputeBaselineOSCmd()
+ * ----------------------------------------------------
+ */
+void CS_RecomputeBaselineOSCmd(const CS_NoArgsCmd_t *CmdPtr)
+{
+    UT_GenStub_AddParam(CS_RecomputeBaselineOSCmd, const CS_NoArgsCmd_t *, CmdPtr);
+
+    UT_GenStub_Execute(CS_RecomputeBaselineOSCmd, Basic, NULL);
+}
+
+/*
+ * ----------------------------------------------------
+ * Generated stub function for CS_ReportBaselineCfeCoreCmd()
+ * ----------------------------------------------------
+ */
+void CS_ReportBaselineCfeCoreCmd(const CS_NoArgsCmd_t *CmdPtr)
+{
+    UT_GenStub_AddParam(CS_ReportBaselineCfeCoreCmd, const CS_NoArgsCmd_t *, CmdPtr);
+
+    UT_GenStub_Execute(CS_ReportBaselineCfeCoreCmd, Basic, NULL);
+}
+
+/*
+ * ----------------------------------------------------
+ * Generated stub function for CS_ReportBaselineOSCmd()
+ * ----------------------------------------------------
+ */
+void CS_ReportBaselineOSCmd(const CS_NoArgsCmd_t *CmdPtr)
+{
+    UT_GenStub_AddParam(CS_ReportBaselineOSCmd, const CS_NoArgsCmd_t *, CmdPtr);
+
+    UT_GenStub_Execute(CS_ReportBaselineOSCmd, Basic, NULL);
+}
+
+/*
+ * ----------------------------------------------------
+ * Generated stub function for CS_ResetCmd()
+ * ----------------------------------------------------
+ */
+void CS_ResetCmd(const CS_NoArgsCmd_t *CmdPtr)
+{
+    UT_GenStub_AddParam(CS_ResetCmd, const CS_NoArgsCmd_t *, CmdPtr);
+
+    UT_GenStub_Execute(CS_ResetCmd, Basic, NULL);
 }

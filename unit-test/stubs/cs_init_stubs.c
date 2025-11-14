@@ -17,28 +17,50 @@
  * limitations under the License.
  ************************************************************************/
 
-/*
- * Includes
+/**
+ * @file
+ *
+ * Auto-Generated stub implementations for functions defined in cs_init header
  */
 
-#include "cs_app.h"
+#include "cs_init.h"
+#include "utgenstub.h"
 
-/* UT includes */
-#include "uttest.h"
-#include "utassert.h"
-#include "utstubs.h"
-
-CFE_Status_t CS_SbInit(void)
-{
-    return UT_DEFAULT_IMPL(CS_SbInit);
-}
-
+/*
+ * ----------------------------------------------------
+ * Generated stub function for CS_InitAllTables()
+ * ----------------------------------------------------
+ */
 CFE_Status_t CS_InitAllTables(void)
 {
-    return UT_DEFAULT_IMPL(CS_InitAllTables);
+    UT_GenStub_SetupReturnBuffer(CS_InitAllTables, CFE_Status_t);
+
+    UT_GenStub_Execute(CS_InitAllTables, Basic, NULL);
+
+    return UT_GenStub_GetReturnValue(CS_InitAllTables, CFE_Status_t);
 }
 
-CFE_Status_t CS_InitSegments(void)
+/*
+ * ----------------------------------------------------
+ * Generated stub function for CS_InitSegments()
+ * ----------------------------------------------------
+ */
+void CS_InitSegments(void)
 {
-    return UT_DEFAULT_IMPL(CS_InitAllTables);
+
+    UT_GenStub_Execute(CS_InitSegments, Basic, NULL);
+}
+
+/*
+ * ----------------------------------------------------
+ * Generated stub function for CS_SbInit()
+ * ----------------------------------------------------
+ */
+CFE_Status_t CS_SbInit(void)
+{
+    UT_GenStub_SetupReturnBuffer(CS_SbInit, CFE_Status_t);
+
+    UT_GenStub_Execute(CS_SbInit, Basic, NULL);
+
+    return UT_GenStub_GetReturnValue(CS_SbInit, CFE_Status_t);
 }

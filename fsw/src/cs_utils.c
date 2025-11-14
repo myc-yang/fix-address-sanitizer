@@ -32,6 +32,7 @@
 #include "cs_events.h"
 #include "cs_compute.h"
 #include "cs_utils.h"
+#include "cs_table_processing.h"
 #include <string.h>
 
 /**************************************************************************
@@ -39,6 +40,43 @@
  ** Functions
  **
  **************************************************************************/
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+/*                                                                 */
+/* Gets a table type ID value as a printable string                */
+/*                                                                 */
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+const char *CS_GetTableTypeAsString(uint32 TableId)
+{
+    const char *TableTypeStr;
+
+    switch (TableId)
+    {
+        case CS_APP_TABLE:
+            TableTypeStr = "Apps";
+            break;
+        case CS_TABLES_TABLE:
+            TableTypeStr = "Tables";
+            break;
+        case CS_EEPROM_TABLE:
+            TableTypeStr = "EEPROM";
+            break;
+        case CS_MEMORY_TABLE:
+            TableTypeStr = "Memory";
+            break;
+        case CS_CFECORE:
+            TableTypeStr = "cFE Core";
+            break;
+        case CS_OSCORE:
+            TableTypeStr = "OS";
+            break;
+        default:
+            TableTypeStr = "Undef";
+            break;
+    }
+
+    return TableTypeStr;
+}
+
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                 */
 /* CS Zero out the temp chcksum values of EEPROM                   */
@@ -922,33 +960,33 @@ CFE_Status_t CS_HandleRoutineTableUpdates(void)
     CFE_Status_t Result    = CFE_SUCCESS;
     CFE_Status_t ErrorCode = CFE_SUCCESS;
 
-    if (!((CS_AppData.HkPacket.Payload.RecomputeInProgress == true) && (CS_AppData.HkPacket.Payload.OneShotInProgress == false) &&
-          (CS_AppData.ChildTaskTable == CS_EEPROM_TABLE)))
+    if (!((CS_AppData.HkPacket.Payload.RecomputeInProgress == true) &&
+          (CS_AppData.HkPacket.Payload.OneShotInProgress == false) && (CS_AppData.ChildTaskTable == CS_EEPROM_TABLE)))
     {
-        Result = CS_HandleTableUpdate((void *)&CS_AppData.DefEepromTblPtr, (void *)&CS_AppData.ResEepromTblPtr,
+        Result = CS_HandleTableUpdate((void **)&CS_AppData.DefEepromTblPtr, (void **)&CS_AppData.ResEepromTblPtr,
                                       CS_AppData.DefEepromTableHandle, CS_AppData.ResEepromTableHandle, CS_EEPROM_TABLE,
                                       CS_MAX_NUM_EEPROM_TABLE_ENTRIES);
 
         if (Result != CFE_SUCCESS)
         {
             CS_AppData.HkPacket.Payload.EepromCSState = CS_STATE_DISABLED;
-            Result                            = CFE_EVS_SendEvent(CS_UPDATE_EEPROM_ERR_EID, CFE_EVS_EventType_ERROR,
+            Result    = CFE_EVS_SendEvent(CS_UPDATE_EEPROM_ERR_EID, CFE_EVS_EventType_ERROR,
                                        "Table update failed for EEPROM: 0x%08X, checksumming EEPROM is disabled",
                                        (unsigned int)Result);
-            ErrorCode                         = Result;
+            ErrorCode = Result;
         }
     }
 
-    if (!((CS_AppData.HkPacket.Payload.RecomputeInProgress == true) && (CS_AppData.HkPacket.Payload.OneShotInProgress == false) &&
-          (CS_AppData.ChildTaskTable == CS_MEMORY_TABLE)))
+    if (!((CS_AppData.HkPacket.Payload.RecomputeInProgress == true) &&
+          (CS_AppData.HkPacket.Payload.OneShotInProgress == false) && (CS_AppData.ChildTaskTable == CS_MEMORY_TABLE)))
     {
-        Result = CS_HandleTableUpdate((void *)&CS_AppData.DefMemoryTblPtr, (void *)&CS_AppData.ResMemoryTblPtr,
+        Result = CS_HandleTableUpdate((void **)&CS_AppData.DefMemoryTblPtr, (void **)&CS_AppData.ResMemoryTblPtr,
                                       CS_AppData.DefMemoryTableHandle, CS_AppData.ResMemoryTableHandle, CS_MEMORY_TABLE,
                                       CS_MAX_NUM_MEMORY_TABLE_ENTRIES);
         if (Result != CFE_SUCCESS)
         {
             CS_AppData.HkPacket.Payload.MemoryCSState = CS_STATE_DISABLED;
-            Result                            = CFE_EVS_SendEvent(CS_UPDATE_MEMORY_ERR_EID, CFE_EVS_EventType_ERROR,
+            Result = CFE_EVS_SendEvent(CS_UPDATE_MEMORY_ERR_EID, CFE_EVS_EventType_ERROR,
                                        "Table update failed for Memory: 0x%08X, checksumming Memory is disabled",
                                        (unsigned int)Result);
 
@@ -959,16 +997,16 @@ CFE_Status_t CS_HandleRoutineTableUpdates(void)
         }
     }
 
-    if (!((CS_AppData.HkPacket.Payload.RecomputeInProgress == true) && (CS_AppData.HkPacket.Payload.OneShotInProgress == false) &&
-          (CS_AppData.ChildTaskTable == CS_APP_TABLE)))
+    if (!((CS_AppData.HkPacket.Payload.RecomputeInProgress == true) &&
+          (CS_AppData.HkPacket.Payload.OneShotInProgress == false) && (CS_AppData.ChildTaskTable == CS_APP_TABLE)))
     {
-        Result = CS_HandleTableUpdate((void *)&CS_AppData.DefAppTblPtr, (void *)&CS_AppData.ResAppTblPtr,
+        Result = CS_HandleTableUpdate((void **)&CS_AppData.DefAppTblPtr, (void **)&CS_AppData.ResAppTblPtr,
                                       CS_AppData.DefAppTableHandle, CS_AppData.ResAppTableHandle, CS_APP_TABLE,
                                       CS_MAX_NUM_APP_TABLE_ENTRIES);
         if (Result != CFE_SUCCESS)
         {
             CS_AppData.HkPacket.Payload.AppCSState = CS_STATE_DISABLED;
-            Result                         = CFE_EVS_SendEvent(CS_UPDATE_APP_ERR_EID, CFE_EVS_EventType_ERROR,
+            Result                                 = CFE_EVS_SendEvent(CS_UPDATE_APP_ERR_EID, CFE_EVS_EventType_ERROR,
                                        "Table update failed for Apps: 0x%08X, checksumming Apps is disabled",
                                        (unsigned int)Result);
             if (ErrorCode == CFE_SUCCESS)
@@ -978,17 +1016,17 @@ CFE_Status_t CS_HandleRoutineTableUpdates(void)
         }
     }
 
-    if (!((CS_AppData.HkPacket.Payload.RecomputeInProgress == true) && (CS_AppData.HkPacket.Payload.OneShotInProgress == false) &&
-          (CS_AppData.ChildTaskTable == CS_TABLES_TABLE)))
+    if (!((CS_AppData.HkPacket.Payload.RecomputeInProgress == true) &&
+          (CS_AppData.HkPacket.Payload.OneShotInProgress == false) && (CS_AppData.ChildTaskTable == CS_TABLES_TABLE)))
     {
-        Result = CS_HandleTableUpdate((void *)&CS_AppData.DefTablesTblPtr, (void *)&CS_AppData.ResTablesTblPtr,
+        Result = CS_HandleTableUpdate((void **)&CS_AppData.DefTablesTblPtr, (void **)&CS_AppData.ResTablesTblPtr,
                                       CS_AppData.DefTablesTableHandle, CS_AppData.ResTablesTableHandle, CS_TABLES_TABLE,
                                       CS_MAX_NUM_TABLES_TABLE_ENTRIES);
 
         if (Result != CFE_SUCCESS)
         {
             CS_AppData.HkPacket.Payload.TablesCSState = CS_STATE_DISABLED;
-            Result                            = CFE_EVS_SendEvent(CS_UPDATE_TABLES_ERR_EID, CFE_EVS_EventType_ERROR,
+            Result = CFE_EVS_SendEvent(CS_UPDATE_TABLES_ERR_EID, CFE_EVS_EventType_ERROR,
                                        "Table update failed for Tables: 0x%08X, checksumming Tables is disabled",
                                        (unsigned int)Result);
             if (ErrorCode == CFE_SUCCESS)
@@ -1033,7 +1071,8 @@ bool CS_CheckRecomputeOneshot(void)
 {
     bool Result = false;
 
-    if (CS_AppData.HkPacket.Payload.RecomputeInProgress == true || CS_AppData.HkPacket.Payload.OneShotInProgress == true)
+    if (CS_AppData.HkPacket.Payload.RecomputeInProgress == true ||
+        CS_AppData.HkPacket.Payload.OneShotInProgress == true)
     {
         CFE_EVS_SendEvent(CS_CMD_COMPUTE_PROG_ERR_EID, CFE_EVS_EventType_ERROR,
                           "Cannot perform command. Recompute or oneshot in progress.");

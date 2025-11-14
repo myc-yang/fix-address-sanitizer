@@ -17,49 +17,83 @@
  * limitations under the License.
  ************************************************************************/
 
-/*
- * Includes
+/**
+ * @file
+ *
+ * Auto-Generated stub implementations for functions defined in cs_table_cmds header
  */
 
 #include "cs_table_cmds.h"
+#include "utgenstub.h"
 
-/* UT includes */
-#include "uttest.h"
-#include "utassert.h"
-#include "utstubs.h"
-
-void CS_DisableTablesCmd(const CS_NoArgsCmd_t *CmdPtr)
-{
-    UT_Stub_RegisterContext(UT_KEY(CS_DisableTablesCmd), CmdPtr);
-    UT_DEFAULT_IMPL(CS_DisableTablesCmd);
-}
-
-void CS_EnableTablesCmd(const CS_NoArgsCmd_t *CmdPtr)
-{
-    UT_Stub_RegisterContext(UT_KEY(CS_EnableTablesCmd), CmdPtr);
-    UT_DEFAULT_IMPL(CS_EnableTablesCmd);
-}
-
-void CS_ReportBaselineTablesCmd(const CS_TableNameCmd_t *CmdPtr)
-{
-    UT_Stub_RegisterContext(UT_KEY(CS_ReportBaselineTablesCmd), CmdPtr);
-    UT_DEFAULT_IMPL(CS_ReportBaselineTablesCmd);
-}
-
-void CS_RecomputeBaselineTablesCmd(const CS_TableNameCmd_t *CmdPtr)
-{
-    UT_Stub_RegisterContext(UT_KEY(CS_RecomputeBaselineTablesCmd), CmdPtr);
-    UT_DEFAULT_IMPL(CS_RecomputeBaselineTablesCmd);
-}
-
+/*
+ * ----------------------------------------------------
+ * Generated stub function for CS_DisableNameTablesCmd()
+ * ----------------------------------------------------
+ */
 void CS_DisableNameTablesCmd(const CS_TableNameCmd_t *CmdPtr)
 {
-    UT_Stub_RegisterContext(UT_KEY(CS_DisableNameTablesCmd), CmdPtr);
-    UT_DEFAULT_IMPL(CS_DisableNameTablesCmd);
+    UT_GenStub_AddParam(CS_DisableNameTablesCmd, const CS_TableNameCmd_t *, CmdPtr);
+
+    UT_GenStub_Execute(CS_DisableNameTablesCmd, Basic, NULL);
 }
 
+/*
+ * ----------------------------------------------------
+ * Generated stub function for CS_DisableTablesCmd()
+ * ----------------------------------------------------
+ */
+void CS_DisableTablesCmd(const CS_NoArgsCmd_t *CmdPtr)
+{
+    UT_GenStub_AddParam(CS_DisableTablesCmd, const CS_NoArgsCmd_t *, CmdPtr);
+
+    UT_GenStub_Execute(CS_DisableTablesCmd, Basic, NULL);
+}
+
+/*
+ * ----------------------------------------------------
+ * Generated stub function for CS_EnableNameTablesCmd()
+ * ----------------------------------------------------
+ */
 void CS_EnableNameTablesCmd(const CS_TableNameCmd_t *CmdPtr)
 {
-    UT_Stub_RegisterContext(UT_KEY(CS_EnableNameTablesCmd), CmdPtr);
-    UT_DEFAULT_IMPL(CS_EnableNameTablesCmd);
+    UT_GenStub_AddParam(CS_EnableNameTablesCmd, const CS_TableNameCmd_t *, CmdPtr);
+
+    UT_GenStub_Execute(CS_EnableNameTablesCmd, Basic, NULL);
+}
+
+/*
+ * ----------------------------------------------------
+ * Generated stub function for CS_EnableTablesCmd()
+ * ----------------------------------------------------
+ */
+void CS_EnableTablesCmd(const CS_NoArgsCmd_t *CmdPtr)
+{
+    UT_GenStub_AddParam(CS_EnableTablesCmd, const CS_NoArgsCmd_t *, CmdPtr);
+
+    UT_GenStub_Execute(CS_EnableTablesCmd, Basic, NULL);
+}
+
+/*
+ * ----------------------------------------------------
+ * Generated stub function for CS_RecomputeBaselineTablesCmd()
+ * ----------------------------------------------------
+ */
+void CS_RecomputeBaselineTablesCmd(const CS_TableNameCmd_t *CmdPtr)
+{
+    UT_GenStub_AddParam(CS_RecomputeBaselineTablesCmd, const CS_TableNameCmd_t *, CmdPtr);
+
+    UT_GenStub_Execute(CS_RecomputeBaselineTablesCmd, Basic, NULL);
+}
+
+/*
+ * ----------------------------------------------------
+ * Generated stub function for CS_ReportBaselineTablesCmd()
+ * ----------------------------------------------------
+ */
+void CS_ReportBaselineTablesCmd(const CS_TableNameCmd_t *CmdPtr)
+{
+    UT_GenStub_AddParam(CS_ReportBaselineTablesCmd, const CS_TableNameCmd_t *, CmdPtr);
+
+    UT_GenStub_Execute(CS_ReportBaselineTablesCmd, Basic, NULL);
 }

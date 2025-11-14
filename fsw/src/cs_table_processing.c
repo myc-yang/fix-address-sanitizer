@@ -32,6 +32,8 @@
 #include "cs_events.h"
 #include "cs_tbldefs.h"
 #include "cs_utils.h"
+#include "cs_table_processing.h"
+
 #include <string.h>
 
 /*************************************************************************
@@ -39,6 +41,31 @@
  ** Local function prototypes
  **
  **************************************************************************/
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+/*                                                                 */
+/* Call respective table update handler function (helper)          */
+/*                                                                 */
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+void CS_CallTableUpdateHandler(uint32 Table, const void *DefinitionPtr, void *ResultsPtr, size_t NumEntries)
+{
+    switch (Table)
+    {
+        case CS_APP_TABLE:
+            CS_ProcessNewAppDefinitionTable(DefinitionPtr, ResultsPtr);
+            break;
+        case CS_TABLES_TABLE:
+            CS_ProcessNewTablesDefinitionTable(DefinitionPtr, ResultsPtr);
+            break;
+        case CS_EEPROM_TABLE:
+        case CS_MEMORY_TABLE:
+            CS_ProcessNewEepromMemoryDefinitionTable(DefinitionPtr, ResultsPtr, NumEntries, Table);
+            break;
+        default:
+            /* no defined handler */
+            break;
+    }
+}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                 */
@@ -461,33 +488,25 @@ CFE_Status_t CS_ValidateAppChecksumDefinitionTable(void *TblPtr)
 /* CS  processing new definition tables for EEPROM or Memory       */
 /*                                                                 */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-void CS_ProcessNewEepromMemoryDefinitionTable(const CS_Def_EepromMemory_Table_Entry_t *DefinitionTblPtr,
-                                              const CS_Res_EepromMemory_Table_Entry_t *ResultsTblPtr, uint16 NumEntries,
+void CS_ProcessNewEepromMemoryDefinitionTable(const CS_Def_EepromMemory_Table_Entry_t *StartOfDefTable,
+                                              CS_Res_EepromMemory_Table_Entry_t *StartOfResultsTable, uint16 NumEntries,
                                               uint16 Table)
 {
-    CS_Def_EepromMemory_Table_Entry_t *StartOfDefTable     = NULL;
-    CS_Def_EepromMemory_Table_Entry_t *DefEntry            = NULL;
-    CS_Res_EepromMemory_Table_Entry_t *StartOfResultsTable = NULL;
-    CS_Res_EepromMemory_Table_Entry_t *ResultsEntry        = NULL;
-    uint16                             Loop                = 0;
-    uint16                             NumRegionsInTable   = 0;
-    uint16                             PreviousState       = CS_STATE_EMPTY;
-    char                               TableType[CS_TABLETYPE_NAME_SIZE];
-
-    memcpy(&StartOfResultsTable, ResultsTblPtr, sizeof(StartOfResultsTable));
-    memcpy(&StartOfDefTable, DefinitionTblPtr, sizeof(StartOfDefTable));
-
-    snprintf(&TableType[0], CS_TABLETYPE_NAME_SIZE, "%s", "Undef Tbl"); /* Init the table type string */
+    const CS_Def_EepromMemory_Table_Entry_t *DefEntry          = NULL;
+    CS_Res_EepromMemory_Table_Entry_t *      ResultsEntry      = NULL;
+    uint16                                   Loop              = 0;
+    uint16                                   NumRegionsInTable = 0;
+    uint16                                   PreviousState     = CS_STATE_EMPTY;
 
     /* We don't want to be doing chekcksums while changing the table out */
     if (Table == CS_EEPROM_TABLE)
     {
-        PreviousState                     = CS_AppData.HkPacket.Payload.EepromCSState;
+        PreviousState                             = CS_AppData.HkPacket.Payload.EepromCSState;
         CS_AppData.HkPacket.Payload.EepromCSState = CS_STATE_DISABLED;
     }
     if (Table == CS_MEMORY_TABLE)
     {
-        PreviousState                     = CS_AppData.HkPacket.Payload.MemoryCSState;
+        PreviousState                             = CS_AppData.HkPacket.Payload.MemoryCSState;
         CS_AppData.HkPacket.Payload.MemoryCSState = CS_STATE_DISABLED;
     }
 
@@ -537,17 +556,8 @@ void CS_ProcessNewEepromMemoryDefinitionTable(const CS_Def_EepromMemory_Table_En
 
     if (NumRegionsInTable == 0)
     {
-        if (Table == CS_EEPROM_TABLE)
-        {
-            snprintf(&TableType[0], CS_TABLETYPE_NAME_SIZE, "%s", "EEPROM");
-        }
-        if (Table == CS_MEMORY_TABLE)
-        {
-            snprintf(&TableType[0], CS_TABLETYPE_NAME_SIZE, "%s", "Memory");
-        }
-
         CFE_EVS_SendEvent(CS_PROCESS_EEPROM_MEMORY_NO_ENTRIES_INF_EID, CFE_EVS_EventType_INFORMATION,
-                          "CS %s Table: No valid entries in the table", TableType);
+                          "CS %s Table: No valid entries in the table", CS_GetTableTypeAsString(Table));
     }
 }
 
@@ -556,34 +566,29 @@ void CS_ProcessNewEepromMemoryDefinitionTable(const CS_Def_EepromMemory_Table_En
 /* CS processing new definition tables for Tables                  */
 /*                                                                 */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-void CS_ProcessNewTablesDefinitionTable(const CS_Def_Tables_Table_Entry_t *DefinitionTblPtr,
-                                        const CS_Res_Tables_Table_Entry_t *ResultsTblPtr)
+void CS_ProcessNewTablesDefinitionTable(const CS_Def_Tables_Table_Entry_t *StartOfDefTable,
+                                        CS_Res_Tables_Table_Entry_t *      StartOfResultsTable)
 {
-    CS_Def_Tables_Table_Entry_t *StartOfDefTable     = NULL;
-    CS_Def_Tables_Table_Entry_t *DefEntry            = NULL;
-    CS_Res_Tables_Table_Entry_t *StartOfResultsTable = NULL;
-    CS_Res_Tables_Table_Entry_t *ResultsEntry        = NULL;
-    uint16                       Loop                = 0;
-    uint16                       NumRegionsInTable   = 0;
-    uint16                       PreviousState       = CS_STATE_EMPTY;
-    CFE_ES_AppId_t               AppID               = CFE_ES_APPID_UNDEFINED;
-    CFE_TBL_Handle_t             TableHandle         = CFE_TBL_BAD_TABLE_HANDLE;
-    bool                         Owned               = false;
-    uint16                       DefNameIndex        = 0;
-    uint16                       AppNameIndex        = 0;
-    uint16                       TableNameIndex      = 0;
-    char                         AppName[OS_MAX_API_NAME];
-    char                         TableAppName[OS_MAX_API_NAME];
-    char                         TableTableName[CFE_MISSION_TBL_MAX_NAME_LENGTH];
-
-    memcpy(&StartOfResultsTable, ResultsTblPtr, sizeof(StartOfResultsTable));
-    memcpy(&StartOfDefTable, DefinitionTblPtr, sizeof(StartOfDefTable));
+    const CS_Def_Tables_Table_Entry_t *DefEntry          = NULL;
+    CS_Res_Tables_Table_Entry_t *      ResultsEntry      = NULL;
+    uint16                             Loop              = 0;
+    uint16                             NumRegionsInTable = 0;
+    uint16                             PreviousState     = CS_STATE_EMPTY;
+    CFE_ES_AppId_t                     AppID             = CFE_ES_APPID_UNDEFINED;
+    CFE_TBL_Handle_t                   TableHandle       = CFE_TBL_BAD_TABLE_HANDLE;
+    bool                               Owned             = false;
+    uint16                             DefNameIndex      = 0;
+    uint16                             AppNameIndex      = 0;
+    uint16                             TableNameIndex    = 0;
+    char                               AppName[OS_MAX_API_NAME];
+    char                               TableAppName[OS_MAX_API_NAME];
+    char                               TableTableName[CFE_MISSION_TBL_MAX_NAME_LENGTH];
 
     CFE_ES_GetAppID(&AppID);
     CFE_ES_GetAppName(AppName, AppID, OS_MAX_API_NAME);
 
     /* We don't want to be doing chekcksums while changing the table out */
-    PreviousState                     = CS_AppData.HkPacket.Payload.TablesCSState;
+    PreviousState                             = CS_AppData.HkPacket.Payload.TablesCSState;
     CS_AppData.HkPacket.Payload.TablesCSState = CS_STATE_DISABLED;
 
     /* Assume none of the CS tables are listed in the new Tables table */
@@ -749,23 +754,18 @@ void CS_ProcessNewTablesDefinitionTable(const CS_Def_Tables_Table_Entry_t *Defin
 /* CS processing new definition tables for Apps                    */
 /*                                                                 */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-void CS_ProcessNewAppDefinitionTable(const CS_Def_App_Table_Entry_t *DefinitionTblPtr,
-                                     const CS_Res_App_Table_Entry_t *ResultsTblPtr)
+void CS_ProcessNewAppDefinitionTable(const CS_Def_App_Table_Entry_t *StartOfDefTable,
+                                     CS_Res_App_Table_Entry_t *      StartOfResultsTable)
 {
-    CS_Def_App_Table_Entry_t *StartOfDefTable     = NULL;
-    CS_Def_App_Table_Entry_t *DefEntry            = NULL;
-    CS_Res_App_Table_Entry_t *StartOfResultsTable = NULL;
-    CS_Res_App_Table_Entry_t *ResultsEntry        = NULL;
-    uint16                    Loop                = 0;
-    uint16                    NumRegionsInTable   = 0;
-    uint16                    PreviousState       = CS_STATE_EMPTY;
-
-    memcpy(&StartOfResultsTable, ResultsTblPtr, sizeof(StartOfResultsTable));
-    memcpy(&StartOfDefTable, DefinitionTblPtr, sizeof(StartOfDefTable));
+    const CS_Def_App_Table_Entry_t *DefEntry          = NULL;
+    CS_Res_App_Table_Entry_t *      ResultsEntry      = NULL;
+    uint16                          Loop              = 0;
+    uint16                          NumRegionsInTable = 0;
+    uint16                          PreviousState     = CS_STATE_EMPTY;
 
     /* We don't want to be doing chekcksums while changing the table out */
 
-    PreviousState                  = CS_AppData.HkPacket.Payload.AppCSState;
+    PreviousState                          = CS_AppData.HkPacket.Payload.AppCSState;
     CS_AppData.HkPacket.Payload.AppCSState = CS_STATE_DISABLED;
 
     for (Loop = 0; Loop < CS_MAX_NUM_APP_TABLE_ENTRIES; Loop++)
@@ -822,21 +822,14 @@ void CS_ProcessNewAppDefinitionTable(const CS_Def_App_Table_Entry_t *DefinitionT
 /*                                                                 */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 CFE_Status_t CS_TableInit(CFE_TBL_Handle_t *DefinitionTableHandle, CFE_TBL_Handle_t *ResultsTableHandle,
-                          void *DefinitionTblPtr, void *ResultsTblPtr, uint16 Table, const char *DefinitionTableName,
+                          void **DefinitionTblPtr, void **ResultsTblPtr, uint16 Table, const char *DefinitionTableName,
                           const char *ResultsTableName, uint16 NumEntries, const char *DefinitionTableFileName,
                           const void *DefaultDefTableAddress, uint16 SizeofDefinitionTableEntry,
                           uint16 SizeofResultsTableEntry, CFE_TBL_CallbackFuncPtr_t CallBackFunction)
 {
     CFE_Status_t Result           = CFE_SUCCESS;
-    int32        OS_Status        = -1;
-    CFE_Status_t ResultFromLoad   = OS_ERROR;
-    int32        SizeOfTable      = 0;
+    size_t       SizeOfTable      = 0;
     bool         LoadedFromMemory = false;
-    bool         ValidFile        = false;
-    osal_id_t    Fd               = OS_OBJECT_ID_UNDEFINED;
-    char         TableType[CS_TABLETYPE_NAME_SIZE];
-
-    snprintf(TableType, CS_TABLETYPE_NAME_SIZE, "%s", "Undef Tbl"); /* Init table type */
 
     SizeOfTable = NumEntries * SizeofResultsTableEntry;
 
@@ -856,107 +849,62 @@ CFE_Status_t CS_TableInit(CFE_TBL_Handle_t *DefinitionTableHandle, CFE_TBL_Handl
                                   CFE_TBL_OPT_SNGL_BUFFER | CFE_TBL_OPT_LOAD_DUMP, CallBackFunction);
     }
 
-    OS_Status = OS_OpenCreate(&Fd, DefinitionTableFileName, OS_FILE_FLAG_NONE, OS_READ_ONLY);
-
-    if (OS_Status == OS_SUCCESS)
+    if (Result == CFE_SUCCESS)
     {
-        ValidFile = true;
-        OS_close(Fd);
-    }
+        Result = CFE_TBL_Load(*DefinitionTableHandle, CFE_TBL_SRC_FILE, DefinitionTableFileName);
 
-    if ((Result == CFE_SUCCESS) && (ValidFile == true))
-    {
-        Result         = CFE_TBL_Load(*DefinitionTableHandle, CFE_TBL_SRC_FILE, DefinitionTableFileName);
-        ResultFromLoad = Result;
-    }
-
-    /* if the load from the file fails, load from
-     the default tables in CS */
-    if (ResultFromLoad != CFE_SUCCESS)
-    {
-        Result           = CFE_TBL_Load(*DefinitionTableHandle, CFE_TBL_SRC_ADDRESS, DefaultDefTableAddress);
-        LoadedFromMemory = true;
+        /* if the load from the file fails, load from the default tables in CS */
+        if (Result < CFE_SUCCESS)
+        {
+            Result           = CFE_TBL_Load(*DefinitionTableHandle, CFE_TBL_SRC_ADDRESS, DefaultDefTableAddress);
+            LoadedFromMemory = (Result >= CFE_SUCCESS);
+        }
     }
 
     if (Result == CFE_SUCCESS)
     {
         Result = CFE_TBL_GetAddress(DefinitionTblPtr, *DefinitionTableHandle);
 
-        if ((Result == CFE_TBL_INFO_UPDATED))
+        if (Result == CFE_TBL_INFO_UPDATED)
         {
-            if (Table == CS_APP_TABLE)
-            {
-                CS_ProcessNewAppDefinitionTable((CS_Def_App_Table_Entry_t *)DefinitionTblPtr,
-                                                (CS_Res_App_Table_Entry_t *)ResultsTblPtr);
-            }
-            else
-            {
-                if (Table == CS_TABLES_TABLE)
-                {
-                    CS_ProcessNewTablesDefinitionTable((CS_Def_Tables_Table_Entry_t *)DefinitionTblPtr,
-                                                       (CS_Res_Tables_Table_Entry_t *)ResultsTblPtr);
-                }
-                else
-                {
-                    CS_ProcessNewEepromMemoryDefinitionTable((CS_Def_EepromMemory_Table_Entry_t *)DefinitionTblPtr,
-                                                             (CS_Res_EepromMemory_Table_Entry_t *)ResultsTblPtr,
-                                                             NumEntries, Table);
-                }
-            }
-
+            CS_CallTableUpdateHandler(Table, *DefinitionTblPtr, *ResultsTblPtr, NumEntries);
         } /* end if (Result == CFE_TBL_INFO_UPDATED) || (Result == CFE_SUCCESS) */
     }
 
     if (Result >= CFE_SUCCESS)
     {
+        /* If we loaded from file successfully then the states we wish to use have already been set
+         * If we loaded from memory then disable the table  */
+        if (LoadedFromMemory)
+        {
+            switch (Table)
+            {
+                case CS_EEPROM_TABLE:
+                    CS_AppData.HkPacket.Payload.EepromCSState = CS_STATE_DISABLED;
+                    break;
+                case CS_MEMORY_TABLE:
+                    CS_AppData.HkPacket.Payload.MemoryCSState = CS_STATE_DISABLED;
+                    break;
+                case CS_APP_TABLE:
+                    CS_AppData.HkPacket.Payload.AppCSState = CS_STATE_DISABLED;
+                    break;
+                case CS_TABLES_TABLE:
+                    CS_AppData.HkPacket.Payload.TablesCSState = CS_STATE_DISABLED;
+                    break;
+                default:
+                    break;
+            }
+        }
+
         Result = CFE_SUCCESS;
     }
     else
     {
-        if (Table == CS_EEPROM_TABLE)
-        {
-            snprintf(TableType, CS_TABLETYPE_NAME_SIZE, "%s", "EEPROM");
-        }
-        if (Table == CS_MEMORY_TABLE)
-        {
-            snprintf(TableType, CS_TABLETYPE_NAME_SIZE, "%s", "Memory");
-        }
-        if (Table == CS_TABLES_TABLE)
-        {
-            snprintf(TableType, CS_TABLETYPE_NAME_SIZE, "%s", "Tables");
-        }
-        if (Table == CS_APP_TABLE)
-        {
-            snprintf(TableType, CS_TABLETYPE_NAME_SIZE, "%s", "Apps");
-        }
-
         CFE_EVS_SendEvent(CS_TBL_INIT_ERR_EID, CFE_EVS_EventType_ERROR,
                           "CS received error 0x%08X initializing Definition table for %s", (unsigned int)Result,
-                          TableType);
+                          CS_GetTableTypeAsString(Table));
     }
 
-    /* If we loaded from file successfully then the states we wish to use have already been set
-     * If we loaded from memory then disable the table  */
-    if (LoadedFromMemory == true && Result == CFE_SUCCESS)
-    {
-        switch (Table)
-        {
-            case CS_EEPROM_TABLE:
-                CS_AppData.HkPacket.Payload.EepromCSState = CS_STATE_DISABLED;
-                break;
-            case CS_MEMORY_TABLE:
-                CS_AppData.HkPacket.Payload.MemoryCSState = CS_STATE_DISABLED;
-                break;
-            case CS_APP_TABLE:
-                CS_AppData.HkPacket.Payload.AppCSState = CS_STATE_DISABLED;
-                break;
-            case CS_TABLES_TABLE:
-                CS_AppData.HkPacket.Payload.TablesCSState = CS_STATE_DISABLED;
-                break;
-            default:
-                break;
-        }
-    }
     return Result;
 }
 
@@ -965,7 +913,7 @@ CFE_Status_t CS_TableInit(CFE_TBL_Handle_t *DefinitionTableHandle, CFE_TBL_Handl
 /* CS Handles table updates                                        */
 /*                                                                 */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-CFE_Status_t CS_HandleTableUpdate(void *DefinitionTblPtr, void *ResultsTblPtr, CFE_TBL_Handle_t DefinitionTableHandle,
+CFE_Status_t CS_HandleTableUpdate(void **DefinitionTblPtr, void **ResultsTblPtr, CFE_TBL_Handle_t DefinitionTableHandle,
                                   CFE_TBL_Handle_t ResultsTableHandle, uint16 Table, uint16 NumEntries)
 {
     CFE_Status_t ReleaseResult1 = CFE_SUCCESS;
@@ -976,9 +924,6 @@ CFE_Status_t CS_HandleTableUpdate(void *DefinitionTblPtr, void *ResultsTblPtr, C
     CFE_Status_t GetResult2     = CFE_SUCCESS;
     CFE_Status_t Result         = CFE_SUCCESS;
     int32        Loop           = 0;
-    char         TableType[CS_TABLETYPE_NAME_SIZE];
-
-    snprintf(TableType, CS_TABLETYPE_NAME_SIZE, "%s", "Undef Tbl"); /* Init table type */
 
     /* Below, there are several values that are returned and assigned, but never evaluated. */
     /* This is done so intentionally, as it helps us with Source-Level debugging this functions. */
@@ -1015,24 +960,9 @@ CFE_Status_t CS_HandleTableUpdate(void *DefinitionTblPtr, void *ResultsTblPtr, C
                     }
                 }
             }
+        }
 
-            CS_ProcessNewTablesDefinitionTable((CS_Def_Tables_Table_Entry_t *)DefinitionTblPtr,
-                                               (CS_Res_Tables_Table_Entry_t *)ResultsTblPtr);
-        }
-        else
-        {
-            if (Table == CS_APP_TABLE)
-            {
-                CS_ProcessNewAppDefinitionTable((CS_Def_App_Table_Entry_t *)DefinitionTblPtr,
-                                                (CS_Res_App_Table_Entry_t *)ResultsTblPtr);
-            }
-            else
-            {
-                CS_ProcessNewEepromMemoryDefinitionTable((CS_Def_EepromMemory_Table_Entry_t *)DefinitionTblPtr,
-                                                         (CS_Res_EepromMemory_Table_Entry_t *)ResultsTblPtr, NumEntries,
-                                                         Table);
-            }
-        }
+        CS_CallTableUpdateHandler(Table, *DefinitionTblPtr, *ResultsTblPtr, NumEntries);
 
         Result = CFE_SUCCESS;
     }
@@ -1040,29 +970,12 @@ CFE_Status_t CS_HandleTableUpdate(void *DefinitionTblPtr, void *ResultsTblPtr, C
     {
         if (Result < CFE_SUCCESS)
         {
-            if (Table == CS_EEPROM_TABLE)
-            {
-                snprintf(TableType, CS_TABLETYPE_NAME_SIZE, "%s", "EEPROM");
-            }
-            if (Table == CS_MEMORY_TABLE)
-            {
-                snprintf(TableType, CS_TABLETYPE_NAME_SIZE, "%s", "Memory");
-            }
-            if (Table == CS_TABLES_TABLE)
-            {
-                snprintf(TableType, CS_TABLETYPE_NAME_SIZE, "%s", "Table");
-            }
-            if (Table == CS_APP_TABLE)
-            {
-                snprintf(TableType, CS_TABLETYPE_NAME_SIZE, "%s", "App");
-            }
-
             /* There was a problem somewhere, generate an event */
             CFE_EVS_SendEvent(CS_TBL_UPDATE_ERR_EID, CFE_EVS_EventType_ERROR,
                               "CS had problems updating table. Res Release: 0x%08X Def Release:0x%08X Res "
                               "Manage:0x%08X Def Manage: 0x%08X Get:0x%08X for table %s",
                               (unsigned int)ReleaseResult1, (unsigned int)ReleaseResult2, (unsigned int)ManageResult1,
-                              (unsigned int)ManageResult2, (unsigned int)GetResult2, TableType);
+                              (unsigned int)ManageResult2, (unsigned int)GetResult2, CS_GetTableTypeAsString(Table));
         }
     }
     return Result;

@@ -17,49 +17,83 @@
  * limitations under the License.
  ************************************************************************/
 
-/*
- * Includes
+/**
+ * @file
+ *
+ * Auto-Generated stub implementations for functions defined in cs_app_cmds header
  */
 
 #include "cs_app_cmds.h"
+#include "utgenstub.h"
 
-/* UT includes */
-#include "uttest.h"
-#include "utassert.h"
-#include "utstubs.h"
-
+/*
+ * ----------------------------------------------------
+ * Generated stub function for CS_DisableAppCmd()
+ * ----------------------------------------------------
+ */
 void CS_DisableAppCmd(const CS_NoArgsCmd_t *CmdPtr)
 {
-    UT_Stub_RegisterContext(UT_KEY(CS_DisableAppCmd), CmdPtr);
-    UT_DEFAULT_IMPL(CS_DisableAppCmd);
+    UT_GenStub_AddParam(CS_DisableAppCmd, const CS_NoArgsCmd_t *, CmdPtr);
+
+    UT_GenStub_Execute(CS_DisableAppCmd, Basic, NULL);
 }
 
-void CS_EnableAppCmd(const CS_NoArgsCmd_t *CmdPtr)
-{
-    UT_Stub_RegisterContext(UT_KEY(CS_EnableAppCmd), CmdPtr);
-    UT_DEFAULT_IMPL(CS_EnableAppCmd);
-}
-
-void CS_ReportBaselineAppCmd(const CS_AppNameCmd_t *CmdPtr)
-{
-    UT_Stub_RegisterContext(UT_KEY(CS_ReportBaselineAppCmd), CmdPtr);
-    UT_DEFAULT_IMPL(CS_ReportBaselineAppCmd);
-}
-
-void CS_RecomputeBaselineAppCmd(const CS_AppNameCmd_t *CmdPtr)
-{
-    UT_Stub_RegisterContext(UT_KEY(CS_RecomputeBaselineAppCmd), CmdPtr);
-    UT_DEFAULT_IMPL(CS_RecomputeBaselineAppCmd);
-}
-
+/*
+ * ----------------------------------------------------
+ * Generated stub function for CS_DisableNameAppCmd()
+ * ----------------------------------------------------
+ */
 void CS_DisableNameAppCmd(const CS_AppNameCmd_t *CmdPtr)
 {
-    UT_Stub_RegisterContext(UT_KEY(CS_DisableNameAppCmd), CmdPtr);
-    UT_DEFAULT_IMPL(CS_DisableNameAppCmd);
+    UT_GenStub_AddParam(CS_DisableNameAppCmd, const CS_AppNameCmd_t *, CmdPtr);
+
+    UT_GenStub_Execute(CS_DisableNameAppCmd, Basic, NULL);
 }
 
+/*
+ * ----------------------------------------------------
+ * Generated stub function for CS_EnableAppCmd()
+ * ----------------------------------------------------
+ */
+void CS_EnableAppCmd(const CS_NoArgsCmd_t *CmdPtr)
+{
+    UT_GenStub_AddParam(CS_EnableAppCmd, const CS_NoArgsCmd_t *, CmdPtr);
+
+    UT_GenStub_Execute(CS_EnableAppCmd, Basic, NULL);
+}
+
+/*
+ * ----------------------------------------------------
+ * Generated stub function for CS_EnableNameAppCmd()
+ * ----------------------------------------------------
+ */
 void CS_EnableNameAppCmd(const CS_AppNameCmd_t *CmdPtr)
 {
-    UT_Stub_RegisterContext(UT_KEY(CS_EnableNameAppCmd), CmdPtr);
-    UT_DEFAULT_IMPL(CS_EnableNameAppCmd);
+    UT_GenStub_AddParam(CS_EnableNameAppCmd, const CS_AppNameCmd_t *, CmdPtr);
+
+    UT_GenStub_Execute(CS_EnableNameAppCmd, Basic, NULL);
+}
+
+/*
+ * ----------------------------------------------------
+ * Generated stub function for CS_RecomputeBaselineAppCmd()
+ * ----------------------------------------------------
+ */
+void CS_RecomputeBaselineAppCmd(const CS_AppNameCmd_t *CmdPtr)
+{
+    UT_GenStub_AddParam(CS_RecomputeBaselineAppCmd, const CS_AppNameCmd_t *, CmdPtr);
+
+    UT_GenStub_Execute(CS_RecomputeBaselineAppCmd, Basic, NULL);
+}
+
+/*
+ * ----------------------------------------------------
+ * Generated stub function for CS_ReportBaselineAppCmd()
+ * ----------------------------------------------------
+ */
+void CS_ReportBaselineAppCmd(const CS_AppNameCmd_t *CmdPtr)
+{
+    UT_GenStub_AddParam(CS_ReportBaselineAppCmd, const CS_AppNameCmd_t *, CmdPtr);
+
+    UT_GenStub_Execute(CS_ReportBaselineAppCmd, Basic, NULL);
 }
