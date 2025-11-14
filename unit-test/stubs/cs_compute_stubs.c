@@ -17,61 +17,110 @@
  * limitations under the License.
  ************************************************************************/
 
-/*
- * Includes
+/**
+ * @file
+ *
+ * Auto-Generated stub implementations for functions defined in cs_compute header
  */
 
 #include "cs_compute.h"
+#include "utgenstub.h"
 
-/* UT includes */
-#include "uttest.h"
-#include "utassert.h"
-#include "utstubs.h"
+/*
+ * ----------------------------------------------------
+ * Generated stub function for CS_ComputeApp()
+ * ----------------------------------------------------
+ */
+CFE_Status_t CS_ComputeApp(CS_Res_App_Table_Entry_t *ResultsEntry, uint32 *ComputedCSValue, bool *DoneWithEntry)
+{
+    UT_GenStub_SetupReturnBuffer(CS_ComputeApp, CFE_Status_t);
 
+    UT_GenStub_AddParam(CS_ComputeApp, CS_Res_App_Table_Entry_t *, ResultsEntry);
+    UT_GenStub_AddParam(CS_ComputeApp, uint32 *, ComputedCSValue);
+    UT_GenStub_AddParam(CS_ComputeApp, bool *, DoneWithEntry);
+
+    UT_GenStub_Execute(CS_ComputeApp, Basic, NULL);
+
+    return UT_GenStub_GetReturnValue(CS_ComputeApp, CFE_Status_t);
+}
+
+/*
+ * ----------------------------------------------------
+ * Generated stub function for CS_ComputeEepromMemory()
+ * ----------------------------------------------------
+ */
 CFE_Status_t CS_ComputeEepromMemory(CS_Res_EepromMemory_Table_Entry_t *ResultsEntry, uint32 *ComputedCSValue,
                                     bool *DoneWithEntry)
 {
-    UT_Stub_RegisterContext(UT_KEY(CS_ComputeEepromMemory), ResultsEntry);
-    UT_Stub_RegisterContext(UT_KEY(CS_ComputeEepromMemory), ComputedCSValue);
-    UT_Stub_RegisterContext(UT_KEY(CS_ComputeEepromMemory), DoneWithEntry);
+    UT_GenStub_SetupReturnBuffer(CS_ComputeEepromMemory, CFE_Status_t);
 
-    return UT_DEFAULT_IMPL(CS_ComputeEepromMemory);
+    UT_GenStub_AddParam(CS_ComputeEepromMemory, CS_Res_EepromMemory_Table_Entry_t *, ResultsEntry);
+    UT_GenStub_AddParam(CS_ComputeEepromMemory, uint32 *, ComputedCSValue);
+    UT_GenStub_AddParam(CS_ComputeEepromMemory, bool *, DoneWithEntry);
+
+    UT_GenStub_Execute(CS_ComputeEepromMemory, Basic, NULL);
+
+    return UT_GenStub_GetReturnValue(CS_ComputeEepromMemory, CFE_Status_t);
 }
 
+/*
+ * ----------------------------------------------------
+ * Generated stub function for CS_ComputeTables()
+ * ----------------------------------------------------
+ */
 CFE_Status_t CS_ComputeTables(CS_Res_Tables_Table_Entry_t *ResultsEntry, uint32 *ComputedCSValue, bool *DoneWithEntry)
 {
-    UT_Stub_RegisterContext(UT_KEY(CS_ComputeTables), ResultsEntry);
-    UT_Stub_RegisterContext(UT_KEY(CS_ComputeTables), ComputedCSValue);
-    UT_Stub_RegisterContext(UT_KEY(CS_ComputeTables), DoneWithEntry);
+    UT_GenStub_SetupReturnBuffer(CS_ComputeTables, CFE_Status_t);
 
-    return UT_DEFAULT_IMPL(CS_ComputeTables);
+    UT_GenStub_AddParam(CS_ComputeTables, CS_Res_Tables_Table_Entry_t *, ResultsEntry);
+    UT_GenStub_AddParam(CS_ComputeTables, uint32 *, ComputedCSValue);
+    UT_GenStub_AddParam(CS_ComputeTables, bool *, DoneWithEntry);
+
+    UT_GenStub_Execute(CS_ComputeTables, Basic, NULL);
+
+    return UT_GenStub_GetReturnValue(CS_ComputeTables, CFE_Status_t);
 }
 
-CFE_Status_t CS_ComputeApp(CS_Res_App_Table_Entry_t *ResultsEntry, uint32 *ComputedCSValue, bool *DoneWithEntry)
-{
-    UT_Stub_RegisterContext(UT_KEY(CS_ComputeApp), ResultsEntry);
-    UT_Stub_RegisterContext(UT_KEY(CS_ComputeApp), ComputedCSValue);
-    UT_Stub_RegisterContext(UT_KEY(CS_ComputeApp), DoneWithEntry);
-
-    return UT_DEFAULT_IMPL(CS_ComputeApp);
-}
-
-void CS_RecomputeEepromMemoryChildTask(void)
-{
-    UT_DEFAULT_IMPL(CS_RecomputeEepromMemoryChildTask);
-}
-
-void CS_RecomputeTablesChildTask(void)
-{
-    UT_DEFAULT_IMPL(CS_RecomputeTablesChildTask);
-}
-
-void CS_RecomputeAppChildTask(void)
-{
-    UT_DEFAULT_IMPL(CS_RecomputeAppChildTask);
-}
-
+/*
+ * ----------------------------------------------------
+ * Generated stub function for CS_OneShotChildTask()
+ * ----------------------------------------------------
+ */
 void CS_OneShotChildTask(void)
 {
-    UT_DEFAULT_IMPL(CS_OneShotChildTask);
+
+    UT_GenStub_Execute(CS_OneShotChildTask, Basic, NULL);
+}
+
+/*
+ * ----------------------------------------------------
+ * Generated stub function for CS_RecomputeAppChildTask()
+ * ----------------------------------------------------
+ */
+void CS_RecomputeAppChildTask(void)
+{
+
+    UT_GenStub_Execute(CS_RecomputeAppChildTask, Basic, NULL);
+}
+
+/*
+ * ----------------------------------------------------
+ * Generated stub function for CS_RecomputeEepromMemoryChildTask()
+ * ----------------------------------------------------
+ */
+void CS_RecomputeEepromMemoryChildTask(void)
+{
+
+    UT_GenStub_Execute(CS_RecomputeEepromMemoryChildTask, Basic, NULL);
+}
+
+/*
+ * ----------------------------------------------------
+ * Generated stub function for CS_RecomputeTablesChildTask()
+ * ----------------------------------------------------
+ */
+void CS_RecomputeTablesChildTask(void)
+{
+
+    UT_GenStub_Execute(CS_RecomputeTablesChildTask, Basic, NULL);
 }

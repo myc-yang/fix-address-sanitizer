@@ -17,55 +17,95 @@
  * limitations under the License.
  ************************************************************************/
 
-/*
- * Includes
+/**
+ * @file
+ *
+ * Auto-Generated stub implementations for functions defined in cs_memory_cmds header
  */
 
 #include "cs_memory_cmds.h"
+#include "utgenstub.h"
 
-/* UT includes */
-#include "uttest.h"
-#include "utassert.h"
-#include "utstubs.h"
-
-void CS_DisableMemoryCmd(const CS_NoArgsCmd_t *CmdPtr)
-{
-    UT_Stub_RegisterContext(UT_KEY(CS_DisableMemoryCmd), CmdPtr);
-    UT_DEFAULT_IMPL(CS_DisableMemoryCmd);
-}
-
-void CS_EnableMemoryCmd(const CS_NoArgsCmd_t *CmdPtr)
-{
-    UT_Stub_RegisterContext(UT_KEY(CS_EnableMemoryCmd), CmdPtr);
-    UT_DEFAULT_IMPL(CS_EnableMemoryCmd);
-}
-
-void CS_ReportBaselineEntryIDMemoryCmd(const CS_EntryCmd_t *CmdPtr)
-{
-    UT_Stub_RegisterContext(UT_KEY(CS_ReportBaselineEntryIDMemoryCmd), CmdPtr);
-    UT_DEFAULT_IMPL(CS_ReportBaselineEntryIDMemoryCmd);
-}
-
+/*
+ * ----------------------------------------------------
+ * Generated stub function for CS_DisableEntryIDMemoryCmd()
+ * ----------------------------------------------------
+ */
 void CS_DisableEntryIDMemoryCmd(const CS_EntryCmd_t *CmdPtr)
 {
-    UT_Stub_RegisterContext(UT_KEY(CS_DisableEntryIDMemoryCmd), CmdPtr);
-    UT_DEFAULT_IMPL(CS_DisableEntryIDMemoryCmd);
+    UT_GenStub_AddParam(CS_DisableEntryIDMemoryCmd, const CS_EntryCmd_t *, CmdPtr);
+
+    UT_GenStub_Execute(CS_DisableEntryIDMemoryCmd, Basic, NULL);
 }
 
-void CS_RecomputeBaselineMemoryCmd(const CS_EntryCmd_t *CmdPtr)
+/*
+ * ----------------------------------------------------
+ * Generated stub function for CS_DisableMemoryCmd()
+ * ----------------------------------------------------
+ */
+void CS_DisableMemoryCmd(const CS_NoArgsCmd_t *CmdPtr)
 {
-    UT_Stub_RegisterContext(UT_KEY(CS_RecomputeBaselineMemoryCmd), CmdPtr);
-    UT_DEFAULT_IMPL(CS_RecomputeBaselineMemoryCmd);
+    UT_GenStub_AddParam(CS_DisableMemoryCmd, const CS_NoArgsCmd_t *, CmdPtr);
+
+    UT_GenStub_Execute(CS_DisableMemoryCmd, Basic, NULL);
 }
 
+/*
+ * ----------------------------------------------------
+ * Generated stub function for CS_EnableEntryIDMemoryCmd()
+ * ----------------------------------------------------
+ */
 void CS_EnableEntryIDMemoryCmd(const CS_EntryCmd_t *CmdPtr)
 {
-    UT_Stub_RegisterContext(UT_KEY(CS_EnableEntryIDMemoryCmd), CmdPtr);
-    UT_DEFAULT_IMPL(CS_EnableEntryIDMemoryCmd);
+    UT_GenStub_AddParam(CS_EnableEntryIDMemoryCmd, const CS_EntryCmd_t *, CmdPtr);
+
+    UT_GenStub_Execute(CS_EnableEntryIDMemoryCmd, Basic, NULL);
 }
 
+/*
+ * ----------------------------------------------------
+ * Generated stub function for CS_EnableMemoryCmd()
+ * ----------------------------------------------------
+ */
+void CS_EnableMemoryCmd(const CS_NoArgsCmd_t *CmdPtr)
+{
+    UT_GenStub_AddParam(CS_EnableMemoryCmd, const CS_NoArgsCmd_t *, CmdPtr);
+
+    UT_GenStub_Execute(CS_EnableMemoryCmd, Basic, NULL);
+}
+
+/*
+ * ----------------------------------------------------
+ * Generated stub function for CS_GetEntryIDMemoryCmd()
+ * ----------------------------------------------------
+ */
 void CS_GetEntryIDMemoryCmd(const CS_GetEntryIDCmd_t *CmdPtr)
 {
-    UT_Stub_RegisterContext(UT_KEY(CS_GetEntryIDMemoryCmd), CmdPtr);
-    UT_DEFAULT_IMPL(CS_GetEntryIDMemoryCmd);
+    UT_GenStub_AddParam(CS_GetEntryIDMemoryCmd, const CS_GetEntryIDCmd_t *, CmdPtr);
+
+    UT_GenStub_Execute(CS_GetEntryIDMemoryCmd, Basic, NULL);
+}
+
+/*
+ * ----------------------------------------------------
+ * Generated stub function for CS_RecomputeBaselineMemoryCmd()
+ * ----------------------------------------------------
+ */
+void CS_RecomputeBaselineMemoryCmd(const CS_EntryCmd_t *CmdPtr)
+{
+    UT_GenStub_AddParam(CS_RecomputeBaselineMemoryCmd, const CS_EntryCmd_t *, CmdPtr);
+
+    UT_GenStub_Execute(CS_RecomputeBaselineMemoryCmd, Basic, NULL);
+}
+
+/*
+ * ----------------------------------------------------
+ * Generated stub function for CS_ReportBaselineEntryIDMemoryCmd()
+ * ----------------------------------------------------
+ */
+void CS_ReportBaselineEntryIDMemoryCmd(const CS_EntryCmd_t *CmdPtr)
+{
+    UT_GenStub_AddParam(CS_ReportBaselineEntryIDMemoryCmd, const CS_EntryCmd_t *, CmdPtr);
+
+    UT_GenStub_Execute(CS_ReportBaselineEntryIDMemoryCmd, Basic, NULL);
 }

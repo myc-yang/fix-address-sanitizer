@@ -233,7 +233,7 @@ void CS_FindEnabledEepromEntry_Test(void)
     /* Set up to find last entry (skip first) */
     CS_AppData.ResEepromTblPtr[0].State                                   = CS_STATE_ENABLED;
     CS_AppData.ResEepromTblPtr[CS_MAX_NUM_EEPROM_TABLE_ENTRIES - 1].State = CS_STATE_ENABLED;
-    CS_AppData.HkPacket.Payload.CurrentEntryInTable                               = 1;
+    CS_AppData.HkPacket.Payload.CurrentEntryInTable                       = 1;
 
     UtAssert_BOOL_TRUE(CS_FindEnabledEepromEntry(&EnabledEntry));
     UtAssert_UINT16_EQ(CS_AppData.HkPacket.Payload.CurrentEntryInTable, CS_MAX_NUM_EEPROM_TABLE_ENTRIES - 1);
@@ -254,7 +254,7 @@ void CS_FindEnabledMemoryEntry_Test(void)
     /* Set up to find last entry (skip first) */
     CS_AppData.ResMemoryTblPtr[0].State                                   = CS_STATE_ENABLED;
     CS_AppData.ResMemoryTblPtr[CS_MAX_NUM_MEMORY_TABLE_ENTRIES - 1].State = CS_STATE_ENABLED;
-    CS_AppData.HkPacket.Payload.CurrentEntryInTable                               = 1;
+    CS_AppData.HkPacket.Payload.CurrentEntryInTable                       = 1;
 
     UtAssert_BOOL_TRUE(CS_FindEnabledMemoryEntry(&EnabledEntry));
     UtAssert_UINT16_EQ(CS_AppData.HkPacket.Payload.CurrentEntryInTable, CS_MAX_NUM_MEMORY_TABLE_ENTRIES - 1);
@@ -275,7 +275,7 @@ void CS_FindEnabledTablesEntry_Test(void)
     /* Set up to find last entry (skip first) */
     CS_AppData.ResTablesTblPtr[0].State                                   = CS_STATE_ENABLED;
     CS_AppData.ResTablesTblPtr[CS_MAX_NUM_TABLES_TABLE_ENTRIES - 1].State = CS_STATE_ENABLED;
-    CS_AppData.HkPacket.Payload.CurrentEntryInTable                               = 1;
+    CS_AppData.HkPacket.Payload.CurrentEntryInTable                       = 1;
 
     UtAssert_BOOL_TRUE(CS_FindEnabledTablesEntry(&EnabledEntry));
     UtAssert_UINT16_EQ(CS_AppData.HkPacket.Payload.CurrentEntryInTable, CS_MAX_NUM_TABLES_TABLE_ENTRIES - 1);
@@ -296,7 +296,7 @@ void CS_FindEnabledAppEntry_Test(void)
     /* Set up to find last entry (skip first) */
     CS_AppData.ResAppTblPtr[0].State                                = CS_STATE_ENABLED;
     CS_AppData.ResAppTblPtr[CS_MAX_NUM_APP_TABLE_ENTRIES - 1].State = CS_STATE_ENABLED;
-    CS_AppData.HkPacket.Payload.CurrentEntryInTable                         = 1;
+    CS_AppData.HkPacket.Payload.CurrentEntryInTable                 = 1;
 
     UtAssert_BOOL_TRUE(CS_FindEnabledAppEntry(&EnabledEntry));
     UtAssert_UINT16_EQ(CS_AppData.HkPacket.Payload.CurrentEntryInTable, CS_MAX_NUM_APP_TABLE_ENTRIES - 1);
@@ -340,7 +340,7 @@ void CS_BackgroundCfeCore_Test(void)
 
     /* Segment disabled */
     CS_AppData.HkPacket.Payload.CfeCoreCSState = CS_STATE_ENABLED;
-    CS_AppData.CfeCoreCodeSeg.State    = CS_STATE_DISABLED;
+    CS_AppData.CfeCoreCodeSeg.State            = CS_STATE_DISABLED;
     UtAssert_BOOL_FALSE(CS_BackgroundCfeCore());
     UtAssert_UINT16_EQ(CS_AppData.HkPacket.Payload.CurrentEntryInTable, 0);
     UtAssert_UINT16_EQ(CS_AppData.HkPacket.Payload.CurrentCSTable, 2);
@@ -374,7 +374,7 @@ void CS_BackgroundOS_Test(void)
 
     /* Segment disabled */
     CS_AppData.HkPacket.Payload.OSCSState = CS_STATE_ENABLED;
-    CS_AppData.OSCodeSeg.State    = CS_STATE_DISABLED;
+    CS_AppData.OSCodeSeg.State            = CS_STATE_DISABLED;
     UtAssert_BOOL_FALSE(CS_BackgroundOS());
     UtAssert_UINT16_EQ(CS_AppData.HkPacket.Payload.CurrentEntryInTable, 0);
     UtAssert_UINT16_EQ(CS_AppData.HkPacket.Payload.CurrentCSTable, 2);
@@ -407,7 +407,7 @@ void CS_BackgroundEeprom_Test(void)
     UtAssert_UINT16_EQ(CS_AppData.HkPacket.Payload.CurrentCSTable, 1);
 
     /* All entries disabled */
-    CS_AppData.HkPacket.Payload.EepromCSState             = CS_STATE_ENABLED;
+    CS_AppData.HkPacket.Payload.EepromCSState     = CS_STATE_ENABLED;
     CS_AppData.ResEepromTblPtr[0].ComparisonValue = 1;
     CS_AppData.ResEepromTblPtr[1].ComparisonValue = 2;
     UtAssert_BOOL_FALSE(CS_BackgroundEeprom());
@@ -426,8 +426,8 @@ void CS_BackgroundEeprom_Test(void)
     UtAssert_UINT16_EQ(CS_AppData.HkPacket.Payload.CurrentCSTable, 2);
 
     /* Last entry, Enabled, compares, done with entry */
-    CS_AppData.HkPacket.Payload.CurrentEntryInTable                                   = CS_MAX_NUM_EEPROM_TABLE_ENTRIES - 1;
-    CS_AppData.ResEepromTblPtr[CS_AppData.HkPacket.Payload.CurrentEntryInTable].State = CS_STATE_ENABLED;
+    CS_AppData.HkPacket.Payload.CurrentEntryInTable = CS_MAX_NUM_EEPROM_TABLE_ENTRIES - 1;
+    CS_AppData.ResEepromTblPtr[CS_AppData.HkPacket.Payload.CurrentEntryInTable].State           = CS_STATE_ENABLED;
     CS_AppData.ResEepromTblPtr[CS_AppData.HkPacket.Payload.CurrentEntryInTable].ComparisonValue = 3;
     UT_SetHandlerFunction(UT_KEY(CS_ComputeEepromMemory), CS_UTILS_TEST_CS_ComputeHandler, NULL);
     UtAssert_BOOL_TRUE(CS_BackgroundEeprom());
@@ -463,7 +463,7 @@ void CS_BackgroundMemory_Test(void)
     UtAssert_UINT16_EQ(CS_AppData.HkPacket.Payload.CurrentCSTable, 2);
 
     /* Last entry, Enabled, compares, done with entry */
-    CS_AppData.HkPacket.Payload.CurrentEntryInTable                                   = CS_MAX_NUM_MEMORY_TABLE_ENTRIES - 1;
+    CS_AppData.HkPacket.Payload.CurrentEntryInTable = CS_MAX_NUM_MEMORY_TABLE_ENTRIES - 1;
     CS_AppData.ResMemoryTblPtr[CS_AppData.HkPacket.Payload.CurrentEntryInTable].State = CS_STATE_ENABLED;
     UT_SetHandlerFunction(UT_KEY(CS_ComputeEepromMemory), CS_UTILS_TEST_CS_ComputeHandler, NULL);
     UtAssert_BOOL_TRUE(CS_BackgroundMemory());
@@ -507,7 +507,7 @@ void CS_BackgroundTables_Test(void)
     UtAssert_UINT16_EQ(CS_AppData.HkPacket.Payload.CurrentCSTable, 2);
 
     /* Last entry, Enabled, compares, done with entry */
-    CS_AppData.HkPacket.Payload.CurrentEntryInTable                                   = CS_MAX_NUM_TABLES_TABLE_ENTRIES - 1;
+    CS_AppData.HkPacket.Payload.CurrentEntryInTable = CS_MAX_NUM_TABLES_TABLE_ENTRIES - 1;
     CS_AppData.ResTablesTblPtr[CS_AppData.HkPacket.Payload.CurrentEntryInTable].State = CS_STATE_ENABLED;
     UT_SetHandlerFunction(UT_KEY(CS_ComputeTables), CS_UTILS_TEST_CS_ComputeHandler, NULL);
     UtAssert_BOOL_TRUE(CS_BackgroundTables());
@@ -705,6 +705,17 @@ void CS_CheckRecomputeOneShot_Test(void)
     UtAssert_UINT8_EQ(CS_AppData.HkPacket.Payload.CmdErrCounter, 2);
 }
 
+void CS_GetTableTypeAsString_Test(void)
+{
+    uint32 i;
+
+    /* Just call the function with every table type, it should never return NULL */
+    for (i = 0; i <= CS_NUM_TABLES; ++i)
+    {
+        UtAssert_NOT_NULL(CS_GetTableTypeAsString(i));
+    }
+}
+
 void UtTest_Setup(void)
 {
     UtTest_Add(CS_ZeroEepromTempValues_Test, CS_Test_Setup, CS_Test_TearDown, "CS_ZeroEepromTempValues_Test");
@@ -734,4 +745,5 @@ void UtTest_Setup(void)
     UtTest_Add(CS_HandleRoutineTableUpdates_Test, CS_Test_Setup, CS_Test_TearDown, "CS_HandleRoutineTableUpdates_Test");
     UtTest_Add(CS_AttemptTableReshare_Test, CS_Test_Setup, CS_Test_TearDown, "CS_AttemptTableReshare_Test");
     UtTest_Add(CS_CheckRecomputeOneShot_Test, CS_Test_Setup, CS_Test_TearDown, "CS_CheckRecomputeOneShot_Test");
+    UtTest_Add(CS_GetTableTypeAsString_Test, CS_Test_Setup, CS_Test_TearDown, "CS_GetTableTypeAsString_Test");
 }

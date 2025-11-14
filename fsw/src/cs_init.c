@@ -31,6 +31,7 @@
 #include "cs_app_cmds.h"
 #include "cs_cmds.h"
 #include "cs_init.h"
+#include "cs_table_processing.h"
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                 */
@@ -98,11 +99,11 @@ CFE_Status_t CS_InitAllTables(void)
     CFE_Status_t ResultInit = CFE_SUCCESS;
 
     ResultInit = CS_TableInit(&CS_AppData.DefEepromTableHandle, &CS_AppData.ResEepromTableHandle,
-                              (void *)&CS_AppData.DefEepromTblPtr, (void *)&CS_AppData.ResEepromTblPtr, CS_EEPROM_TABLE,
-                              CS_DEF_EEPROM_TABLE_NAME, CS_RESULTS_EEPROM_TABLE_NAME, CS_MAX_NUM_EEPROM_TABLE_ENTRIES,
-                              CS_DEF_EEPROM_TABLE_FILENAME, &CS_AppData.DefaultEepromDefTable,
-                              sizeof(CS_Def_EepromMemory_Table_Entry_t), sizeof(CS_Res_EepromMemory_Table_Entry_t),
-                              CS_ValidateEepromChecksumDefinitionTable);
+                              (void **)&CS_AppData.DefEepromTblPtr, (void **)&CS_AppData.ResEepromTblPtr,
+                              CS_EEPROM_TABLE, CS_DEF_EEPROM_TABLE_NAME, CS_RESULTS_EEPROM_TABLE_NAME,
+                              CS_MAX_NUM_EEPROM_TABLE_ENTRIES, CS_DEF_EEPROM_TABLE_FILENAME,
+                              &CS_AppData.DefaultEepromDefTable, sizeof(CS_Def_EepromMemory_Table_Entry_t),
+                              sizeof(CS_Res_EepromMemory_Table_Entry_t), CS_ValidateEepromChecksumDefinitionTable);
 
     if (ResultInit != CFE_SUCCESS)
     {
@@ -113,7 +114,7 @@ CFE_Status_t CS_InitAllTables(void)
     else
     {
         ResultInit = CS_TableInit(&CS_AppData.DefMemoryTableHandle, &CS_AppData.ResMemoryTableHandle,
-                                  (void *)&CS_AppData.DefMemoryTblPtr, (void *)&CS_AppData.ResMemoryTblPtr,
+                                  (void **)&CS_AppData.DefMemoryTblPtr, (void **)&CS_AppData.ResMemoryTblPtr,
                                   CS_MEMORY_TABLE, CS_DEF_MEMORY_TABLE_NAME, CS_RESULTS_MEMORY_TABLE_NAME,
                                   CS_MAX_NUM_MEMORY_TABLE_ENTRIES, CS_DEF_MEMORY_TABLE_FILENAME,
                                   &CS_AppData.DefaultMemoryDefTable, sizeof(CS_Def_EepromMemory_Table_Entry_t),
@@ -130,8 +131,8 @@ CFE_Status_t CS_InitAllTables(void)
     if (ResultInit == CFE_SUCCESS)
     {
         ResultInit = CS_TableInit(
-            &CS_AppData.DefAppTableHandle, &CS_AppData.ResAppTableHandle, (void *)&CS_AppData.DefAppTblPtr,
-            (void *)&CS_AppData.ResAppTblPtr, CS_APP_TABLE, CS_DEF_APP_TABLE_NAME, CS_RESULTS_APP_TABLE_NAME,
+            &CS_AppData.DefAppTableHandle, &CS_AppData.ResAppTableHandle, (void **)&CS_AppData.DefAppTblPtr,
+            (void **)&CS_AppData.ResAppTblPtr, CS_APP_TABLE, CS_DEF_APP_TABLE_NAME, CS_RESULTS_APP_TABLE_NAME,
             CS_MAX_NUM_APP_TABLE_ENTRIES, CS_DEF_APP_TABLE_FILENAME, &CS_AppData.DefaultAppDefTable,
             sizeof(CS_Def_App_Table_Entry_t), sizeof(CS_Res_App_Table_Entry_t), CS_ValidateAppChecksumDefinitionTable);
 
@@ -146,7 +147,7 @@ CFE_Status_t CS_InitAllTables(void)
     if (ResultInit == CFE_SUCCESS)
     {
         ResultInit = CS_TableInit(&CS_AppData.DefTablesTableHandle, &CS_AppData.ResTablesTableHandle,
-                                  (void *)&CS_AppData.DefTablesTblPtr, (void *)&CS_AppData.ResTablesTblPtr,
+                                  (void **)&CS_AppData.DefTablesTblPtr, (void **)&CS_AppData.ResTablesTblPtr,
                                   CS_TABLES_TABLE, CS_DEF_TABLES_TABLE_NAME, CS_RESULTS_TABLES_TABLE_NAME,
                                   CS_MAX_NUM_TABLES_TABLE_ENTRIES, CS_DEF_TABLES_TABLE_FILENAME,
                                   &CS_AppData.DefaultTablesDefTable, sizeof(CS_Def_Tables_Table_Entry_t),
