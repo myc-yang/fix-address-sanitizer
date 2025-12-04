@@ -30,7 +30,7 @@
  **
  **************************************************************************/
 #include "cfe.h"
-#include "cs_tbldefs.h"
+#include "cs_tbl.h"
 
 /**
  * \brief Converts the numeric table ID to a string for logging
@@ -39,7 +39,7 @@
  *
  * \return Pointer to printable string (never NULL)
  */
-const char *CS_GetTableTypeAsString(uint32 TableId);
+const char *CS_GetTableTypeAsString(CS_ChecksumType_Enum_t TableId);
 
 /**
  * \brief Zeros out temporary checksum values of EEPROM table entries
@@ -340,33 +340,6 @@ bool CS_FindEnabledTablesEntry(uint16 *EnabledEntry);
  *  \retval false Enabled entry was not found in the table
  */
 bool CS_FindEnabledAppEntry(uint16 *EnabledEntry);
-
-/**
- * \brief Verify command message length
- *
- *  \par Description
- *       This routine will check if the actual length of a software bus
- *       command message matches the expected length and send an
- *       error event message if a mismatch occurs
- *
- *  \par Assumptions, External Events, and Notes:
- *       None
- *
- *  \param [in]   msg              A #CFE_MSG_Message_t* pointer that
- *                                 references the software bus message.
- *                                 Calling function ensures this is
- *                                 non-null.
- *
- *  \param [in]   ExpectedLength   The expected length of the message
- *                                 based upon the command code
- *
- *  \return Boolean length valid response
- *  \retval true  Message length matches ExpectedLength
- *  \retval false Message length ExpectedLength mismatch
- *
- *  \sa #CS_CMD_LEN_ERR_EID
- */
-bool CS_VerifyCmdLength(const CFE_MSG_Message_t *msg, size_t ExpectedLength);
 
 /**
  * \brief Compute a background check cycle on the OS

@@ -49,7 +49,7 @@
  *
  *  \sa #CS_DISABLE_MEMORY_CC
  */
-void CS_DisableMemoryCmd(const CS_NoArgsCmd_t *CmdPtr);
+CFE_Status_t CS_DisableMemoryCmd(const CS_DisableMemoryCmd_t *CmdPtr);
 
 /**
  * \brief Process an enable background checking for the Memory
@@ -68,7 +68,7 @@ void CS_DisableMemoryCmd(const CS_NoArgsCmd_t *CmdPtr);
  *
  *  \sa #CS_ENABLE_MEMORY_CC
  */
-void CS_EnableMemoryCmd(const CS_NoArgsCmd_t *CmdPtr);
+CFE_Status_t CS_EnableMemoryCmd(const CS_EnableMemoryCmd_t *CmdPtr);
 
 /**
  * \brief Proccess a report baseline of a Memory Entry command
@@ -82,9 +82,9 @@ void CS_EnableMemoryCmd(const CS_NoArgsCmd_t *CmdPtr);
  *
  *  \param[in] CmdPtr Command pointer, verified non-null in CS_AppMain
  *
- *  \sa #CS_REPORT_BASELINE_MEMORY_CC
+ *  \sa #CS_REPORT_BASELINE_ENTRY_ID_MEMORY_CC
  */
-void CS_ReportBaselineEntryIDMemoryCmd(const CS_EntryCmd_t *CmdPtr);
+CFE_Status_t CS_ReportBaselineEntryIDMemoryCmd(const CS_ReportBaselineEntryIDMemoryCmd_t *CmdPtr);
 
 /**
  * \brief Process a disable background checking for a Memory
@@ -105,9 +105,9 @@ void CS_ReportBaselineEntryIDMemoryCmd(const CS_EntryCmd_t *CmdPtr);
  *
  *  \param[in] CmdPtr Command pointer, verified non-null in CS_AppMain
  *
- *  \sa #CS_DISABLE_ENTRY_MEMORY_CC
+ *  \sa #CS_DISABLE_ENTRY_ID_MEMORY_CC
  */
-void CS_DisableEntryIDMemoryCmd(const CS_EntryCmd_t *CmdPtr);
+CFE_Status_t CS_DisableEntryIDMemoryCmd(const CS_DisableEntryIDMemoryCmd_t *CmdPtr);
 
 /**
  * \brief Process a recopmute baseline of a Memory table entry command
@@ -123,7 +123,7 @@ void CS_DisableEntryIDMemoryCmd(const CS_EntryCmd_t *CmdPtr);
  *
  *  \sa #CS_RECOMPUTE_BASELINE_MEMORY_CC
  */
-void CS_RecomputeBaselineMemoryCmd(const CS_EntryCmd_t *CmdPtr);
+CFE_Status_t CS_RecomputeBaselineMemoryCmd(const CS_RecomputeBaselineMemoryCmd_t *CmdPtr);
 
 /**
  * \brief Process an enable background checking for a Memory
@@ -144,9 +144,9 @@ void CS_RecomputeBaselineMemoryCmd(const CS_EntryCmd_t *CmdPtr);
  *
  *  \param[in] CmdPtr Command pointer, verified non-null in CS_AppMain
  *
- *  \sa #CS_ENABLE_ENTRY_MEMORY_CC
+ *  \sa #CS_ENABLE_ENTRY_ID_MEMORY_CC
  */
-void CS_EnableEntryIDMemoryCmd(const CS_EntryCmd_t *CmdPtr);
+CFE_Status_t CS_EnableEntryIDMemoryCmd(const CS_EnableEntryIDMemoryCmd_t *CmdPtr);
 
 /**
  * \brief Process a get Memory Entry by Address command
@@ -162,6 +162,6 @@ void CS_EnableEntryIDMemoryCmd(const CS_EntryCmd_t *CmdPtr);
  *
  *  \sa #CS_GET_ENTRY_ID_MEMORY_CC
  */
-void CS_GetEntryIDMemoryCmd(const CS_GetEntryIDCmd_t *CmdPtr);
+CFE_Status_t CS_GetEntryIDMemoryCmd(const CS_GetEntryIDMemoryCmd_t *CmdPtr);
 
 #endif

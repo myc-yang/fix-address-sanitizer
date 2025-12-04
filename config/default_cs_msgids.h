@@ -21,17 +21,19 @@
  * @file
  *   Specification for the CFS Checksum constants for message IDs
  */
-#ifndef CS_MSGIDS_H
-#define CS_MSGIDS_H
+#ifndef DEFAULT_CS_MSGIDS_H
+#define DEFAULT_CS_MSGIDS_H
+
+#include "cs_msgid_values.h"
 
 /**
  * \defgroup cfscscmdmid CFS Checksum Command Message IDs
  * \{
  */
 
-#define CS_CMD_MID              (0x189F) /**< \brief CS Command Message ID */
-#define CS_SEND_HK_MID          (0x18A0) /**< \brief CS Housekeeping Request Message ID */
-#define CS_BACKGROUND_CYCLE_MID (0x18A1) /**< \brief CS Background Cycle Message ID */
+#define CS_CMD_MID              CFE_PLATFORM_CS_CMD_MIDVAL(CMD)
+#define CS_SEND_HK_MID          CFE_PLATFORM_CS_CMD_MIDVAL(SEND_HK)
+#define CS_BACKGROUND_CYCLE_MID CFE_PLATFORM_CS_CMD_MIDVAL(BACKGROUND_CYCLE)
 
 /**\}*/
 
@@ -40,7 +42,7 @@
  * \{
  */
 
-#define CS_HK_TLM_MID (0x08A4) /**< \brief CS Housekeeping Telemetry Message ID */
+#define CS_HK_TLM_MID CFE_PLATFORM_CS_TLM_MIDVAL(HK_TLM)
 
 /**\}*/
 

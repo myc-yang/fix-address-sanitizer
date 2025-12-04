@@ -32,9 +32,8 @@
 **************************************************************************/
 
 #include "cfe.h"
-#include "cs_tbldefs.h"
+#include "cs_tbl.h"
 #include "cs_msg.h"
-#include "cs_msgdefs.h"
 #include "cs_platform_cfg.h"
 #include "cs_mission_cfg.h"
 #include "cs_msgids.h"
@@ -62,7 +61,7 @@
  * \name CS Command Pipe Parameters
  * \{
  */
-#define CS_CMD_PIPE_NAME     "CS_CMD_PIPE"
+#define CS_CMD_PIPE_NAME "CS_CMD_PIPE"
 /**\}*/
 
 /**
@@ -100,9 +99,9 @@ typedef struct
 {
     CS_HkPacket_t HkPacket; /**< \brief Housekeeping telemetry packet */
 
-    uint16          ChildTaskTable;   /**< \brief Table for the child task to process */
-    uint16          ChildTaskEntryID; /**< \brief Entry in table for child task to process */
-    CFE_ES_TaskId_t ChildTaskID;      /**< \brief Task ID for the child task */
+    CS_ChecksumType_Enum_t ChildTaskTable;   /**< \brief Table for the child task to process */
+    uint16                 ChildTaskEntryID; /**< \brief Entry in table for child task to process */
+    CFE_ES_TaskId_t        ChildTaskID;      /**< \brief Task ID for the child task */
 
     size_t MaxBytesPerCycle; /**< \brief Max number of bytes to process in a cycle */
 
@@ -223,52 +222,6 @@ void CS_UpdateCDS(void);
  * \retval #CFE_SUCCESS \copybrief CFE_SUCCESS
  */
 CFE_Status_t CS_AppInit(void);
-
-/**
- * \brief Process a command pipe message
- *
- *  \par Description
- *       Processes a single software bus command pipe message. Checks
- *       the message and command IDs and calls the appropriate routine
- *       to handle the command.
- *
- *  \par Assumptions, External Events, and Notes:
- *       None
- *
- *  \param [in]   BufPtr   A #CFE_SB_Buffer_t* pointer that
- *                         references the software bus message.  The
- *                         calling function verifies that BufPtr is
- *                         non-null.
- *
- * \return Execution status, see \ref CFEReturnCodes
- * \retval #CFE_SUCCESS \copybrief CFE_SUCCESS
- */
-CFE_Status_t CS_AppPipe(const CFE_SB_Buffer_t *BufPtr);
-
-/**
- * \brief Process housekeeping request
- *
- *  \par Description
- *       Processes an on-board housekeeping request message.
- *
- *  \par Assumptions, External Events, and Notes:
- *       This command does not affect the command execution counter
- *
- *  \param[in] CmdPtr Command pointer, verified non-null in CS_AppMain
- */
-void CS_HousekeepingCmd(const CS_NoArgsCmd_t *CmdPtr);
-
-/**
- * \brief Command packet processor
- *
- * \par Description
- *      Processes all CS commands
- *
- * \param [in] BufPtr A CFE_SB_Buffer_t* pointer that
- *                    references the software bus pointer. The
- *                    BufPtr is verified non-null in CS_AppMain.
- */
-void CS_ProcessCmd(const CFE_SB_Buffer_t *BufPtr);
 
 /**
  * \brief Restore tables states from CDS if enabled

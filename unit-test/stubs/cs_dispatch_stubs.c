@@ -19,32 +19,37 @@
 
 /**
  * @file
- *   Specification for the CFS Checksum macro constants that can
- *   be configured from one mission to another
- */
-#ifndef CS_MISSION_CFG_H
-#define CS_MISSION_CFG_H
-
-#include <cfe_mission_cfg.h>
-
-/**
- * \defgroup cfscsmissioncfg CFS Checksum Mission Configuration
- * \{
- */
-
-/**
- * \brief default CRC algorithm
  *
- *  \par  Description:
- *        This parameter is the algorithm used by CS to checksum
- *        the requested data.
- *
- *  \par Limits:
- *         This parameter is limited to either #CFE_MISSION_ES_DEFAULT_CRC,
- *         or  #CFE_ES_CrcType_CRC_16
+ * Auto-Generated stub implementations for functions defined in cs_dispatch header
  */
-#define CS_DEFAULT_ALGORITHM CFE_MISSION_ES_DEFAULT_CRC
 
-/**\}*/
+#include "cs_dispatch.h"
+#include "utgenstub.h"
 
-#endif
+/*
+ * ----------------------------------------------------
+ * Generated stub function for CS_AppPipe()
+ * ----------------------------------------------------
+ */
+CFE_Status_t CS_AppPipe(const CFE_SB_Buffer_t *BufPtr)
+{
+    UT_GenStub_SetupReturnBuffer(CS_AppPipe, CFE_Status_t);
+
+    UT_GenStub_AddParam(CS_AppPipe, const CFE_SB_Buffer_t *, BufPtr);
+
+    UT_GenStub_Execute(CS_AppPipe, Basic, NULL);
+
+    return UT_GenStub_GetReturnValue(CS_AppPipe, CFE_Status_t);
+}
+
+/*
+ * ----------------------------------------------------
+ * Generated stub function for CS_ProcessCmd()
+ * ----------------------------------------------------
+ */
+void CS_ProcessCmd(const CFE_SB_Buffer_t *BufPtr)
+{
+    UT_GenStub_AddParam(CS_ProcessCmd, const CFE_SB_Buffer_t *, BufPtr);
+
+    UT_GenStub_Execute(CS_ProcessCmd, Basic, NULL);
+}

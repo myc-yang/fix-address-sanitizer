@@ -282,11 +282,11 @@ bool CS_GetTableResTblEntryByName(CS_Res_Tables_Table_Entry_t **EntryPtr, const 
  * Generated stub function for CS_GetTableTypeAsString()
  * ----------------------------------------------------
  */
-const char *CS_GetTableTypeAsString(uint32 TableId)
+const char *CS_GetTableTypeAsString(CS_ChecksumType_Enum_t TableId)
 {
     UT_GenStub_SetupReturnBuffer(CS_GetTableTypeAsString, const char *);
 
-    UT_GenStub_AddParam(CS_GetTableTypeAsString, uint32, TableId);
+    UT_GenStub_AddParam(CS_GetTableTypeAsString, CS_ChecksumType_Enum_t, TableId);
 
     UT_GenStub_Execute(CS_GetTableTypeAsString, Basic, NULL);
 
@@ -339,23 +339,6 @@ void CS_ResetTablesTblResultEntry(CS_Res_Tables_Table_Entry_t *TablesTblResultEn
     UT_GenStub_AddParam(CS_ResetTablesTblResultEntry, CS_Res_Tables_Table_Entry_t *, TablesTblResultEntry);
 
     UT_GenStub_Execute(CS_ResetTablesTblResultEntry, Basic, NULL);
-}
-
-/*
- * ----------------------------------------------------
- * Generated stub function for CS_VerifyCmdLength()
- * ----------------------------------------------------
- */
-bool CS_VerifyCmdLength(const CFE_MSG_Message_t *msg, size_t ExpectedLength)
-{
-    UT_GenStub_SetupReturnBuffer(CS_VerifyCmdLength, bool);
-
-    UT_GenStub_AddParam(CS_VerifyCmdLength, const CFE_MSG_Message_t *, msg);
-    UT_GenStub_AddParam(CS_VerifyCmdLength, size_t, ExpectedLength);
-
-    UT_GenStub_Execute(CS_VerifyCmdLength, Basic, NULL);
-
-    return UT_GenStub_GetReturnValue(CS_VerifyCmdLength, bool);
 }
 
 /*

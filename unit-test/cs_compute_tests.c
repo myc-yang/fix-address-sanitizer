@@ -24,7 +24,7 @@
 #include "cs_compute.h"
 #include "cs_msg.h"
 #include "cs_msgdefs.h"
-#include "cs_events.h"
+#include "cs_eventids.h"
 #include "cs_version.h"
 #include "cs_utils.h"
 #include "cs_test_utils.h"
@@ -66,7 +66,7 @@ void CS_COMPUTE_TEST_CFE_TBL_ShareHandler(void *UserObj, UT_EntryKey_t FuncKey, 
     CFE_TBL_Handle_t *TblHandlePtr =
         (CFE_TBL_Handle_t *)UT_Hook_GetArgValueByName(Context, "TblHandlePtr", CFE_TBL_Handle_t *);
 
-    *TblHandlePtr = 99;
+    *TblHandlePtr = CFE_TBL_HandleFromID(CFE_TBL_HANDLEID_C(CFE_ResourceId_FromInteger(99)));
 }
 
 void CS_COMPUTE_TEST_CFE_ES_GetModuleInfoHandler1(void *UserObj, UT_EntryKey_t FuncKey, const UT_StubContext_t *Context)
@@ -207,8 +207,8 @@ void CS_ComputeEepromMemory_Test_OffsetlargerThanBytesCheck(void)
     memset(&ResultsEntry, 0, sizeof(ResultsEntry));
 
     ResultsEntry.NumBytesToChecksum = 2;
-    ResultsEntry.ByteOffset = 3;
-    CS_AppData.MaxBytesPerCycle = 5;
+    ResultsEntry.ByteOffset         = 3;
+    CS_AppData.MaxBytesPerCycle     = 5;
 
     ResultsEntry.ComputedYet = false;
 
@@ -235,7 +235,7 @@ void CS_ComputeTables_Test_TableNeverLoaded(void)
     snprintf(ExpectedEventString, CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "CS Tables: Problem Getting table %%s info Share: 0x%%08X, GetInfo: 0x%%08X, GetAddress: 0x%%08X");
 
-    ResultsEntry.TblHandle = 99;
+    ResultsEntry.TblHandleID = CFE_TBL_HANDLEID_C(CFE_ResourceId_FromInteger(99));
 
     strncpy(ResultsEntry.Name, "name", 10);
 
@@ -269,7 +269,7 @@ void CS_ComputeTables_Test_TableUnregisteredAndNeverLoaded(void)
     snprintf(ExpectedEventString, CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "CS Tables: Problem Getting table %%s info Share: 0x%%08X, GetInfo: 0x%%08X, GetAddress: 0x%%08X");
 
-    ResultsEntry.TblHandle = 99;
+    ResultsEntry.TblHandleID = CFE_TBL_HANDLEID_C(CFE_ResourceId_FromInteger(99));
 
     strncpy(ResultsEntry.Name, "name", 10);
 
@@ -313,7 +313,7 @@ void CS_ComputeTables_Test_ResultShareNotSuccess(void)
     snprintf(ExpectedEventString, CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "CS Tables: Problem Getting table %%s info Share: 0x%%08X, GetInfo: 0x%%08X, GetAddress: 0x%%08X");
 
-    ResultsEntry.TblHandle = CFE_TBL_BAD_TABLE_HANDLE;
+    ResultsEntry.TblHandleID = CFE_TBL_HANDLEID_UNDEFINED;
 
     strncpy(ResultsEntry.Name, "name", 10);
 
@@ -332,8 +332,6 @@ void CS_ComputeTables_Test_ResultShareNotSuccess(void)
 
     /* Verify results */
     UtAssert_BOOL_FALSE(DoneWithEntry);
-
-    UtAssert_INT32_EQ(ResultsEntry.TblHandle, CFE_TBL_BAD_TABLE_HANDLE);
 
     UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventID, CS_COMPUTE_TABLES_ERR_EID);
     UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventType, CFE_EVS_EventType_ERROR);
@@ -354,7 +352,7 @@ void CS_ComputeTables_Test_TblInfoUpdated(void)
     memset(&ResultsEntry, 0, sizeof(ResultsEntry));
     memset(&TblInfo, 0, sizeof(TblInfo));
 
-    ResultsEntry.TblHandle      = 99;
+    ResultsEntry.TblHandleID    = CFE_TBL_HANDLEID_C(CFE_ResourceId_FromInteger(99));
     CS_AppData.MaxBytesPerCycle = 5;
 
     /* Sets TblInfo.Size = 5 and returns CFE_TBL_INFO_UPDATED */
@@ -394,7 +392,7 @@ void CS_ComputeTables_Test_GetInfoResult(void)
     memset(&ResultsEntry, 0, sizeof(ResultsEntry));
     memset(&TblInfo, 0, sizeof(TblInfo));
 
-    ResultsEntry.TblHandle = 99;
+    ResultsEntry.TblHandleID = CFE_TBL_HANDLEID_C(CFE_ResourceId_FromInteger(99));
 
     CS_AppData.MaxBytesPerCycle = 5;
 
@@ -435,7 +433,7 @@ void CS_ComputeTables_Test_CSError(void)
     memset(&ResultsEntry, 0, sizeof(ResultsEntry));
     memset(&TblInfo, 0, sizeof(TblInfo));
 
-    ResultsEntry.TblHandle = 99;
+    ResultsEntry.TblHandleID = CFE_TBL_HANDLEID_C(CFE_ResourceId_FromInteger(99));
 
     CS_AppData.MaxBytesPerCycle = 5;
 
@@ -480,7 +478,7 @@ void CS_ComputeTables_Test_NominalBadTableHandle(void)
     memset(&ResultsEntry, 0, sizeof(ResultsEntry));
     memset(&TblInfo, 0, sizeof(TblInfo));
 
-    ResultsEntry.TblHandle = CFE_TBL_BAD_TABLE_HANDLE;
+    ResultsEntry.TblHandleID = CFE_TBL_HANDLEID_UNDEFINED;
 
     CS_AppData.MaxBytesPerCycle = 5;
 
@@ -509,8 +507,6 @@ void CS_ComputeTables_Test_NominalBadTableHandle(void)
     /* Verify results */
     UtAssert_BOOL_TRUE(DoneWithEntry);
 
-    UtAssert_INT32_EQ(ResultsEntry.TblHandle, 99);
-
     UtAssert_UINT32_EQ(ResultsEntry.NumBytesToChecksum, 5);
     UtAssert_UINT32_EQ(ResultsEntry.StartAddress, 0);
     UtAssert_UINT32_EQ(ComputedCSValue, 2);
@@ -530,7 +526,7 @@ void CS_ComputeTables_Test_FirstTimeThrough(void)
     memset(&ResultsEntry, 0, sizeof(ResultsEntry));
     memset(&TblInfo, 0, sizeof(TblInfo));
 
-    ResultsEntry.TblHandle = CFE_TBL_BAD_TABLE_HANDLE;
+    ResultsEntry.TblHandleID = CFE_TBL_HANDLEID_UNDEFINED;
 
     CS_AppData.MaxBytesPerCycle = 5;
 
@@ -559,8 +555,6 @@ void CS_ComputeTables_Test_FirstTimeThrough(void)
     /* Verify results */
     UtAssert_BOOL_TRUE(DoneWithEntry);
 
-    UtAssert_INT32_EQ(ResultsEntry.TblHandle, 99);
-
     UtAssert_UINT32_EQ(ResultsEntry.NumBytesToChecksum, 5);
     UtAssert_UINT32_EQ(ResultsEntry.StartAddress, 0);
 
@@ -584,7 +578,7 @@ void CS_ComputeTables_Test_EntryNotFinished(void)
     memset(&ResultsEntry, 0, sizeof(ResultsEntry));
     memset(&TblInfo, 0, sizeof(TblInfo));
 
-    ResultsEntry.TblHandle = CFE_TBL_BAD_TABLE_HANDLE;
+    ResultsEntry.TblHandleID = CFE_TBL_HANDLEID_UNDEFINED;
 
     CS_AppData.MaxBytesPerCycle = 3;
 
@@ -613,8 +607,6 @@ void CS_ComputeTables_Test_EntryNotFinished(void)
     /* Verify results */
     UtAssert_BOOL_FALSE(DoneWithEntry);
 
-    UtAssert_INT32_EQ(ResultsEntry.TblHandle, 99);
-
     UtAssert_UINT32_EQ(ResultsEntry.NumBytesToChecksum, 5);
     UtAssert_UINT32_EQ(ResultsEntry.StartAddress, 0);
 
@@ -639,7 +631,7 @@ void CS_ComputeTables_Test_ComputeTablesReleaseError(void)
     snprintf(ExpectedEventString, CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "CS Tables: Could not release addresss for table %%s, returned: 0x%%08X");
 
-    ResultsEntry.TblHandle = CFE_TBL_BAD_TABLE_HANDLE;
+    ResultsEntry.TblHandleID = CFE_TBL_HANDLEID_UNDEFINED;
 
     CS_AppData.MaxBytesPerCycle = 3;
 
@@ -673,8 +665,6 @@ void CS_ComputeTables_Test_ComputeTablesReleaseError(void)
     /* Verify results */
     UtAssert_BOOL_FALSE(DoneWithEntry);
 
-    UtAssert_INT32_EQ(ResultsEntry.TblHandle, 99);
-
     UtAssert_UINT32_EQ(ResultsEntry.NumBytesToChecksum, 5);
     UtAssert_UINT32_EQ(ResultsEntry.StartAddress, 0);
 
@@ -705,7 +695,7 @@ void CS_ComputeTables_Test_ComputeTablesError(void)
     snprintf(ExpectedEventString, CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "CS Tables: Problem Getting table %%s info Share: 0x%%08X, GetInfo: 0x%%08X, GetAddress: 0x%%08X");
 
-    ResultsEntry.TblHandle = CFE_TBL_BAD_TABLE_HANDLE;
+    ResultsEntry.TblHandleID = CFE_TBL_HANDLEID_UNDEFINED;
 
     strncpy(ResultsEntry.Name, "name", 10);
 
@@ -744,7 +734,7 @@ void CS_ComputeTables_Test_OffsetlargerThanBytesCheck(void)
 
     memset(&TblInfo, 0, sizeof(TblInfo));
     memset(&ResultsEntry, 0, sizeof(ResultsEntry));
-    
+
     CS_AppData.MaxBytesPerCycle = 5;
 
     ResultsEntry.ComputedYet = true;
@@ -1049,7 +1039,6 @@ void CS_ComputeApp_Test_OffsetlargerThanBytesCheck(void)
     UtAssert_BOOL_TRUE(DoneWithEntry);
     UtAssert_UINT32_EQ(ResultsEntry.ByteOffset, 0);
     UtAssert_UINT32_EQ(ResultsEntry.NumBytesToChecksum, 5);
-
 }
 
 void CS_ComputeApp_Test_EntryNotFinished(void)
@@ -1111,7 +1100,7 @@ void CS_RecomputeEepromMemoryChildTask_Test_EEPROMTable(void)
     CS_AppData.RecomputeEepromMemoryEntryPtr = &RecomputeEepromMemoryEntry;
     CS_AppData.DefEepromTblPtr               = DefEepromTbl;
 
-    CS_AppData.ChildTaskTable = CS_EEPROM_TABLE;
+    CS_AppData.ChildTaskTable = CS_ChecksumType_EEPROM_TABLE;
 
     CS_AppData.ChildTaskEntryID = 1;
 
@@ -1165,7 +1154,7 @@ void CS_RecomputeEepromMemoryChildTask_Test_MemoryTable(void)
     CS_AppData.RecomputeEepromMemoryEntryPtr = &RecomputeEepromMemoryEntry;
     CS_AppData.DefMemoryTblPtr               = DefMemoryTbl;
 
-    CS_AppData.ChildTaskTable = CS_MEMORY_TABLE;
+    CS_AppData.ChildTaskTable = CS_ChecksumType_MEMORY_TABLE;
 
     CS_AppData.ChildTaskEntryID = 1;
 
@@ -1219,7 +1208,7 @@ void CS_RecomputeEepromMemoryChildTask_Test_CFECore(void)
     CS_AppData.RecomputeEepromMemoryEntryPtr = &RecomputeEepromMemoryEntry;
     CS_AppData.DefMemoryTblPtr               = DefMemoryTbl;
 
-    CS_AppData.ChildTaskTable = CS_CFECORE;
+    CS_AppData.ChildTaskTable = CS_ChecksumType_CFECORE;
 
     CS_AppData.ChildTaskEntryID = 1;
 
@@ -1275,7 +1264,7 @@ void CS_RecomputeEepromMemoryChildTask_Test_OSCore(void)
     CS_AppData.RecomputeEepromMemoryEntryPtr = &RecomputeEepromMemoryEntry;
     CS_AppData.DefMemoryTblPtr               = DefMemoryTbl;
 
-    CS_AppData.ChildTaskTable = CS_OSCORE;
+    CS_AppData.ChildTaskTable = CS_ChecksumType_OSCORE;
 
     CS_AppData.ChildTaskEntryID = 1;
 
@@ -1316,7 +1305,7 @@ void CS_RecomputeEepromMemoryChildTask_Test_OSCore(void)
     UtAssert_STUB_COUNT(CFE_EVS_SendEvent, 1);
 }
 
-void CS_RecomputeEepromMemoryChildTask_Test_EEPROMTableEntryId(void)
+void CS_RecomputeEepromMemoryChildTask_Test_EEPROMTableEntryID(void)
 {
     CS_Res_EepromMemory_Table_Entry_t RecomputeEepromMemoryEntry;
     CS_Def_EepromMemory_Table_Entry_t DefEepromTbl[10];
@@ -1331,7 +1320,7 @@ void CS_RecomputeEepromMemoryChildTask_Test_EEPROMTableEntryId(void)
     CS_AppData.RecomputeEepromMemoryEntryPtr = &RecomputeEepromMemoryEntry;
     CS_AppData.DefEepromTblPtr               = DefEepromTbl;
 
-    CS_AppData.ChildTaskTable = CS_EEPROM_TABLE;
+    CS_AppData.ChildTaskTable = CS_ChecksumType_EEPROM_TABLE;
 
     CS_AppData.ChildTaskEntryID = CS_MAX_NUM_EEPROM_TABLE_ENTRIES;
 
@@ -1384,7 +1373,7 @@ void CS_RecomputeEepromMemoryChildTask_Test_EEPROMTableStartAddress(void)
     CS_AppData.RecomputeEepromMemoryEntryPtr = &RecomputeEepromMemoryEntry;
     CS_AppData.DefEepromTblPtr               = DefEepromTbl;
 
-    CS_AppData.ChildTaskTable = CS_EEPROM_TABLE;
+    CS_AppData.ChildTaskTable = CS_ChecksumType_EEPROM_TABLE;
 
     CS_AppData.ChildTaskEntryID = 1;
 
@@ -1438,7 +1427,7 @@ void CS_RecomputeEepromMemoryChildTask_Test_EEPROMTableState(void)
     CS_AppData.RecomputeEepromMemoryEntryPtr = &RecomputeEepromMemoryEntry;
     CS_AppData.DefEepromTblPtr               = DefEepromTbl;
 
-    CS_AppData.ChildTaskTable = CS_EEPROM_TABLE;
+    CS_AppData.ChildTaskTable = CS_ChecksumType_EEPROM_TABLE;
 
     CS_AppData.ChildTaskEntryID = 1;
 
@@ -1446,7 +1435,7 @@ void CS_RecomputeEepromMemoryChildTask_Test_EEPROMTableState(void)
 
     RecomputeEepromMemoryEntry.StartAddress = 1;
 
-    DefEepromTbl[1].State = CS_STATE_EMPTY;
+    DefEepromTbl[1].State = CS_ChecksumState_EMPTY;
 
     CS_AppData.RecomputeEepromMemoryEntryPtr->NumBytesToChecksum = 1;
     CS_AppData.MaxBytesPerCycle                                  = 2;
@@ -1466,7 +1455,7 @@ void CS_RecomputeEepromMemoryChildTask_Test_EEPROMTableState(void)
     UtAssert_UINT32_EQ(CS_AppData.RecomputeEepromMemoryEntryPtr->ByteOffset, 0);
     UtAssert_BOOL_TRUE(CS_AppData.RecomputeEepromMemoryEntryPtr->ComputedYet);
     UtAssert_UINT16_EQ(CS_AppData.RecomputeEepromMemoryEntryPtr->State, 99);
-    UtAssert_UINT16_EQ(CS_AppData.DefEepromTblPtr[CS_AppData.ChildTaskEntryID].State, CS_STATE_EMPTY);
+    UtAssert_UINT16_EQ(CS_AppData.DefEepromTblPtr[CS_AppData.ChildTaskEntryID].State, CS_ChecksumState_EMPTY);
 
     UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventID, CS_RECOMPUTE_FINISH_EEPROM_MEMORY_INF_EID);
     UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventType, CFE_EVS_EventType_INFORMATION);
@@ -1492,7 +1481,7 @@ void CS_RecomputeAppChildTask_Test_Nominal(void)
     CS_AppData.RecomputeAppEntryPtr = &RecomputeAppEntry;
     CS_AppData.DefAppTblPtr         = DefAppTbl;
 
-    CS_AppData.ChildTaskTable = CS_OSCORE;
+    CS_AppData.ChildTaskTable = CS_ChecksumType_OSCORE;
 
     CS_AppData.ChildTaskEntryID = 1;
 
@@ -1545,12 +1534,12 @@ void CS_RecomputeAppChildTask_Test_CouldNotGetAddress(void)
     CS_AppData.RecomputeAppEntryPtr = &RecomputeAppEntry;
     CS_AppData.DefAppTblPtr         = DefAppTbl;
 
-    CS_AppData.ChildTaskTable = CS_OSCORE;
+    CS_AppData.ChildTaskTable = CS_ChecksumType_OSCORE;
 
     CS_AppData.ChildTaskEntryID = 1;
 
     /* No matching non-empty state entry */
-    DefAppTbl[1].State = CS_STATE_EMPTY;
+    DefAppTbl[1].State = CS_ChecksumState_EMPTY;
 
     CS_AppData.RecomputeAppEntryPtr->State = 99;
 
@@ -1570,7 +1559,7 @@ void CS_RecomputeAppChildTask_Test_CouldNotGetAddress(void)
 
     /* Verify results */
     UtAssert_UINT32_EQ(CS_AppData.RecomputeAppEntryPtr->State, 99);
-    UtAssert_UINT32_EQ(CS_AppData.DefAppTblPtr[CS_AppData.ChildTaskEntryID].State, CS_STATE_EMPTY);
+    UtAssert_UINT32_EQ(CS_AppData.DefAppTblPtr[CS_AppData.ChildTaskEntryID].State, CS_ChecksumState_EMPTY);
     UtAssert_UINT32_EQ(CS_AppData.RecomputeAppEntryPtr->TempChecksumValue, 0);
     UtAssert_UINT32_EQ(CS_AppData.RecomputeAppEntryPtr->ByteOffset, 0);
 
@@ -1599,7 +1588,7 @@ void CS_RecomputeAppChildTask_Test_DefEntryId(void)
     CS_AppData.RecomputeAppEntryPtr = &RecomputeAppEntry;
     CS_AppData.DefAppTblPtr         = DefAppTbl;
 
-    CS_AppData.ChildTaskTable = CS_OSCORE;
+    CS_AppData.ChildTaskTable = CS_ChecksumType_OSCORE;
 
     CS_AppData.ChildTaskEntryID = 1;
 
@@ -1613,7 +1602,7 @@ void CS_RecomputeAppChildTask_Test_DefEntryId(void)
 
     strncpy(CS_AppData.RecomputeAppEntryPtr->Name, "name", 10);
     strncpy(DefAppTbl[1].Name, "name", 10);
-    DefAppTbl[1].State = CS_STATE_ENABLED;
+    DefAppTbl[1].State = CS_ChecksumState_ENABLED;
 
     /* Sets AppInfo.CodeSize = 5, sets AppInfo.CodeAddress = 1, AppInfo.AddressesAreValid = true, and returns
      * CFE_SUCCESS */
@@ -1624,7 +1613,7 @@ void CS_RecomputeAppChildTask_Test_DefEntryId(void)
 
     /* Verify results */
     UtAssert_UINT32_EQ(CS_AppData.RecomputeAppEntryPtr->State, 99);
-    UtAssert_UINT32_EQ(CS_AppData.DefAppTblPtr[CS_AppData.ChildTaskEntryID].State, CS_STATE_ENABLED);
+    UtAssert_UINT32_EQ(CS_AppData.DefAppTblPtr[CS_AppData.ChildTaskEntryID].State, CS_ChecksumState_ENABLED);
     UtAssert_UINT32_EQ(CS_AppData.RecomputeAppEntryPtr->TempChecksumValue, 0);
     UtAssert_UINT32_EQ(CS_AppData.RecomputeAppEntryPtr->ByteOffset, 0);
     UtAssert_BOOL_TRUE(CS_AppData.RecomputeAppEntryPtr->ComputedYet);
@@ -1656,7 +1645,7 @@ void CS_RecomputeTablesChildTask_Test_Nominal(void)
     CS_AppData.RecomputeTablesEntryPtr = &RecomputeTablesEntry;
     CS_AppData.DefTablesTblPtr         = DefTablesTbl;
 
-    CS_AppData.ChildTaskTable = CS_OSCORE;
+    CS_AppData.ChildTaskTable = CS_ChecksumType_OSCORE;
 
     CS_AppData.ChildTaskEntryID = 1;
 
@@ -1673,7 +1662,7 @@ void CS_RecomputeTablesChildTask_Test_Nominal(void)
     strncpy(CS_AppData.RecomputeTablesEntryPtr->Name, "name", 10);
     strncpy(DefTablesTbl[1].Name, "name", 10);
 
-    RecomputeTablesEntry.TblHandle = CFE_TBL_BAD_TABLE_HANDLE;
+    RecomputeTablesEntry.TblHandleID = CFE_TBL_HANDLEID_UNDEFINED;
 
     RecomputeTablesEntry.ByteOffset = 0;
     CS_AppData.MaxBytesPerCycle     = 5;
@@ -1726,12 +1715,12 @@ void CS_RecomputeTablesChildTask_Test_CouldNotGetAddress(void)
     CS_AppData.RecomputeTablesEntryPtr = &RecomputeTablesEntry;
     CS_AppData.DefTablesTblPtr         = DefTablesTbl;
 
-    CS_AppData.ChildTaskTable = CS_OSCORE;
+    CS_AppData.ChildTaskTable = CS_ChecksumType_OSCORE;
 
     CS_AppData.ChildTaskEntryID = 1;
 
     /* No matching non-empty state entry */
-    DefTablesTbl[1].State = CS_STATE_EMPTY;
+    DefTablesTbl[1].State = CS_ChecksumState_EMPTY;
 
     CS_AppData.RecomputeTablesEntryPtr->State = 99;
 
@@ -1748,7 +1737,7 @@ void CS_RecomputeTablesChildTask_Test_CouldNotGetAddress(void)
 
     /* Verify results */
     UtAssert_UINT32_EQ(CS_AppData.RecomputeTablesEntryPtr->State, 99);
-    UtAssert_UINT32_EQ(CS_AppData.DefTablesTblPtr[CS_AppData.ChildTaskEntryID].State, CS_STATE_EMPTY);
+    UtAssert_UINT32_EQ(CS_AppData.DefTablesTblPtr[CS_AppData.ChildTaskEntryID].State, CS_ChecksumState_EMPTY);
     UtAssert_UINT32_EQ(CS_AppData.RecomputeTablesEntryPtr->TempChecksumValue, 0);
     UtAssert_UINT32_EQ(CS_AppData.RecomputeTablesEntryPtr->ByteOffset, 0);
 
@@ -1778,7 +1767,7 @@ void CS_RecomputeTablesChildTask_Test_DefEntryId(void)
     CS_AppData.RecomputeTablesEntryPtr = &RecomputeTablesEntry;
     CS_AppData.DefTablesTblPtr         = DefTablesTbl;
 
-    CS_AppData.ChildTaskTable = CS_OSCORE;
+    CS_AppData.ChildTaskTable = CS_ChecksumType_OSCORE;
 
     CS_AppData.ChildTaskEntryID = 1;
 
@@ -1792,9 +1781,9 @@ void CS_RecomputeTablesChildTask_Test_DefEntryId(void)
 
     strncpy(CS_AppData.RecomputeTablesEntryPtr->Name, "name", 10);
     strncpy(DefTablesTbl[1].Name, "name", 10);
-    DefTablesTbl[1].State = CS_STATE_ENABLED;
+    DefTablesTbl[1].State = CS_ChecksumState_ENABLED;
 
-    RecomputeTablesEntry.TblHandle = CFE_TBL_BAD_TABLE_HANDLE;
+    RecomputeTablesEntry.TblHandleID = CFE_TBL_HANDLEID_UNDEFINED;
 
     RecomputeTablesEntry.ByteOffset = 0;
     CS_AppData.MaxBytesPerCycle     = 5;
@@ -1820,7 +1809,7 @@ void CS_RecomputeTablesChildTask_Test_DefEntryId(void)
 
     /* Verify results */
     UtAssert_UINT32_EQ(CS_AppData.RecomputeTablesEntryPtr->State, 99);
-    UtAssert_UINT32_EQ(CS_AppData.DefTablesTblPtr[CS_AppData.ChildTaskEntryID].State, CS_STATE_ENABLED);
+    UtAssert_UINT32_EQ(CS_AppData.DefTablesTblPtr[CS_AppData.ChildTaskEntryID].State, CS_ChecksumState_ENABLED);
     UtAssert_UINT32_EQ(CS_AppData.RecomputeTablesEntryPtr->TempChecksumValue, 0);
     UtAssert_UINT32_EQ(CS_AppData.RecomputeTablesEntryPtr->ByteOffset, 0);
     UtAssert_BOOL_TRUE(CS_AppData.RecomputeTablesEntryPtr->ComputedYet);
@@ -1880,7 +1869,7 @@ void UtTest_Setup(void)
     UtTest_Add(CS_ComputeEepromMemory_Test_NotFinished, CS_Test_Setup, CS_Test_TearDown,
                "CS_ComputeEepromMemory_Test_NotFinished");
     UtTest_Add(CS_ComputeEepromMemory_Test_OffsetlargerThanBytesCheck, CS_Test_Setup, CS_Test_TearDown,
-                "CS_ComputeEepromMemory_Test_OffsetlargerThanBytesCheck");
+               "CS_ComputeEepromMemory_Test_OffsetlargerThanBytesCheck");
 
     UtTest_Add(CS_ComputeTables_Test_TableNeverLoaded, CS_Test_Setup, CS_Test_TearDown,
                "CS_ComputeTables_Test_TableNeverLoaded");
@@ -1904,7 +1893,7 @@ void UtTest_Setup(void)
     UtTest_Add(CS_ComputeTables_Test_ComputeTablesError, CS_Test_Setup, CS_Test_TearDown,
                "CS_ComputeTables_Test_ComputeTablesError");
     UtTest_Add(CS_ComputeTables_Test_OffsetlargerThanBytesCheck, CS_Test_Setup, CS_Test_TearDown,
-                "CS_ComputeTables_Test_OffsetlargerThanBytesCheck");
+               "CS_ComputeTables_Test_OffsetlargerThanBytesCheck");
 
     UtTest_Add(CS_ComputeApp_Test_NominalApp, CS_Test_Setup, CS_Test_TearDown, "CS_ComputeApp_Test_NominalApp");
     UtTest_Add(CS_ComputeApp_Test_NominalLib, CS_Test_Setup, CS_Test_TearDown, "CS_ComputeApp_Test_NominalLib");
@@ -1921,7 +1910,7 @@ void UtTest_Setup(void)
     UtTest_Add(CS_ComputeApp_Test_EntryNotFinished, CS_Test_Setup, CS_Test_TearDown,
                "CS_ComputeApp_Test_EntryNotFinished");
     UtTest_Add(CS_ComputeApp_Test_OffsetlargerThanBytesCheck, CS_Test_Setup, CS_Test_TearDown,
-                "CS_ComputeApp_Test_OffsetlargerThanBytesCheck");
+               "CS_ComputeApp_Test_OffsetlargerThanBytesCheck");
 
     UtTest_Add(CS_RecomputeEepromMemoryChildTask_Test_EEPROMTable, CS_Test_Setup, CS_Test_TearDown,
                "CS_RecomputeEepromMemoryChildTask_Test_EEPROMTable");
@@ -1931,8 +1920,8 @@ void UtTest_Setup(void)
                "CS_RecomputeEepromMemoryChildTask_Test_CFECore");
     UtTest_Add(CS_RecomputeEepromMemoryChildTask_Test_OSCore, CS_Test_Setup, CS_Test_TearDown,
                "CS_RecomputeEepromMemoryChildTask_Test_OSCore");
-    UtTest_Add(CS_RecomputeEepromMemoryChildTask_Test_EEPROMTableEntryId, CS_Test_Setup, CS_Test_TearDown,
-               "CS_RecomputeEepromMemoryChildTask_Test_EEPROMTableEntryId");
+    UtTest_Add(CS_RecomputeEepromMemoryChildTask_Test_EEPROMTableEntryID, CS_Test_Setup, CS_Test_TearDown,
+               "CS_RecomputeEepromMemoryChildTask_Test_EEPROMTableEntryID");
     UtTest_Add(CS_RecomputeEepromMemoryChildTask_Test_EEPROMTableStartAddress, CS_Test_Setup, CS_Test_TearDown,
                "CS_RecomputeEepromMemoryChildTask_Test_EEPROMTableStartAddress");
     UtTest_Add(CS_RecomputeEepromMemoryChildTask_Test_EEPROMTableState, CS_Test_Setup, CS_Test_TearDown,

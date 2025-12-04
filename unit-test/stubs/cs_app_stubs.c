@@ -53,22 +53,6 @@ void CS_AppMain(void)
 
 /*
  * ----------------------------------------------------
- * Generated stub function for CS_AppPipe()
- * ----------------------------------------------------
- */
-CFE_Status_t CS_AppPipe(const CFE_SB_Buffer_t *BufPtr)
-{
-    UT_GenStub_SetupReturnBuffer(CS_AppPipe, CFE_Status_t);
-
-    UT_GenStub_AddParam(CS_AppPipe, const CFE_SB_Buffer_t *, BufPtr);
-
-    UT_GenStub_Execute(CS_AppPipe, Basic, NULL);
-
-    return UT_GenStub_GetReturnValue(CS_AppPipe, CFE_Status_t);
-}
-
-/*
- * ----------------------------------------------------
  * Generated stub function for CS_CreateRestoreStatesFromCDS()
  * ----------------------------------------------------
  */
@@ -79,30 +63,6 @@ CFE_Status_t CS_CreateRestoreStatesFromCDS(void)
     UT_GenStub_Execute(CS_CreateRestoreStatesFromCDS, Basic, NULL);
 
     return UT_GenStub_GetReturnValue(CS_CreateRestoreStatesFromCDS, CFE_Status_t);
-}
-
-/*
- * ----------------------------------------------------
- * Generated stub function for CS_HousekeepingCmd()
- * ----------------------------------------------------
- */
-void CS_HousekeepingCmd(const CS_NoArgsCmd_t *CmdPtr)
-{
-    UT_GenStub_AddParam(CS_HousekeepingCmd, const CS_NoArgsCmd_t *, CmdPtr);
-
-    UT_GenStub_Execute(CS_HousekeepingCmd, Basic, NULL);
-}
-
-/*
- * ----------------------------------------------------
- * Generated stub function for CS_ProcessCmd()
- * ----------------------------------------------------
- */
-void CS_ProcessCmd(const CFE_SB_Buffer_t *BufPtr)
-{
-    UT_GenStub_AddParam(CS_ProcessCmd, const CFE_SB_Buffer_t *, BufPtr);
-
-    UT_GenStub_Execute(CS_ProcessCmd, Basic, NULL);
 }
 
 /*
