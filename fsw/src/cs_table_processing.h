@@ -39,11 +39,53 @@
  **
  **************************************************************************/
 
+/*************************************************************************
+ **
+ ** Type definitions
+ **
+ **************************************************************************/
+typedef struct CS_TableWrapper
+{
+    const char *DefTableName; /**< \brief Name of definition table */
+    const char *ResTableName; /**< \brief Name of result table */
+
+    CFE_TBL_Handle_t DefHandle; /**< \brief Handle to the definition table */
+    CFE_TBL_Handle_t ResHandle; /**< \brief Handle to the results table */
+
+    size_t NumEntries; /**< \brief Number of entries in table (applies to both def and res) */
+
+    void * DefAddr;        /**< \brief Pointer to definition table */
+    size_t DefEntrySize;   /**< \brief Size of each entry in definition table */
+    size_t DefStateOffset; /**< \brief Offset of "State" member within definition entry */
+
+    void * ResAddr;      /**< \brief Pointer to results table */
+    size_t ResEntrySize; /**< \brief Size of each entry in result table */
+
+    const void *DefaultDefinitionPtr; /**< Pointer to default definition, if applicable */
+
+    void (*UpdateHandler)(struct CS_TableWrapper *); /**< Function to handle table updates */
+
+    uint32 *BaselineValue; /**< \brief pointer to HK TLM entry containing baseline value */
+    uint8 * GlobalState;   /**< \brief pointer to HK TLM entry containing global enable/disable */
+
+    CS_Res_Tables_Table_Entry_t *ResTblPtr; /**< \brief CS results entry for this table */
+
+} CS_TableWrapper_t;
+
 /**************************************************************************
  **
  **  Function Prototypes
  **
  **************************************************************************/
+
+/**
+ * \brief Calls the table update handler, if configured
+ *
+ * This is a helper function, tested separately
+ *
+ *  \param [in] tw        A pointer to the table wrapper struct
+ */
+void CS_CallTableUpdateHandler(CS_TableWrapper_t *tw);
 
 /**
  * \brief Validate EEPROM definition table
@@ -55,7 +97,7 @@
  *  \par Assumptions, External Events, and Notes:
  *       None
  *
- *  \param [in]  TblPtr        A pointer to the table to be validated
+ *  \param [in]  TblPtr        A pointer to the table data to be validated
  *
  *  \return Execution status see \ref CFEReturnCodes
  *  \retval #CFE_SUCCESS    \copydoc CFE_SUCCESS
@@ -73,7 +115,7 @@ CFE_Status_t CS_ValidateEepromChecksumDefinitionTable(void *TblPtr);
  *  \par Assumptions, External Events, and Notes:
  *       None
  *
- *  \param [in]  TblPtr        A pointer to the table to be validated
+ *  \param [in]  TblPtr        A pointer to the table data to be validated
  *
  *  \return Execution status see \ref CFEReturnCodes
  *  \retval #CFE_SUCCESS    \copydoc CFE_SUCCESS
@@ -91,7 +133,7 @@ CFE_Status_t CS_ValidateMemoryChecksumDefinitionTable(void *TblPtr);
  *  \par Assumptions, External Events, and Notes:
  *       None
  *
- *  \param [in]  TblPtr        A pointer to the table to be validated
+ *  \param [in]  TblPtr        A pointer to the table data to be validated
  *
  *  \return Execution status see \ref CFEReturnCodes
  *  \retval #CFE_SUCCESS    \copydoc CFE_SUCCESS
@@ -109,7 +151,7 @@ CFE_Status_t CS_ValidateTablesChecksumDefinitionTable(void *TblPtr);
  *  \par Assumptions, External Events, and Notes:
  *       None
  *
- *  \param [in]  TblPtr        A pointer to the table to be validated
+ *  \param [in]  TblPtr        A pointer to the table data to be validated
  *
  *  \return Execution status see \ref CFEReturnCodes
  *  \retval #CFE_SUCCESS    \copydoc CFE_SUCCESS
@@ -128,19 +170,9 @@ CFE_Status_t CS_ValidateAppChecksumDefinitionTable(void *TblPtr);
  *  \par Assumptions, External Events, and Notes:
  *       None
  *
- *  \param [in]    DefinitionTblPtr    A pointer to the definiton table
- *                                     (#CS_Def_EepromMemory_Table_Entry_t)
- *                                     that we are operating on
- *
- *  \param [in]    ResultsTblPtr       A pointer to the result table
- *                                     (#CS_Res_EepromMemory_Table_Entry_t)
- *                                     to operate on
- *  \param [in]    NumEntries          The number of entries in the table
- *  \param [in]    Table               The specific table we are operating on
+ *  \param [in] tw        A pointer to the table wrapper struct
  */
-void CS_ProcessNewEepromMemoryDefinitionTable(const CS_Def_EepromMemory_Table_Entry_t *DefinitionTblPtr,
-                                              CS_Res_EepromMemory_Table_Entry_t *ResultsTblPtr, uint16 NumEntries,
-                                              CS_ChecksumType_Enum_t Table);
+void CS_ProcessNewEepromMemoryDefinitionTable(CS_TableWrapper_t *tw);
 
 /**
  * \brief Processes a new definition table for the Tables table
@@ -153,16 +185,9 @@ void CS_ProcessNewEepromMemoryDefinitionTable(const CS_Def_EepromMemory_Table_En
  *  \par Assumptions, External Events, and Notes:
  *       None
  *
- *  \param [in]    DefinitionTblPtr    A pointer to the definiton table
- *                                     (#CS_Def_Tables_Table_Entry_t)
- *                                     that we are operating on
- *
- *  \param [in]    ResultsTblPtr       A pointer to the result table
- *                                     (#CS_Res_Tables_Table_Entry_t)
- *                                     to operate on
+ *  \param [in] tw        A pointer to the table wrapper struct
  */
-void CS_ProcessNewTablesDefinitionTable(const CS_Def_Tables_Table_Entry_t *DefinitionTblPtr,
-                                        CS_Res_Tables_Table_Entry_t *      ResultsTblPtr);
+void CS_ProcessNewTablesDefinitionTable(CS_TableWrapper_t *tw);
 
 /**
  * \brief Processes a new definition table for the App table
@@ -175,16 +200,9 @@ void CS_ProcessNewTablesDefinitionTable(const CS_Def_Tables_Table_Entry_t *Defin
  *  \par Assumptions, External Events, and Notes:
  *       None
  *
- *  \param [in]    DefinitionTblPtr    A pointer to the definiton table
- *                                     (#CS_Def_App_Table_Entry_t)
- *                                     that we are operating on
- *
- *  \param [in]    ResultsTblPtr       A pointer to the result table
- *                                     (#CS_Res_App_Table_Entry_t)
- *                                     to operate on
+ *  \param [in] tw        A pointer to the table wrapper struct
  */
-void CS_ProcessNewAppDefinitionTable(const CS_Def_App_Table_Entry_t *DefinitionTblPtr,
-                                     CS_Res_App_Table_Entry_t *      ResultsTblPtr);
+void CS_ProcessNewAppDefinitionTable(CS_TableWrapper_t *tw);
 
 /**
  * \brief Initializes the results and definition table on startup
@@ -198,75 +216,18 @@ void CS_ProcessNewAppDefinitionTable(const CS_Def_App_Table_Entry_t *DefinitionT
  *       Also, if the default table file is not found for the definitionm
  *       table, this function loads a 'blank' table from memory
  *
- *  \param [in]    DefinitionTableHandle       A #CFE_TBL_Handle_t pointer
- *                                             that will get filled in with the
- *                                             table handle to the definition
- *                                             table
- *
- *  \param [in]    ResultsTableHandle          A #CFE_TBL_Handle_t pointer
- *                                             that will get filled in with the
- *                                             table handle to the results
- *                                             table
- *
- *  \param [in]    DefinitionTblPtr            A pointer to the definiton table
- *                                             that we are operating on, it
- *                                             will get assigned during this
- *                                             call
- *
- *  \param [in]    ResultsTblPtr               A pointer to the result table
- *                                             to operate on , it will get
- *                                             assigned during this call
- *
- *  \param [in]    Table                       The specific table we are
- *                                             operating on
- *
- *  \param [in]    DefinitionTableName         The name of the definition table
- *
- *  \param [in]    ResultsTableName            The name of the results table
- *
- *  \param [in]    NumEntries                  The number of entries in the
- *                                             table
+ *  \param [in] tw        A pointer to the table wrapper struct
  *
  *  \param [in]    DefinitionTableFileName     The name of the file to load the
  *                                             definition table from
  *
- *  \param [in]    DefaultDefTableAddress      The address of the default
- *                                             definition table that we may
- *                                             have to load from memory if
- *                                             the file is absent
- *
- *  \param [in]    SizeofDefinitionTableEntry  The sizeof an entry in the
- *                                             definition table
- *
- *  \param [in]    SizeofResultsTableEntry     The size of an enrty in the
- *                                             results table
- *
  *  \param [in]    CallBackFunction            A pointer to a function used to
  *                                             validate the definition table
- *
- *  \param [out]  * DefinitionTableHandle      A #CFE_TBL_Handle_t pointer that
- *                                             will get filled in with the tbl
- *                                             handle to the definition table
- *
- *  \param [out]  * ResultsTableHandle         A #CFE_TBL_Handle_t pointer that
- *                                             will get filled in with the tbl
- *                                             handle to the results table
- *
- *  \param [out]  * DefinitionTblPtr           A pointer to the definiton table
- *                                             that we are operating on
- *
- *  \param [in]   * ResultsTblPtr              A pointer to the result table
- *                                             to operate on , it will get
- *                                             be used to access the table
  *
  * \return Execution status, see \ref CFEReturnCodes
  * \retval #CFE_SUCCESS \copybrief CFE_SUCCESS
  */
-CFE_Status_t CS_TableInit(CFE_TBL_Handle_t *DefinitionTableHandle, CFE_TBL_Handle_t *ResultsTableHandle,
-                          void **DefinitionTblPtr, void **ResultsTblPtr, CS_ChecksumType_Enum_t Table,
-                          const char *DefinitionTableName, const char *ResultsTableName, uint16 NumEntries,
-                          const char *DefinitionTableFileName, const void *DefaultDefTableAddress,
-                          uint16 SizeofDefinitionTableEntry, uint16 SizeofResultsTableEntry,
+CFE_Status_t CS_TableInit(CS_TableWrapper_t *tw, const char *DefinitionTableFileName,
                           CFE_TBL_CallbackFuncPtr_t CallBackFunction);
 
 /**
@@ -279,26 +240,11 @@ CFE_Status_t CS_TableInit(CFE_TBL_Handle_t *DefinitionTableHandle, CFE_TBL_Handl
  *  \par Assumptions, External Events, and Notes:
  *       None
  *
- *  \param [in]    DefinitionTblPtr        A pointer to the definiton table
- *                                         that we are operating on
- *
- *  \param [in]    ResultsTblPtr           A pointer to the result table
- *                                         to operate on
- *  \param [in]    DefinitionTableHandle   A table handle to the definition
- *                                         table
- *
- *  \param [in]    ResultsTableHandle      A table handle to the results
- *                                         table
- *
- *  \param [in]    NumEntries              The number of entries in the table
- *
- *  \param [in]    Table                   The specific table we are operating
- *                                         on
+ *  \param [in] tw        A pointer to the table wrapper struct
  *
  * \return Execution status, see \ref CFEReturnCodes
  * \retval #CFE_SUCCESS \copybrief CFE_SUCCESS
  */
-CFE_Status_t CS_HandleTableUpdate(void **DefinitionTblPtr, void **ResultsTblPtr, CFE_TBL_Handle_t DefinitionTableHandle,
-                                  CFE_TBL_Handle_t ResultsTableHandle, CS_ChecksumType_Enum_t Table, uint16 NumEntries);
+CFE_Status_t CS_HandleTableUpdate(CS_TableWrapper_t *tw);
 
 #endif

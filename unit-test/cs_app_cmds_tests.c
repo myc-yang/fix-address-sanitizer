@@ -49,9 +49,10 @@ void CS_APP_CMDS_TEST_CS_GetAppResTblEntryByNameHandler1(void *UserObj, UT_Entry
     CS_Res_App_Table_Entry_t **EntryPtr =
         (CS_Res_App_Table_Entry_t **)UT_Hook_GetArgValueByName(Context, "EntryPtr", CS_Res_App_Table_Entry_t **);
 
-    *EntryPtr = CS_AppData.ResAppTblPtr;
+    CS_Res_App_Table_Entry_t *ResAppTblPtr = CS_AppData.Tbl[CS_ChecksumType_APP_TABLE].ResAddr;
+    *EntryPtr                              = ResAppTblPtr;
 
-    CS_AppData.ResAppTblPtr->ComputedYet = true;
+    ResAppTblPtr->ComputedYet = true;
 }
 
 void CS_APP_CMDS_TEST_CS_GetAppResTblEntryByNameHandler2(void *UserObj, UT_EntryKey_t FuncKey,
@@ -60,9 +61,10 @@ void CS_APP_CMDS_TEST_CS_GetAppResTblEntryByNameHandler2(void *UserObj, UT_Entry
     CS_Res_App_Table_Entry_t **EntryPtr =
         (CS_Res_App_Table_Entry_t **)UT_Hook_GetArgValueByName(Context, "EntryPtr", CS_Res_App_Table_Entry_t **);
 
-    *EntryPtr = CS_AppData.ResAppTblPtr;
+    CS_Res_App_Table_Entry_t *ResAppTblPtr = CS_AppData.Tbl[CS_ChecksumType_APP_TABLE].ResAddr;
+    *EntryPtr                              = ResAppTblPtr;
 
-    CS_AppData.ResAppTblPtr->ComputedYet = false;
+    ResAppTblPtr->ComputedYet = false;
 }
 
 void CS_APP_CMDS_TEST_CS_GetAppDefTblEntryByNameHandler1(void *UserObj, UT_EntryKey_t FuncKey,
@@ -71,7 +73,8 @@ void CS_APP_CMDS_TEST_CS_GetAppDefTblEntryByNameHandler1(void *UserObj, UT_Entry
     CS_Def_Tables_Table_Entry_t **EntryPtr =
         (CS_Def_Tables_Table_Entry_t **)UT_Hook_GetArgValueByName(Context, "EntryPtr", CS_Def_Tables_Table_Entry_t **);
 
-    *EntryPtr = CS_AppData.DefTablesTblPtr;
+    CS_Def_Tables_Table_Entry_t *DefTablesTblPtr = CS_AppData.Tbl[CS_ChecksumType_TABLES_TABLE].DefAddr;
+    *EntryPtr                                    = DefTablesTblPtr;
 }
 
 void CS_DisableAppsCmd_Test(void)
@@ -181,17 +184,18 @@ void CS_ReportBaselineAppCmd_Test_Baseline(void)
     CS_ReportBaselineAppCmd_t CmdPacket;
     int32                     strCmpResult;
     char                      ExpectedEventString[CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+    CS_Res_App_Table_Entry_t *ResAppTblPtr = CS_AppData.Tbl[CS_ChecksumType_APP_TABLE].ResAddr;
 
     memset(&CmdPacket, 0, sizeof(CmdPacket));
     snprintf(ExpectedEventString, CFE_MISSION_EVS_MAX_MESSAGE_LENGTH, "Report baseline of app %%s is 0x%%08X");
 
     strncpy(CmdPacket.Payload.Name, "App1", OS_MAX_API_NAME);
-    strncpy(CS_AppData.ResAppTblPtr->Name, "App1", OS_MAX_API_NAME);
+    strncpy(ResAppTblPtr->Name, "App1", OS_MAX_API_NAME);
 
     /* Needed to make subfunction CS_GetAppResTblEntryByName behave properly */
-    CS_AppData.ResAppTblPtr->State           = 1;
-    CS_AppData.ResAppTblPtr->ComputedYet     = true;
-    CS_AppData.ResAppTblPtr->ComparisonValue = 1;
+    ResAppTblPtr->State           = 1;
+    ResAppTblPtr->ComputedYet     = true;
+    ResAppTblPtr->ComparisonValue = 1;
 
     UT_SetDeferredRetcode(UT_KEY(CS_GetAppResTblEntryByName), 1, true);
     UT_SetHandlerFunction(UT_KEY(CS_GetAppResTblEntryByName), CS_APP_CMDS_TEST_CS_GetAppResTblEntryByNameHandler1,
@@ -221,17 +225,18 @@ void CS_ReportBaselineAppCmd_Test_NoBaseline(void)
     CS_ReportBaselineAppCmd_t CmdPacket;
     int32                     strCmpResult;
     char                      ExpectedEventString[CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+    CS_Res_App_Table_Entry_t *ResAppTblPtr = CS_AppData.Tbl[CS_ChecksumType_APP_TABLE].ResAddr;
 
     memset(&CmdPacket, 0, sizeof(CmdPacket));
     snprintf(ExpectedEventString, CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "Report baseline of app %%s has not been computed yet");
 
     strncpy(CmdPacket.Payload.Name, "App1", OS_MAX_API_NAME);
-    strncpy(CS_AppData.ResAppTblPtr->Name, "App1", OS_MAX_API_NAME);
+    strncpy(ResAppTblPtr->Name, "App1", OS_MAX_API_NAME);
 
     /* Needed to make subfunction CS_GetAppResTblEntryByName behave properly */
-    CS_AppData.ResAppTblPtr->State       = 1;
-    CS_AppData.ResAppTblPtr->ComputedYet = false;
+    ResAppTblPtr->State       = 1;
+    ResAppTblPtr->ComputedYet = false;
 
     UT_SetDeferredRetcode(UT_KEY(CS_GetAppResTblEntryByName), 1, true);
     UT_SetHandlerFunction(UT_KEY(CS_GetAppResTblEntryByName), CS_APP_CMDS_TEST_CS_GetAppResTblEntryByNameHandler2,
@@ -263,15 +268,16 @@ void CS_ReportBaselineAppCmd_Test_BaselineInvalidName(void)
     CS_ReportBaselineAppCmd_t CmdPacket;
     int32                     strCmpResult;
     char                      ExpectedEventString[CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+    CS_Res_App_Table_Entry_t *ResAppTblPtr = CS_AppData.Tbl[CS_ChecksumType_APP_TABLE].ResAddr;
 
     memset(&CmdPacket, 0, sizeof(CmdPacket));
     snprintf(ExpectedEventString, CFE_MISSION_EVS_MAX_MESSAGE_LENGTH, "App report baseline failed, app %%s not found");
 
     strncpy(CmdPacket.Payload.Name, "App1", OS_MAX_API_NAME);
-    strncpy(CS_AppData.ResAppTblPtr->Name, "App2", OS_MAX_API_NAME);
+    strncpy(ResAppTblPtr->Name, "App2", OS_MAX_API_NAME);
 
     /* Needed to make subfunction CS_GetAppResTblEntryByName behave properly */
-    CS_AppData.ResAppTblPtr->State = 1;
+    ResAppTblPtr->State = 1;
 
     UT_SetDeferredRetcode(UT_KEY(CS_GetAppResTblEntryByName), 1, false);
 
@@ -299,13 +305,14 @@ void CS_RecomputeBaselineAppCmd_Test_OneShot(void)
     CS_RecomputeBaselineAppCmd_t CmdPacket;
     int32                        strCmpResult;
     char                         ExpectedEventString[CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+    CS_Res_App_Table_Entry_t *   ResAppTblPtr = CS_AppData.Tbl[CS_ChecksumType_APP_TABLE].ResAddr;
 
     memset(&CmdPacket, 0, sizeof(CmdPacket));
     snprintf(ExpectedEventString, CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "App recompute baseline for app %%s failed: child task in use");
 
     strncpy(CmdPacket.Payload.Name, "App1", OS_MAX_API_NAME);
-    strncpy(CS_AppData.ResAppTblPtr->Name, "App2", OS_MAX_API_NAME);
+    strncpy(ResAppTblPtr->Name, "App2", OS_MAX_API_NAME);
 
     CS_AppData.HkPacket.Payload.RecomputeInProgress = false;
     CS_AppData.HkPacket.Payload.OneShotInProgress   = true;
@@ -337,17 +344,18 @@ void CS_RecomputeBaselineAppCmd_Test_Nominal(void)
     CS_RecomputeBaselineAppCmd_t CmdPacket;
     int32                        strCmpResult;
     char                         ExpectedEventString[CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+    CS_Res_App_Table_Entry_t *   ResAppTblPtr = CS_AppData.Tbl[CS_ChecksumType_APP_TABLE].ResAddr;
 
     memset(&CmdPacket, 0, sizeof(CmdPacket));
     snprintf(ExpectedEventString, CFE_MISSION_EVS_MAX_MESSAGE_LENGTH, "Recompute baseline of app %%s started");
 
     strncpy(CmdPacket.Payload.Name, "App1", OS_MAX_API_NAME);
-    strncpy(CS_AppData.ResAppTblPtr->Name, "App1", OS_MAX_API_NAME);
+    strncpy(ResAppTblPtr->Name, "App1", OS_MAX_API_NAME);
 
     CS_AppData.HkPacket.Payload.RecomputeInProgress = false;
 
     /* Needed to make subfunction CS_GetAppResTblEntryByName behave properly */
-    CS_AppData.ResAppTblPtr->State = 1;
+    ResAppTblPtr->State = 1;
 
     /* Set to generate event message CS_RECOMPUTE_APP_STARTED_DBG_EID */
     UT_SetDeferredRetcode(UT_KEY(CFE_ES_CreateChildTask), 1, CFE_SUCCESS);
@@ -360,8 +368,7 @@ void CS_RecomputeBaselineAppCmd_Test_Nominal(void)
     CS_RecomputeBaselineAppCmd(&CmdPacket);
 
     /* Verify results */
-    UtAssert_True(CS_AppData.ResAppTblPtr == CS_AppData.RecomputeAppEntryPtr,
-                  "CS_AppData.ResAppTblPtr == CS_AppData.RecomputeAppEntryPtr");
+    UtAssert_True(ResAppTblPtr == CS_AppData.RecomputeAppEntryPtr, "ResAppTblPtr == CS_AppData.RecomputeAppEntryPtr");
 
     UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventID, CS_RECOMPUTE_APP_STARTED_DBG_EID);
     UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventType, CFE_EVS_EventType_DEBUG);
@@ -385,18 +392,19 @@ void CS_RecomputeBaselineAppCmd_Test_CreateChildTaskError(void)
     CS_RecomputeBaselineAppCmd_t CmdPacket;
     int32                        strCmpResult;
     char                         ExpectedEventString[CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+    CS_Res_App_Table_Entry_t *   ResAppTblPtr = CS_AppData.Tbl[CS_ChecksumType_APP_TABLE].ResAddr;
 
     memset(&CmdPacket, 0, sizeof(CmdPacket));
     snprintf(ExpectedEventString, CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "Recompute baseline of app %%s failed, CFE_ES_CreateChildTask returned: 0x%%08X");
 
     strncpy(CmdPacket.Payload.Name, "App1", OS_MAX_API_NAME);
-    strncpy(CS_AppData.ResAppTblPtr->Name, "App1", OS_MAX_API_NAME);
+    strncpy(ResAppTblPtr->Name, "App1", OS_MAX_API_NAME);
 
     CS_AppData.HkPacket.Payload.RecomputeInProgress = false;
 
     /* Needed to make subfunction CS_GetAppResTblEntryByName behave properly */
-    CS_AppData.ResAppTblPtr->State = 1;
+    ResAppTblPtr->State = 1;
 
     /* Set to generate event message CS_RECOMPUTE_APP_CREATE_CHDTASK_ERR_EID */
     UT_SetDeferredRetcode(UT_KEY(CFE_ES_CreateChildTask), 1, -1);
@@ -409,8 +417,7 @@ void CS_RecomputeBaselineAppCmd_Test_CreateChildTaskError(void)
     CS_RecomputeBaselineAppCmd(&CmdPacket);
 
     /* Verify results */
-    UtAssert_True(CS_AppData.ResAppTblPtr == CS_AppData.RecomputeAppEntryPtr,
-                  "CS_AppData.ResAppTblPtr == CS_AppData.RecomputeAppEntryPtr");
+    UtAssert_True(ResAppTblPtr == CS_AppData.RecomputeAppEntryPtr, "ResAppTblPtr == CS_AppData.RecomputeAppEntryPtr");
 
     UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventID, CS_RECOMPUTE_APP_CREATE_CHDTASK_ERR_EID);
     UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventType, CFE_EVS_EventType_ERROR);
@@ -432,18 +439,19 @@ void CS_RecomputeBaselineAppCmd_Test_UnknownNameError(void)
     CS_RecomputeBaselineAppCmd_t CmdPacket;
     int32                        strCmpResult;
     char                         ExpectedEventString[CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+    CS_Res_App_Table_Entry_t *   ResAppTblPtr = CS_AppData.Tbl[CS_ChecksumType_APP_TABLE].ResAddr;
 
     memset(&CmdPacket, 0, sizeof(CmdPacket));
     snprintf(ExpectedEventString, CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "App recompute baseline failed, app %%s not found");
 
     strncpy(CmdPacket.Payload.Name, "App1", OS_MAX_API_NAME);
-    strncpy(CS_AppData.ResAppTblPtr->Name, "App2", OS_MAX_API_NAME);
+    strncpy(ResAppTblPtr->Name, "App2", OS_MAX_API_NAME);
 
     CS_AppData.HkPacket.Payload.RecomputeInProgress = false;
 
     /* Needed to make subfunction CS_GetAppResTblEntryByName behave properly */
-    CS_AppData.ResAppTblPtr->State = 1;
+    ResAppTblPtr->State = 1;
 
     UT_SetDeferredRetcode(UT_KEY(CS_GetAppResTblEntryByName), 1, false);
 
@@ -471,13 +479,14 @@ void CS_RecomputeBaselineAppCmd_Test_RecomputeInProgress(void)
     CS_RecomputeBaselineAppCmd_t CmdPacket;
     int32                        strCmpResult;
     char                         ExpectedEventString[CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+    CS_Res_App_Table_Entry_t *   ResAppTblPtr = CS_AppData.Tbl[CS_ChecksumType_APP_TABLE].ResAddr;
 
     memset(&CmdPacket, 0, sizeof(CmdPacket));
     snprintf(ExpectedEventString, CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "App recompute baseline for app %%s failed: child task in use");
 
     strncpy(CmdPacket.Payload.Name, "App1", OS_MAX_API_NAME);
-    strncpy(CS_AppData.ResAppTblPtr->Name, "App2", OS_MAX_API_NAME);
+    strncpy(ResAppTblPtr->Name, "App2", OS_MAX_API_NAME);
 
     CS_AppData.HkPacket.Payload.RecomputeInProgress = true;
 
@@ -505,22 +514,24 @@ void CS_RecomputeBaselineAppCmd_Test_RecomputeInProgress(void)
 
 void CS_DisableNameAppCmd_Test_Nominal(void)
 {
-    CS_DisableNameAppCmd_t CmdPacket;
-    int32                  strCmpResult;
-    char                   ExpectedEventString[CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+    CS_DisableNameAppCmd_t    CmdPacket;
+    int32                     strCmpResult;
+    char                      ExpectedEventString[CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+    CS_Def_App_Table_Entry_t *DefAppTblPtr = CS_AppData.Tbl[CS_ChecksumType_APP_TABLE].DefAddr;
+    CS_Res_App_Table_Entry_t *ResAppTblPtr = CS_AppData.Tbl[CS_ChecksumType_APP_TABLE].ResAddr;
 
     memset(&CmdPacket, 0, sizeof(CmdPacket));
     snprintf(ExpectedEventString, CFE_MISSION_EVS_MAX_MESSAGE_LENGTH, "Checksumming of app %%s is Disabled");
 
     strncpy(CmdPacket.Payload.Name, "App1", OS_MAX_API_NAME);
-    strncpy(CS_AppData.ResAppTblPtr->Name, "App1", OS_MAX_API_NAME);
-    strncpy(CS_AppData.DefAppTblPtr->Name, "App1", OS_MAX_API_NAME);
+    strncpy(ResAppTblPtr->Name, "App1", OS_MAX_API_NAME);
+    strncpy(DefAppTblPtr->Name, "App1", OS_MAX_API_NAME);
 
     /* Needed to make subfunction CS_GetAppDefTblEntryByName behave properly */
-    CS_AppData.ResAppTblPtr->State = 1;
+    ResAppTblPtr->State = 1;
 
     /* Needed to make subfunction CS_GetAppDefTblEntryByName behave properly */
-    CS_AppData.DefAppTblPtr->State = 1;
+    DefAppTblPtr->State = 1;
 
     UT_SetDeferredRetcode(UT_KEY(CS_CheckRecomputeOneshot), 1, false);
     UT_SetDeferredRetcode(UT_KEY(CS_GetAppResTblEntryByName), 1, true);
@@ -553,9 +564,11 @@ void CS_DisableNameAppCmd_Test_Nominal(void)
 
 void CS_DisableNameAppCmd_Test_UpdateAppsDefinitionTableError(void)
 {
-    CS_DisableNameAppCmd_t CmdPacket;
-    int32                  strCmpResult;
-    char                   ExpectedEventString[2][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+    CS_DisableNameAppCmd_t    CmdPacket;
+    int32                     strCmpResult;
+    char                      ExpectedEventString[2][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+    CS_Def_App_Table_Entry_t *DefAppTblPtr = CS_AppData.Tbl[CS_ChecksumType_APP_TABLE].DefAddr;
+    CS_Res_App_Table_Entry_t *ResAppTblPtr = CS_AppData.Tbl[CS_ChecksumType_APP_TABLE].ResAddr;
 
     memset(&CmdPacket, 0, sizeof(CmdPacket));
     snprintf(ExpectedEventString[0], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH, "Checksumming of app %%s is Disabled");
@@ -564,14 +577,14 @@ void CS_DisableNameAppCmd_Test_UpdateAppsDefinitionTableError(void)
              "CS unable to update apps definition table for entry %%s");
 
     strncpy(CmdPacket.Payload.Name, "App1", OS_MAX_API_NAME);
-    strncpy(CS_AppData.ResAppTblPtr->Name, "App1", OS_MAX_API_NAME);
-    strncpy(CS_AppData.DefAppTblPtr->Name, "App1", OS_MAX_API_NAME);
+    strncpy(ResAppTblPtr->Name, "App1", OS_MAX_API_NAME);
+    strncpy(DefAppTblPtr->Name, "App1", OS_MAX_API_NAME);
 
     /* Needed to make subfunction CS_GetAppDefTblEntryByName behave properly */
-    CS_AppData.ResAppTblPtr->State = 1;
+    ResAppTblPtr->State = 1;
 
     /* Set to make subfunction CS_GetAppDefTblEntryByName return false */
-    CS_AppData.DefAppTblPtr->State = CS_ChecksumState_EMPTY;
+    DefAppTblPtr->State = CS_ChecksumState_EMPTY;
 
     UT_SetDeferredRetcode(UT_KEY(CS_GetAppResTblEntryByName), 1, true);
     UT_SetHandlerFunction(UT_KEY(CS_GetAppResTblEntryByName), CS_APP_CMDS_TEST_CS_GetAppResTblEntryByNameHandler1,
@@ -609,20 +622,22 @@ void CS_DisableNameAppCmd_Test_UpdateAppsDefinitionTableError(void)
 
 void CS_DisableNameAppCmd_Test_UnknownNameError(void)
 {
-    CS_DisableNameAppCmd_t CmdPacket;
-    int32                  strCmpResult;
-    char                   ExpectedEventString[CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+    CS_DisableNameAppCmd_t    CmdPacket;
+    int32                     strCmpResult;
+    char                      ExpectedEventString[CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+    CS_Def_App_Table_Entry_t *DefAppTblPtr = CS_AppData.Tbl[CS_ChecksumType_APP_TABLE].DefAddr;
+    CS_Res_App_Table_Entry_t *ResAppTblPtr = CS_AppData.Tbl[CS_ChecksumType_APP_TABLE].ResAddr;
 
     memset(&CmdPacket, 0, sizeof(CmdPacket));
     snprintf(ExpectedEventString, CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "App disable app command failed, app %%s not found");
 
     strncpy(CmdPacket.Payload.Name, "App1", OS_MAX_API_NAME);
-    strncpy(CS_AppData.ResAppTblPtr->Name, "App1", OS_MAX_API_NAME);
-    strncpy(CS_AppData.DefAppTblPtr->Name, "App1", OS_MAX_API_NAME);
+    strncpy(ResAppTblPtr->Name, "App1", OS_MAX_API_NAME);
+    strncpy(DefAppTblPtr->Name, "App1", OS_MAX_API_NAME);
 
     /* Set to make subfunction CS_GetAppResTblEntryByName return false */
-    CS_AppData.ResAppTblPtr->State = CS_ChecksumState_EMPTY;
+    ResAppTblPtr->State = CS_ChecksumState_EMPTY;
 
     UT_SetDeferredRetcode(UT_KEY(CS_GetAppResTblEntryByName), 1, false);
 
@@ -666,22 +681,24 @@ void CS_DisableNameAppCmd_Test_OneShot(void)
 
 void CS_EnableNameAppCmd_Test_Nominal(void)
 {
-    CS_EnableNameAppCmd_t CmdPacket;
-    int32                 strCmpResult;
-    char                  ExpectedEventString[CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+    CS_EnableNameAppCmd_t     CmdPacket;
+    int32                     strCmpResult;
+    char                      ExpectedEventString[CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+    CS_Def_App_Table_Entry_t *DefAppTblPtr = CS_AppData.Tbl[CS_ChecksumType_APP_TABLE].DefAddr;
+    CS_Res_App_Table_Entry_t *ResAppTblPtr = CS_AppData.Tbl[CS_ChecksumType_APP_TABLE].ResAddr;
 
     memset(&CmdPacket, 0, sizeof(CmdPacket));
     snprintf(ExpectedEventString, CFE_MISSION_EVS_MAX_MESSAGE_LENGTH, "Checksumming of app %%s is Enabled");
 
     strncpy(CmdPacket.Payload.Name, "App1", OS_MAX_API_NAME);
-    strncpy(CS_AppData.ResAppTblPtr->Name, "App1", OS_MAX_API_NAME);
-    strncpy(CS_AppData.DefAppTblPtr->Name, "App1", OS_MAX_API_NAME);
+    strncpy(ResAppTblPtr->Name, "App1", OS_MAX_API_NAME);
+    strncpy(DefAppTblPtr->Name, "App1", OS_MAX_API_NAME);
 
     /* Needed to make subfunction CS_GetAppDefTblEntryByName behave properly */
-    CS_AppData.ResAppTblPtr->State = 1;
+    ResAppTblPtr->State = 1;
 
     /* Needed to make subfunction CS_GetAppDefTblEntryByName behave properly */
-    CS_AppData.DefAppTblPtr->State = 1;
+    DefAppTblPtr->State = 1;
 
     UT_SetDeferredRetcode(UT_KEY(CS_CheckRecomputeOneshot), 1, false);
     UT_SetDeferredRetcode(UT_KEY(CS_GetAppResTblEntryByName), 1, true);
@@ -714,9 +731,11 @@ void CS_EnableNameAppCmd_Test_Nominal(void)
 
 void CS_EnableNameAppCmd_Test_UpdateAppsDefinitionTableError(void)
 {
-    CS_EnableNameAppCmd_t CmdPacket;
-    int32                 strCmpResult;
-    char                  ExpectedEventString[2][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+    CS_EnableNameAppCmd_t     CmdPacket;
+    int32                     strCmpResult;
+    char                      ExpectedEventString[2][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+    CS_Def_App_Table_Entry_t *DefAppTblPtr = CS_AppData.Tbl[CS_ChecksumType_APP_TABLE].DefAddr;
+    CS_Res_App_Table_Entry_t *ResAppTblPtr = CS_AppData.Tbl[CS_ChecksumType_APP_TABLE].ResAddr;
 
     memset(&CmdPacket, 0, sizeof(CmdPacket));
     snprintf(ExpectedEventString[0], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH, "Checksumming of app %%s is Enabled");
@@ -725,14 +744,14 @@ void CS_EnableNameAppCmd_Test_UpdateAppsDefinitionTableError(void)
              "CS unable to update apps definition table for entry %%s");
 
     strncpy(CmdPacket.Payload.Name, "App1", OS_MAX_API_NAME);
-    strncpy(CS_AppData.ResAppTblPtr->Name, "App1", OS_MAX_API_NAME);
-    strncpy(CS_AppData.DefAppTblPtr->Name, "App1", OS_MAX_API_NAME);
+    strncpy(ResAppTblPtr->Name, "App1", OS_MAX_API_NAME);
+    strncpy(DefAppTblPtr->Name, "App1", OS_MAX_API_NAME);
 
     /* Needed to make subfunction CS_GetAppDefTblEntryByName behave properly */
-    CS_AppData.ResAppTblPtr->State = 1;
+    ResAppTblPtr->State = 1;
 
     /* Set to make subfunction CS_GetAppDefTblEntryByName return false */
-    CS_AppData.DefAppTblPtr->State = CS_ChecksumState_EMPTY;
+    DefAppTblPtr->State = CS_ChecksumState_EMPTY;
 
     UT_SetDeferredRetcode(UT_KEY(CS_GetAppResTblEntryByName), 1, true);
     UT_SetHandlerFunction(UT_KEY(CS_GetAppResTblEntryByName), CS_APP_CMDS_TEST_CS_GetAppResTblEntryByNameHandler1,
@@ -770,20 +789,22 @@ void CS_EnableNameAppCmd_Test_UpdateAppsDefinitionTableError(void)
 
 void CS_EnableNameAppCmd_Test_UnknownNameError(void)
 {
-    CS_EnableNameAppCmd_t CmdPacket;
-    int32                 strCmpResult;
-    char                  ExpectedEventString[CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+    CS_EnableNameAppCmd_t     CmdPacket;
+    int32                     strCmpResult;
+    char                      ExpectedEventString[CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+    CS_Def_App_Table_Entry_t *DefAppTblPtr = CS_AppData.Tbl[CS_ChecksumType_APP_TABLE].DefAddr;
+    CS_Res_App_Table_Entry_t *ResAppTblPtr = CS_AppData.Tbl[CS_ChecksumType_APP_TABLE].ResAddr;
 
     memset(&CmdPacket, 0, sizeof(CmdPacket));
     snprintf(ExpectedEventString, CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "App enable app command failed, app %%s not found");
 
     strncpy(CmdPacket.Payload.Name, "App1", OS_MAX_API_NAME);
-    strncpy(CS_AppData.ResAppTblPtr->Name, "App1", OS_MAX_API_NAME);
-    strncpy(CS_AppData.DefAppTblPtr->Name, "App1", OS_MAX_API_NAME);
+    strncpy(ResAppTblPtr->Name, "App1", OS_MAX_API_NAME);
+    strncpy(DefAppTblPtr->Name, "App1", OS_MAX_API_NAME);
 
     /* Set to make subfunction CS_GetAppResTblEntryByName return false */
-    CS_AppData.ResAppTblPtr->State = CS_ChecksumState_EMPTY;
+    ResAppTblPtr->State = CS_ChecksumState_EMPTY;
 
     UT_SetDeferredRetcode(UT_KEY(CS_CheckRecomputeOneshot), 1, false);
     UT_SetDeferredRetcode(UT_KEY(CS_GetAppResTblEntryByName), 1, false);

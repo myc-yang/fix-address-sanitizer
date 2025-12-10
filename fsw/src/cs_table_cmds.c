@@ -197,6 +197,7 @@ CFE_Status_t CS_DisableNameTableCmd(const CS_DisableNameTableCmd_t *CmdPtr)
 {
     CS_Res_Tables_Table_Entry_t *ResultsEntry;
     CS_Def_Tables_Table_Entry_t *DefinitionEntry;
+    CS_TableWrapper_t *          tw = &CS_AppData.Tbl[CS_ChecksumType_TABLES_TABLE];
     char                         Name[CFE_TBL_MAX_FULL_NAME_LEN];
 
     if (CS_CheckRecomputeOneshot() == false)
@@ -215,9 +216,7 @@ CFE_Status_t CS_DisableNameTableCmd(const CS_DisableNameTableCmd_t *CmdPtr)
 
             if (CS_GetTableDefTblEntryByName(&DefinitionEntry, Name))
             {
-                DefinitionEntry->State = CS_ChecksumState_DISABLED;
-                CS_ResetTablesTblResultEntry(CS_AppData.TblResTablesTblPtr);
-                CFE_TBL_Modified(CS_AppData.DefTablesTableHandle);
+                CS_SetDefEntryState(tw, DefinitionEntry, CS_ChecksumState_DISABLED);
             }
             else
             {
@@ -247,6 +246,7 @@ CFE_Status_t CS_EnableNameTableCmd(const CS_EnableNameTableCmd_t *CmdPtr)
 {
     CS_Res_Tables_Table_Entry_t *ResultsEntry;
     CS_Def_Tables_Table_Entry_t *DefinitionEntry;
+    CS_TableWrapper_t *          tw = &CS_AppData.Tbl[CS_ChecksumType_TABLES_TABLE];
     char                         Name[CFE_TBL_MAX_FULL_NAME_LEN];
 
     if (CS_CheckRecomputeOneshot() == false)
@@ -263,9 +263,7 @@ CFE_Status_t CS_EnableNameTableCmd(const CS_EnableNameTableCmd_t *CmdPtr)
 
             if (CS_GetTableDefTblEntryByName(&DefinitionEntry, Name))
             {
-                DefinitionEntry->State = CS_ChecksumState_ENABLED;
-                CS_ResetTablesTblResultEntry(CS_AppData.TblResTablesTblPtr);
-                CFE_TBL_Modified(CS_AppData.DefTablesTableHandle);
+                CS_SetDefEntryState(tw, DefinitionEntry, CS_ChecksumState_ENABLED);
             }
             else
             {

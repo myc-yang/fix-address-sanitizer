@@ -317,10 +317,12 @@ CFE_Status_t CS_EnableOSCmd(const CS_EnableOSCmd_t *CmdPtr)
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 CFE_Status_t CS_ReportBaselineCfeCoreCmd(const CS_ReportBaselineCfeCoreCmd_t *CmdPtr)
 {
-    if (CS_AppData.CfeCoreCodeSeg.ComputedYet == true)
+    CS_Res_EepromMemory_Table_Entry_t *CfeCoreCodeSeg = CS_GetCfeCoreCodeSegResTable();
+
+    if (CfeCoreCodeSeg->ComputedYet == true)
     {
         CFE_EVS_SendEvent(CS_BASELINE_CFECORE_INF_EID, CFE_EVS_EventType_INFORMATION, "Baseline of cFE Core is 0x%08X",
-                          (unsigned int)CS_AppData.CfeCoreCodeSeg.ComparisonValue);
+                          (unsigned int)CfeCoreCodeSeg->ComparisonValue);
     }
     else
     {
@@ -339,10 +341,12 @@ CFE_Status_t CS_ReportBaselineCfeCoreCmd(const CS_ReportBaselineCfeCoreCmd_t *Cm
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 CFE_Status_t CS_ReportBaselineOSCmd(const CS_ReportBaselineOSCmd_t *CmdPtr)
 {
-    if (CS_AppData.OSCodeSeg.ComputedYet == true)
+    CS_Res_EepromMemory_Table_Entry_t *OSCodeSeg = CS_GetOSCodeSegResTable();
+
+    if (OSCodeSeg->ComputedYet == true)
     {
         CFE_EVS_SendEvent(CS_BASELINE_OS_INF_EID, CFE_EVS_EventType_INFORMATION,
-                          "Baseline of OS code segment is 0x%08X", (unsigned int)CS_AppData.OSCodeSeg.ComparisonValue);
+                          "Baseline of OS code segment is 0x%08X", (unsigned int)OSCodeSeg->ComparisonValue);
     }
     else
     {
@@ -374,7 +378,7 @@ CFE_Status_t CS_RecomputeBaselineCfeCoreCmd(const CS_RecomputeBaselineCfeCoreCmd
         /* fill in child task variables */
         CS_AppData.ChildTaskTable                = CS_ChecksumType_CFECORE;
         CS_AppData.ChildTaskEntryID              = 0;
-        CS_AppData.RecomputeEepromMemoryEntryPtr = &CS_AppData.CfeCoreCodeSeg;
+        CS_AppData.RecomputeEepromMemoryEntryPtr = CS_GetCfeCoreCodeSegResTable();
 
         Status = CFE_ES_CreateChildTask(&ChildTaskID, CS_RECOMP_CFECORE_TASK_NAME, CS_RecomputeEepromMemoryChildTask,
                                         NULL, CFE_PLATFORM_ES_DEFAULT_STACK_SIZE, CS_CHILD_TASK_PRIORITY, 0);
@@ -425,7 +429,7 @@ CFE_Status_t CS_RecomputeBaselineOSCmd(const CS_RecomputeBaselineOSCmd_t *CmdPtr
         /* fill in child task variables */
         CS_AppData.ChildTaskTable                = CS_ChecksumType_OSCORE;
         CS_AppData.ChildTaskEntryID              = 0;
-        CS_AppData.RecomputeEepromMemoryEntryPtr = &CS_AppData.OSCodeSeg;
+        CS_AppData.RecomputeEepromMemoryEntryPtr = CS_GetOSCodeSegResTable();
 
         Status = CFE_ES_CreateChildTask(&ChildTaskID, CS_RECOMP_OS_TASK_NAME, CS_RecomputeEepromMemoryChildTask, NULL,
                                         CFE_PLATFORM_ES_DEFAULT_STACK_SIZE, CS_CHILD_TASK_PRIORITY, 0);

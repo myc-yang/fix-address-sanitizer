@@ -1986,6 +1986,18 @@
  */
 #define CS_VAL_APP_DEF_TBL_LONG_NAME_ERR_EID 154
 
+/**
+ * \brief CS Tables Table Validate Failed Illegal State With Long Name Event ID
+ *
+ *  \par Type: ERROR
+ *
+ *  \par Cause:
+ *
+ *  This event message is issued when CS validation for the Table definition table finds an entry
+ *  that contains a non-terminated name field.
+ */
+#define CS_VAL_TABLES_DEF_TBL_LONG_NAME_ERR_EID 155
+
 /**@}*/
 
 #endif

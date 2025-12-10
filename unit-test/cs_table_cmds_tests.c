@@ -178,19 +178,20 @@ void CS_EnableTablesCmd_Test_OneShot(void)
 
 void CS_ReportBaselineTableCmd_Test_Computed(void)
 {
-    CS_ReportBaselineTableCmd_t CmdPacket;
-    int32                       strCmpResult;
-    char                        ExpectedEventString[CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+    CS_ReportBaselineTableCmd_t  CmdPacket;
+    int32                        strCmpResult;
+    char                         ExpectedEventString[CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+    CS_Res_Tables_Table_Entry_t *ResTablesTblPtr = CS_AppData.Tbl[CS_ChecksumType_TABLES_TABLE].ResAddr;
 
     snprintf(ExpectedEventString, CFE_MISSION_EVS_MAX_MESSAGE_LENGTH, "Report baseline of table %%s is 0x%%08X");
 
-    CS_AppData.ResTablesTblPtr[0].ComputedYet     = true;
-    CS_AppData.ResTablesTblPtr[0].ComparisonValue = 1;
+    ResTablesTblPtr[0].ComputedYet     = true;
+    ResTablesTblPtr[0].ComparisonValue = 1;
 
-    strncpy(CS_AppData.ResTablesTblPtr[0].Name, "name", 10);
+    strncpy(ResTablesTblPtr[0].Name, "name", 10);
     strncpy(CmdPacket.Payload.Name, "name", 10);
 
-    CS_AppData.ResTablesTblPtr[0].State = 99; /* Needed to make CS_GetTableResTblEntryByName return correct results */
+    ResTablesTblPtr[0].State = 99; /* Needed to make CS_GetTableResTblEntryByName return correct results */
 
     UT_SetHandlerFunction(UT_KEY(CS_GetTableResTblEntryByName), CS_APP_CMDS_TEST_CS_GetTableResTblEntryByNameHandler1,
                           NULL);
@@ -218,19 +219,20 @@ void CS_ReportBaselineTableCmd_Test_Computed(void)
 
 void CS_ReportBaselineTableCmd_Test_NotYetComputed(void)
 {
-    CS_ReportBaselineTableCmd_t CmdPacket;
-    int32                       strCmpResult;
-    char                        ExpectedEventString[CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+    CS_ReportBaselineTableCmd_t  CmdPacket;
+    int32                        strCmpResult;
+    char                         ExpectedEventString[CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+    CS_Res_Tables_Table_Entry_t *ResTablesTblPtr = CS_AppData.Tbl[CS_ChecksumType_TABLES_TABLE].ResAddr;
 
     snprintf(ExpectedEventString, CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "Report baseline of table %%s has not been computed yet");
 
-    CS_AppData.ResTablesTblPtr[0].ComputedYet = false;
+    ResTablesTblPtr[0].ComputedYet = false;
 
-    strncpy(CS_AppData.ResTablesTblPtr[0].Name, "name", 10);
+    strncpy(ResTablesTblPtr[0].Name, "name", 10);
     strncpy(CmdPacket.Payload.Name, "name", 10);
 
-    CS_AppData.ResTablesTblPtr[0].State = 99; /* Needed to make CS_GetTableResTblEntryByName return correct results */
+    ResTablesTblPtr[0].State = 99; /* Needed to make CS_GetTableResTblEntryByName return correct results */
 
     UT_SetHandlerFunction(UT_KEY(CS_GetTableResTblEntryByName), CS_APP_CMDS_TEST_CS_GetTableResTblEntryByNameHandler2,
                           NULL);
@@ -258,14 +260,15 @@ void CS_ReportBaselineTableCmd_Test_NotYetComputed(void)
 
 void CS_ReportBaselineTableCmd_Test_TableNotFound(void)
 {
-    CS_ReportBaselineTableCmd_t CmdPacket;
-    int32                       strCmpResult;
-    char                        ExpectedEventString[CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+    CS_ReportBaselineTableCmd_t  CmdPacket;
+    int32                        strCmpResult;
+    char                         ExpectedEventString[CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+    CS_Res_Tables_Table_Entry_t *ResTablesTblPtr = CS_AppData.Tbl[CS_ChecksumType_TABLES_TABLE].ResAddr;
 
     snprintf(ExpectedEventString, CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "Tables report baseline failed, table %%s not found");
 
-    strncpy(CS_AppData.ResTablesTblPtr[0].Name, "name1", 10);
+    strncpy(ResTablesTblPtr[0].Name, "name1", 10);
     strncpy(CmdPacket.Payload.Name, "name2", 10);
 
     UT_SetDeferredRetcode(UT_KEY(CS_GetTableResTblEntryByName), 1, false);
@@ -295,13 +298,14 @@ void CS_RecomputeBaselineTableCmd_Test_Nominal(void)
     CS_RecomputeBaselineTableCmd_t CmdPacket;
     int32                          strCmpResult;
     char                           ExpectedEventString[CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+    CS_Res_Tables_Table_Entry_t *  ResTablesTblPtr = CS_AppData.Tbl[CS_ChecksumType_TABLES_TABLE].ResAddr;
 
     snprintf(ExpectedEventString, CFE_MISSION_EVS_MAX_MESSAGE_LENGTH, "Recompute baseline of table %%s started");
 
-    strncpy(CS_AppData.ResTablesTblPtr[0].Name, "name", 10);
+    strncpy(ResTablesTblPtr[0].Name, "name", 10);
     strncpy(CmdPacket.Payload.Name, "name", 10);
 
-    CS_AppData.ResTablesTblPtr[0].State = 99; /* Needed to make CS_GetTableResTblEntryByName return correct results */
+    ResTablesTblPtr[0].State = 99; /* Needed to make CS_GetTableResTblEntryByName return correct results */
 
     UT_SetDeferredRetcode(UT_KEY(CS_CheckRecomputeOneshot), 1, false);
     UT_SetHandlerFunction(UT_KEY(CS_GetTableResTblEntryByName), CS_APP_CMDS_TEST_CS_GetTableResTblEntryByNameHandler1,
@@ -340,14 +344,15 @@ void CS_RecomputeBaselineTableCmd_Test_CreateChildTaskError(void)
     CS_RecomputeBaselineTableCmd_t CmdPacket;
     int32                          strCmpResult;
     char                           ExpectedEventString[CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+    CS_Res_Tables_Table_Entry_t *  ResTablesTblPtr = CS_AppData.Tbl[CS_ChecksumType_TABLES_TABLE].ResAddr;
 
     snprintf(ExpectedEventString, CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "Recompute baseline of table %%s failed, CFE_ES_CreateChildTask returned: 0x%%08X");
 
-    strncpy(CS_AppData.ResTablesTblPtr[0].Name, "name", 10);
+    strncpy(ResTablesTblPtr[0].Name, "name", 10);
     strncpy(CmdPacket.Payload.Name, "name", 10);
 
-    CS_AppData.ResTablesTblPtr[0].State = 99; /* Needed to make CS_GetTableResTblEntryByName return correct results */
+    ResTablesTblPtr[0].State = 99; /* Needed to make CS_GetTableResTblEntryByName return correct results */
 
     /* Set to generate error message CS_RECOMPUTE_TABLES_CREATE_CHDTASK_ERR_EID */
     UT_SetDeferredRetcode(UT_KEY(CFE_ES_CreateChildTask), 1, -1);
@@ -490,20 +495,22 @@ void CS_RecomputeBaselineTableCmd_Test_OneShot(void)
 
 void CS_DisableNameTableCmd_Test_Nominal(void)
 {
-    CS_DisableNameTableCmd_t CmdPacket;
-    int32                    strCmpResult;
-    char                     ExpectedEventString[CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+    CS_DisableNameTableCmd_t     CmdPacket;
+    int32                        strCmpResult;
+    char                         ExpectedEventString[CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+    CS_Def_Tables_Table_Entry_t *DefTablesTblPtr = CS_AppData.Tbl[CS_ChecksumType_TABLES_TABLE].DefAddr;
+    CS_Res_Tables_Table_Entry_t *ResTablesTblPtr = CS_AppData.Tbl[CS_ChecksumType_TABLES_TABLE].ResAddr;
 
     snprintf(ExpectedEventString, CFE_MISSION_EVS_MAX_MESSAGE_LENGTH, "Checksumming of table %%s is Disabled");
 
-    strncpy(CS_AppData.ResTablesTblPtr[0].Name, "name", 10);
+    strncpy(ResTablesTblPtr[0].Name, "name", 10);
     strncpy(CmdPacket.Payload.Name, "name", 10);
 
-    CS_AppData.ResTablesTblPtr[0].State = 99; /* Needed to make CS_GetTableResTblEntryByName return correct results */
+    ResTablesTblPtr[0].State = 99; /* Needed to make CS_GetTableResTblEntryByName return correct results */
 
-    strncpy(CS_AppData.DefTablesTblPtr[0].Name, "name", 10);
+    strncpy(DefTablesTblPtr[0].Name, "name", 10);
 
-    CS_AppData.DefTablesTblPtr[0].State = 99; /* Needed to make CS_GetTableDefTblEntryByName return correct results */
+    DefTablesTblPtr[0].State = 99; /* Needed to make CS_GetTableDefTblEntryByName return correct results */
 
     UT_SetDeferredRetcode(UT_KEY(CS_CheckRecomputeOneshot), 1, false);
     UT_SetHandlerFunction(UT_KEY(CS_GetTableResTblEntryByName), CS_APP_CMDS_TEST_CS_GetTableResTblEntryByNameHandler1,
@@ -517,9 +524,8 @@ void CS_DisableNameTableCmd_Test_Nominal(void)
     CS_DisableNameTableCmd(&CmdPacket);
 
     /* Verify results */
-    UtAssert_True(CS_AppData.ResTablesTblPtr[0].TempChecksumValue == 0,
-                  "CS_AppData.ResTablesTblPtr[0].TempChecksumValue == 0");
-    UtAssert_True(CS_AppData.ResTablesTblPtr[0].ByteOffset == 0, "CS_AppData.ResTablesTblPtr[0].ByteOffset == 0");
+    UtAssert_True(ResTablesTblPtr[0].TempChecksumValue == 0, "ResTablesTblPtr[0].TempChecksumValue == 0");
+    UtAssert_True(ResTablesTblPtr[0].ByteOffset == 0, "ResTablesTblPtr[0].ByteOffset == 0");
 
     UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventID, CS_DISABLE_TABLES_NAME_INF_EID);
     UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventType, CFE_EVS_EventType_INFORMATION);
@@ -538,19 +544,20 @@ void CS_DisableNameTableCmd_Test_Nominal(void)
 
 void CS_DisableNameTableCmd_Test_TableDefNotFound(void)
 {
-    CS_DisableNameTableCmd_t CmdPacket;
-    int32                    strCmpResult;
-    char                     ExpectedEventString[2][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+    CS_DisableNameTableCmd_t     CmdPacket;
+    int32                        strCmpResult;
+    char                         ExpectedEventString[2][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+    CS_Res_Tables_Table_Entry_t *ResTablesTblPtr = CS_AppData.Tbl[CS_ChecksumType_TABLES_TABLE].ResAddr;
 
     snprintf(ExpectedEventString[0], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH, "Checksumming of table %%s is Disabled");
 
     snprintf(ExpectedEventString[1], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "CS unable to update tables definition table for entry %%s");
 
-    strncpy(CS_AppData.ResTablesTblPtr[0].Name, "name", 10);
+    strncpy(ResTablesTblPtr[0].Name, "name", 10);
     strncpy(CmdPacket.Payload.Name, "name", 10);
 
-    CS_AppData.ResTablesTblPtr[0].State = 99; /* Needed to make CS_GetTableResTblEntryByName return correct results */
+    ResTablesTblPtr[0].State = 99; /* Needed to make CS_GetTableResTblEntryByName return correct results */
 
     UT_SetDeferredRetcode(UT_KEY(CS_CheckRecomputeOneshot), 1, false);
     UT_SetHandlerFunction(UT_KEY(CS_GetTableResTblEntryByName), CS_APP_CMDS_TEST_CS_GetTableResTblEntryByNameHandler1,
@@ -562,9 +569,8 @@ void CS_DisableNameTableCmd_Test_TableDefNotFound(void)
     CS_DisableNameTableCmd(&CmdPacket);
 
     /* Verify results */
-    UtAssert_True(CS_AppData.ResTablesTblPtr[0].TempChecksumValue == 0,
-                  "CS_AppData.ResTablesTblPtr[0].TempChecksumValue == 0");
-    UtAssert_True(CS_AppData.ResTablesTblPtr[0].ByteOffset == 0, "CS_AppData.ResTablesTblPtr[0].ByteOffset == 0");
+    UtAssert_True(ResTablesTblPtr[0].TempChecksumValue == 0, "ResTablesTblPtr[0].TempChecksumValue == 0");
+    UtAssert_True(ResTablesTblPtr[0].ByteOffset == 0, "ResTablesTblPtr[0].ByteOffset == 0");
 
     UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventID, CS_DISABLE_TABLES_NAME_INF_EID);
     UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventType, CFE_EVS_EventType_INFORMATION);
@@ -644,20 +650,22 @@ void CS_DisableNameTableCmd_Test_OneShot(void)
 
 void CS_EnableNameTableCmd_Test_Nominal(void)
 {
-    CS_EnableNameTableCmd_t CmdPacket;
-    int32                   strCmpResult;
-    char                    ExpectedEventString[CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+    CS_EnableNameTableCmd_t      CmdPacket;
+    int32                        strCmpResult;
+    char                         ExpectedEventString[CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+    CS_Def_Tables_Table_Entry_t *DefTablesTblPtr = CS_AppData.Tbl[CS_ChecksumType_TABLES_TABLE].DefAddr;
+    CS_Res_Tables_Table_Entry_t *ResTablesTblPtr = CS_AppData.Tbl[CS_ChecksumType_TABLES_TABLE].ResAddr;
 
     snprintf(ExpectedEventString, CFE_MISSION_EVS_MAX_MESSAGE_LENGTH, "Checksumming of table %%s is Enabled");
 
-    strncpy(CS_AppData.ResTablesTblPtr[0].Name, "name", 10);
+    strncpy(ResTablesTblPtr[0].Name, "name", 10);
     strncpy(CmdPacket.Payload.Name, "name", 10);
 
-    CS_AppData.ResTablesTblPtr[0].State = 99; /* Needed to make CS_GetTableResTblEntryByName return correct results */
+    ResTablesTblPtr[0].State = 99; /* Needed to make CS_GetTableResTblEntryByName return correct results */
 
-    strncpy(CS_AppData.DefTablesTblPtr[0].Name, "name", 10);
+    strncpy(DefTablesTblPtr[0].Name, "name", 10);
 
-    CS_AppData.DefTablesTblPtr[0].State = 99; /* Needed to make CS_GetTableDefTblEntryByName return correct results */
+    DefTablesTblPtr[0].State = 99; /* Needed to make CS_GetTableDefTblEntryByName return correct results */
 
     UT_SetDeferredRetcode(UT_KEY(CS_CheckRecomputeOneshot), 1, false);
     UT_SetHandlerFunction(UT_KEY(CS_GetTableResTblEntryByName), CS_APP_CMDS_TEST_CS_GetTableResTblEntryByNameHandler1,
@@ -689,19 +697,20 @@ void CS_EnableNameTableCmd_Test_Nominal(void)
 
 void CS_EnableNameTableCmd_Test_TableDefNotFound(void)
 {
-    CS_EnableNameTableCmd_t CmdPacket;
-    int32                   strCmpResult;
-    char                    ExpectedEventString[2][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+    CS_EnableNameTableCmd_t      CmdPacket;
+    int32                        strCmpResult;
+    char                         ExpectedEventString[2][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+    CS_Res_Tables_Table_Entry_t *ResTablesTblPtr = CS_AppData.Tbl[CS_ChecksumType_TABLES_TABLE].ResAddr;
 
     snprintf(ExpectedEventString[0], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH, "Checksumming of table %%s is Enabled");
 
     snprintf(ExpectedEventString[1], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "CS unable to update tables definition table for entry %%s");
 
-    strncpy(CS_AppData.ResTablesTblPtr[0].Name, "name", 10);
+    strncpy(ResTablesTblPtr[0].Name, "name", 10);
     strncpy(CmdPacket.Payload.Name, "name", 10);
 
-    CS_AppData.ResTablesTblPtr[0].State = 99; /* Needed to make CS_GetTableResTblEntryByName return correct results */
+    ResTablesTblPtr[0].State = 99; /* Needed to make CS_GetTableResTblEntryByName return correct results */
 
     UT_SetDeferredRetcode(UT_KEY(CS_CheckRecomputeOneshot), 1, false);
     UT_SetHandlerFunction(UT_KEY(CS_GetTableResTblEntryByName), CS_APP_CMDS_TEST_CS_GetTableResTblEntryByNameHandler1,
