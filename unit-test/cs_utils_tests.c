@@ -24,7 +24,7 @@
 #include "cs_utils.h"
 #include "cs_msg.h"
 #include "cs_msgdefs.h"
-#include "cs_events.h"
+#include "cs_eventids.h"
 #include "cs_version.h"
 #include "cs_compute.h"
 #include "cs_test_utils.h"
@@ -110,7 +110,7 @@ void CS_GetTableResTblEntryByName_Test(void)
     CS_Res_Tables_Table_Entry_t *EntryPtr = NULL;
 
     /* Empty name, enabled state */
-    CS_AppData.ResTablesTblPtr[0].State = CS_STATE_ENABLED;
+    CS_AppData.ResTablesTblPtr[0].State = CS_ChecksumState_ENABLED;
 
     /* Execute and verify */
     UtAssert_BOOL_FALSE(CS_GetTableResTblEntryByName(&EntryPtr, "name"));
@@ -118,14 +118,14 @@ void CS_GetTableResTblEntryByName_Test(void)
 
     /* Matching name, empty state */
     strncpy(CS_AppData.ResTablesTblPtr[0].Name, "name", 10);
-    CS_AppData.ResTablesTblPtr[0].State = CS_STATE_EMPTY;
+    CS_AppData.ResTablesTblPtr[0].State = CS_ChecksumState_EMPTY;
 
     /* Execute and verify */
     UtAssert_BOOL_FALSE(CS_GetTableResTblEntryByName(&EntryPtr, "name"));
     UtAssert_ADDRESS_EQ(EntryPtr, NULL);
 
     /* Matching name, enabled */
-    CS_AppData.ResTablesTblPtr[0].State = CS_STATE_ENABLED;
+    CS_AppData.ResTablesTblPtr[0].State = CS_ChecksumState_ENABLED;
 
     /* Execute and verify */
     UtAssert_BOOL_TRUE(CS_GetTableResTblEntryByName(&EntryPtr, "name"));
@@ -139,7 +139,7 @@ void CS_GetTableDefTblEntryByName_Test(void)
     CS_Def_Tables_Table_Entry_t *EntryPtr = NULL;
 
     /* Empty name, enabled state */
-    CS_AppData.DefTablesTblPtr[0].State = CS_STATE_ENABLED;
+    CS_AppData.DefTablesTblPtr[0].State = CS_ChecksumState_ENABLED;
 
     /* Execute and verify */
     UtAssert_BOOL_FALSE(CS_GetTableDefTblEntryByName(&EntryPtr, "name"));
@@ -147,14 +147,14 @@ void CS_GetTableDefTblEntryByName_Test(void)
 
     /* Matching name, empty state */
     strncpy(CS_AppData.DefTablesTblPtr[0].Name, "name", 10);
-    CS_AppData.DefTablesTblPtr[0].State = CS_STATE_EMPTY;
+    CS_AppData.DefTablesTblPtr[0].State = CS_ChecksumState_EMPTY;
 
     /* Execute and verify */
     UtAssert_BOOL_FALSE(CS_GetTableDefTblEntryByName(&EntryPtr, "name"));
     UtAssert_ADDRESS_EQ(EntryPtr, NULL);
 
     /* Matching name, enabled */
-    CS_AppData.DefTablesTblPtr[0].State = CS_STATE_ENABLED;
+    CS_AppData.DefTablesTblPtr[0].State = CS_ChecksumState_ENABLED;
 
     /* Execute and verify */
     UtAssert_BOOL_TRUE(CS_GetTableDefTblEntryByName(&EntryPtr, "name"));
@@ -168,7 +168,7 @@ void CS_GetAppResTblEntryByName_Test(void)
     CS_Res_App_Table_Entry_t *EntryPtr = NULL;
 
     /* Empty name, enabled state */
-    CS_AppData.ResAppTblPtr[0].State = CS_STATE_ENABLED;
+    CS_AppData.ResAppTblPtr[0].State = CS_ChecksumState_ENABLED;
 
     /* Execute and verify */
     UtAssert_BOOL_FALSE(CS_GetAppResTblEntryByName(&EntryPtr, "name"));
@@ -176,14 +176,14 @@ void CS_GetAppResTblEntryByName_Test(void)
 
     /* Matching name, empty state */
     strncpy(CS_AppData.ResAppTblPtr[0].Name, "name", 10);
-    CS_AppData.ResAppTblPtr[0].State = CS_STATE_EMPTY;
+    CS_AppData.ResAppTblPtr[0].State = CS_ChecksumState_EMPTY;
 
     /* Execute and verify */
     UtAssert_BOOL_FALSE(CS_GetAppResTblEntryByName(&EntryPtr, "name"));
     UtAssert_ADDRESS_EQ(EntryPtr, NULL);
 
     /* Matching name, enabled */
-    CS_AppData.ResAppTblPtr[0].State = CS_STATE_ENABLED;
+    CS_AppData.ResAppTblPtr[0].State = CS_ChecksumState_ENABLED;
 
     /* Execute and verify */
     UtAssert_BOOL_TRUE(CS_GetAppResTblEntryByName(&EntryPtr, "name"));
@@ -197,7 +197,7 @@ void CS_GetAppDefTblEntryByName_Test(void)
     CS_Def_App_Table_Entry_t *EntryPtr = NULL;
 
     /* Empty name, enabled state */
-    CS_AppData.DefAppTblPtr[0].State = CS_STATE_ENABLED;
+    CS_AppData.DefAppTblPtr[0].State = CS_ChecksumState_ENABLED;
 
     /* Execute and verify */
     UtAssert_BOOL_FALSE(CS_GetAppDefTblEntryByName(&EntryPtr, "name"));
@@ -205,14 +205,14 @@ void CS_GetAppDefTblEntryByName_Test(void)
 
     /* Matching name, empty state */
     strncpy(CS_AppData.DefAppTblPtr[0].Name, "name", 10);
-    CS_AppData.DefAppTblPtr[0].State = CS_STATE_EMPTY;
+    CS_AppData.DefAppTblPtr[0].State = CS_ChecksumState_EMPTY;
 
     /* Execute and verify */
     UtAssert_BOOL_FALSE(CS_GetAppDefTblEntryByName(&EntryPtr, "name"));
     UtAssert_ADDRESS_EQ(EntryPtr, NULL);
 
     /* Matching name, enabled */
-    CS_AppData.DefAppTblPtr[0].State = CS_STATE_ENABLED;
+    CS_AppData.DefAppTblPtr[0].State = CS_ChecksumState_ENABLED;
 
     /* Execute and verify */
     UtAssert_BOOL_TRUE(CS_GetAppDefTblEntryByName(&EntryPtr, "name"));
@@ -231,8 +231,8 @@ void CS_FindEnabledEepromEntry_Test(void)
     UtAssert_UINT16_EQ(EnabledEntry, CS_MAX_NUM_EEPROM_TABLE_ENTRIES);
 
     /* Set up to find last entry (skip first) */
-    CS_AppData.ResEepromTblPtr[0].State                                   = CS_STATE_ENABLED;
-    CS_AppData.ResEepromTblPtr[CS_MAX_NUM_EEPROM_TABLE_ENTRIES - 1].State = CS_STATE_ENABLED;
+    CS_AppData.ResEepromTblPtr[0].State                                   = CS_ChecksumState_ENABLED;
+    CS_AppData.ResEepromTblPtr[CS_MAX_NUM_EEPROM_TABLE_ENTRIES - 1].State = CS_ChecksumState_ENABLED;
     CS_AppData.HkPacket.Payload.CurrentEntryInTable                       = 1;
 
     UtAssert_BOOL_TRUE(CS_FindEnabledEepromEntry(&EnabledEntry));
@@ -252,8 +252,8 @@ void CS_FindEnabledMemoryEntry_Test(void)
     UtAssert_UINT16_EQ(EnabledEntry, CS_MAX_NUM_MEMORY_TABLE_ENTRIES);
 
     /* Set up to find last entry (skip first) */
-    CS_AppData.ResMemoryTblPtr[0].State                                   = CS_STATE_ENABLED;
-    CS_AppData.ResMemoryTblPtr[CS_MAX_NUM_MEMORY_TABLE_ENTRIES - 1].State = CS_STATE_ENABLED;
+    CS_AppData.ResMemoryTblPtr[0].State                                   = CS_ChecksumState_ENABLED;
+    CS_AppData.ResMemoryTblPtr[CS_MAX_NUM_MEMORY_TABLE_ENTRIES - 1].State = CS_ChecksumState_ENABLED;
     CS_AppData.HkPacket.Payload.CurrentEntryInTable                       = 1;
 
     UtAssert_BOOL_TRUE(CS_FindEnabledMemoryEntry(&EnabledEntry));
@@ -273,8 +273,8 @@ void CS_FindEnabledTablesEntry_Test(void)
     UtAssert_UINT16_EQ(EnabledEntry, CS_MAX_NUM_TABLES_TABLE_ENTRIES);
 
     /* Set up to find last entry (skip first) */
-    CS_AppData.ResTablesTblPtr[0].State                                   = CS_STATE_ENABLED;
-    CS_AppData.ResTablesTblPtr[CS_MAX_NUM_TABLES_TABLE_ENTRIES - 1].State = CS_STATE_ENABLED;
+    CS_AppData.ResTablesTblPtr[0].State                                   = CS_ChecksumState_ENABLED;
+    CS_AppData.ResTablesTblPtr[CS_MAX_NUM_TABLES_TABLE_ENTRIES - 1].State = CS_ChecksumState_ENABLED;
     CS_AppData.HkPacket.Payload.CurrentEntryInTable                       = 1;
 
     UtAssert_BOOL_TRUE(CS_FindEnabledTablesEntry(&EnabledEntry));
@@ -294,8 +294,8 @@ void CS_FindEnabledAppEntry_Test(void)
     UtAssert_UINT16_EQ(EnabledEntry, CS_MAX_NUM_APP_TABLE_ENTRIES);
 
     /* Set up to find last entry (skip first) */
-    CS_AppData.ResAppTblPtr[0].State                                = CS_STATE_ENABLED;
-    CS_AppData.ResAppTblPtr[CS_MAX_NUM_APP_TABLE_ENTRIES - 1].State = CS_STATE_ENABLED;
+    CS_AppData.ResAppTblPtr[0].State                                = CS_ChecksumState_ENABLED;
+    CS_AppData.ResAppTblPtr[CS_MAX_NUM_APP_TABLE_ENTRIES - 1].State = CS_ChecksumState_ENABLED;
     CS_AppData.HkPacket.Payload.CurrentEntryInTable                 = 1;
 
     UtAssert_BOOL_TRUE(CS_FindEnabledAppEntry(&EnabledEntry));
@@ -305,48 +305,23 @@ void CS_FindEnabledAppEntry_Test(void)
     UtAssert_STUB_COUNT(CFE_EVS_SendEvent, 0);
 }
 
-void CS_VerifyCmdLength_Test(void)
-{
-    CS_OneShotCmd_t   CmdPacket;
-    CFE_SB_MsgId_t    TestMsgId = CFE_SB_MSGID_WRAP_VALUE(CS_CMD_MID);
-    CFE_MSG_FcnCode_t FcnCode   = 99;
-    size_t            MsgSize   = sizeof(CmdPacket);
-
-    /* Execute with passing size */
-    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
-
-    UtAssert_BOOL_TRUE(CS_VerifyCmdLength((CFE_MSG_Message_t *)(&CmdPacket), MsgSize));
-
-    UtAssert_STUB_COUNT(CFE_EVS_SendEvent, 0);
-
-    /* Execute with failing size */
-    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
-    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
-    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
-
-    UtAssert_BOOL_FALSE(CS_VerifyCmdLength((CFE_MSG_Message_t *)(&CmdPacket), MsgSize - 1));
-
-    UtAssert_STUB_COUNT(CFE_EVS_SendEvent, 1);
-    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventID, CS_CMD_LEN_ERR_EID);
-}
-
 void CS_BackgroundCfeCore_Test(void)
 {
     /* Entirely disabled */
-    CS_AppData.HkPacket.Payload.CfeCoreCSState = CS_STATE_DISABLED;
+    CS_AppData.HkPacket.Payload.CfeCoreCSState = CS_ChecksumState_DISABLED;
     UtAssert_BOOL_FALSE(CS_BackgroundCfeCore());
     UtAssert_UINT16_EQ(CS_AppData.HkPacket.Payload.CurrentEntryInTable, 0);
     UtAssert_UINT16_EQ(CS_AppData.HkPacket.Payload.CurrentCSTable, 1);
 
     /* Segment disabled */
-    CS_AppData.HkPacket.Payload.CfeCoreCSState = CS_STATE_ENABLED;
-    CS_AppData.CfeCoreCodeSeg.State            = CS_STATE_DISABLED;
+    CS_AppData.HkPacket.Payload.CfeCoreCSState = CS_ChecksumState_ENABLED;
+    CS_AppData.CfeCoreCodeSeg.State            = CS_ChecksumState_DISABLED;
     UtAssert_BOOL_FALSE(CS_BackgroundCfeCore());
     UtAssert_UINT16_EQ(CS_AppData.HkPacket.Payload.CurrentEntryInTable, 0);
     UtAssert_UINT16_EQ(CS_AppData.HkPacket.Payload.CurrentCSTable, 2);
 
     /* Enabled, miscompare, not done with entry */
-    CS_AppData.CfeCoreCodeSeg.State = CS_STATE_ENABLED;
+    CS_AppData.CfeCoreCodeSeg.State = CS_ChecksumState_ENABLED;
     UT_SetDeferredRetcode(UT_KEY(CS_ComputeEepromMemory), 1, CS_ERROR);
     UtAssert_BOOL_TRUE(CS_BackgroundCfeCore());
     UtAssert_UINT16_EQ(CS_AppData.HkPacket.Payload.CfeCoreCSErrCounter, 1);
@@ -367,20 +342,20 @@ void CS_BackgroundCfeCore_Test(void)
 void CS_BackgroundOS_Test(void)
 {
     /* Entirely disabled */
-    CS_AppData.HkPacket.Payload.OSCSState = CS_STATE_DISABLED;
+    CS_AppData.HkPacket.Payload.OSCSState = CS_ChecksumState_DISABLED;
     UtAssert_BOOL_FALSE(CS_BackgroundOS());
     UtAssert_UINT16_EQ(CS_AppData.HkPacket.Payload.CurrentEntryInTable, 0);
     UtAssert_UINT16_EQ(CS_AppData.HkPacket.Payload.CurrentCSTable, 1);
 
     /* Segment disabled */
-    CS_AppData.HkPacket.Payload.OSCSState = CS_STATE_ENABLED;
-    CS_AppData.OSCodeSeg.State            = CS_STATE_DISABLED;
+    CS_AppData.HkPacket.Payload.OSCSState = CS_ChecksumState_ENABLED;
+    CS_AppData.OSCodeSeg.State            = CS_ChecksumState_DISABLED;
     UtAssert_BOOL_FALSE(CS_BackgroundOS());
     UtAssert_UINT16_EQ(CS_AppData.HkPacket.Payload.CurrentEntryInTable, 0);
     UtAssert_UINT16_EQ(CS_AppData.HkPacket.Payload.CurrentCSTable, 2);
 
     /* Enabled, miscompare, not done with entry */
-    CS_AppData.OSCodeSeg.State = CS_STATE_ENABLED;
+    CS_AppData.OSCodeSeg.State = CS_ChecksumState_ENABLED;
     UT_SetDeferredRetcode(UT_KEY(CS_ComputeEepromMemory), 1, CS_ERROR);
     UtAssert_BOOL_TRUE(CS_BackgroundOS());
     UtAssert_UINT16_EQ(CS_AppData.HkPacket.Payload.OSCSErrCounter, 1);
@@ -401,13 +376,13 @@ void CS_BackgroundOS_Test(void)
 void CS_BackgroundEeprom_Test(void)
 {
     /* Entirely disabled */
-    CS_AppData.HkPacket.Payload.EepromCSState = CS_STATE_DISABLED;
+    CS_AppData.HkPacket.Payload.EepromCSState = CS_ChecksumState_DISABLED;
     UtAssert_BOOL_FALSE(CS_BackgroundEeprom());
     UtAssert_UINT16_EQ(CS_AppData.HkPacket.Payload.CurrentEntryInTable, 0);
     UtAssert_UINT16_EQ(CS_AppData.HkPacket.Payload.CurrentCSTable, 1);
 
     /* All entries disabled */
-    CS_AppData.HkPacket.Payload.EepromCSState     = CS_STATE_ENABLED;
+    CS_AppData.HkPacket.Payload.EepromCSState     = CS_ChecksumState_ENABLED;
     CS_AppData.ResEepromTblPtr[0].ComparisonValue = 1;
     CS_AppData.ResEepromTblPtr[1].ComparisonValue = 2;
     UtAssert_BOOL_FALSE(CS_BackgroundEeprom());
@@ -416,7 +391,7 @@ void CS_BackgroundEeprom_Test(void)
     UtAssert_UINT32_EQ(CS_AppData.HkPacket.Payload.EepromBaseline, 3);
 
     /* Enabled, miscompare, not done with entry */
-    CS_AppData.ResEepromTblPtr[0].State = CS_STATE_ENABLED;
+    CS_AppData.ResEepromTblPtr[0].State = CS_ChecksumState_ENABLED;
     UT_SetDeferredRetcode(UT_KEY(CS_ComputeEepromMemory), 1, CS_ERROR);
     UtAssert_BOOL_TRUE(CS_BackgroundEeprom());
     UtAssert_UINT16_EQ(CS_AppData.HkPacket.Payload.EepromCSErrCounter, 1);
@@ -427,7 +402,7 @@ void CS_BackgroundEeprom_Test(void)
 
     /* Last entry, Enabled, compares, done with entry */
     CS_AppData.HkPacket.Payload.CurrentEntryInTable = CS_MAX_NUM_EEPROM_TABLE_ENTRIES - 1;
-    CS_AppData.ResEepromTblPtr[CS_AppData.HkPacket.Payload.CurrentEntryInTable].State           = CS_STATE_ENABLED;
+    CS_AppData.ResEepromTblPtr[CS_AppData.HkPacket.Payload.CurrentEntryInTable].State = CS_ChecksumState_ENABLED;
     CS_AppData.ResEepromTblPtr[CS_AppData.HkPacket.Payload.CurrentEntryInTable].ComparisonValue = 3;
     UT_SetHandlerFunction(UT_KEY(CS_ComputeEepromMemory), CS_UTILS_TEST_CS_ComputeHandler, NULL);
     UtAssert_BOOL_TRUE(CS_BackgroundEeprom());
@@ -441,19 +416,19 @@ void CS_BackgroundEeprom_Test(void)
 void CS_BackgroundMemory_Test(void)
 {
     /* Entirely disabled */
-    CS_AppData.HkPacket.Payload.MemoryCSState = CS_STATE_DISABLED;
+    CS_AppData.HkPacket.Payload.MemoryCSState = CS_ChecksumState_DISABLED;
     UtAssert_BOOL_FALSE(CS_BackgroundMemory());
     UtAssert_UINT16_EQ(CS_AppData.HkPacket.Payload.CurrentEntryInTable, 0);
     UtAssert_UINT16_EQ(CS_AppData.HkPacket.Payload.CurrentCSTable, 1);
 
     /* All entries disabled */
-    CS_AppData.HkPacket.Payload.MemoryCSState = CS_STATE_ENABLED;
+    CS_AppData.HkPacket.Payload.MemoryCSState = CS_ChecksumState_ENABLED;
     UtAssert_BOOL_FALSE(CS_BackgroundMemory());
     UtAssert_UINT16_EQ(CS_AppData.HkPacket.Payload.CurrentEntryInTable, 0);
     UtAssert_UINT16_EQ(CS_AppData.HkPacket.Payload.CurrentCSTable, 2);
 
     /* Enabled, miscompare, not done with entry */
-    CS_AppData.ResMemoryTblPtr[0].State = CS_STATE_ENABLED;
+    CS_AppData.ResMemoryTblPtr[0].State = CS_ChecksumState_ENABLED;
     UT_SetDeferredRetcode(UT_KEY(CS_ComputeEepromMemory), 1, CS_ERROR);
     UtAssert_BOOL_TRUE(CS_BackgroundMemory());
     UtAssert_UINT16_EQ(CS_AppData.HkPacket.Payload.MemoryCSErrCounter, 1);
@@ -464,7 +439,7 @@ void CS_BackgroundMemory_Test(void)
 
     /* Last entry, Enabled, compares, done with entry */
     CS_AppData.HkPacket.Payload.CurrentEntryInTable = CS_MAX_NUM_MEMORY_TABLE_ENTRIES - 1;
-    CS_AppData.ResMemoryTblPtr[CS_AppData.HkPacket.Payload.CurrentEntryInTable].State = CS_STATE_ENABLED;
+    CS_AppData.ResMemoryTblPtr[CS_AppData.HkPacket.Payload.CurrentEntryInTable].State = CS_ChecksumState_ENABLED;
     UT_SetHandlerFunction(UT_KEY(CS_ComputeEepromMemory), CS_UTILS_TEST_CS_ComputeHandler, NULL);
     UtAssert_BOOL_TRUE(CS_BackgroundMemory());
     UtAssert_UINT16_EQ(CS_AppData.HkPacket.Payload.MemoryCSErrCounter, 1);
@@ -476,19 +451,19 @@ void CS_BackgroundMemory_Test(void)
 void CS_BackgroundTables_Test(void)
 {
     /* Entirely disabled */
-    CS_AppData.HkPacket.Payload.TablesCSState = CS_STATE_DISABLED;
+    CS_AppData.HkPacket.Payload.TablesCSState = CS_ChecksumState_DISABLED;
     UtAssert_BOOL_FALSE(CS_BackgroundTables());
     UtAssert_UINT16_EQ(CS_AppData.HkPacket.Payload.CurrentEntryInTable, 0);
     UtAssert_UINT16_EQ(CS_AppData.HkPacket.Payload.CurrentCSTable, 1);
 
     /* All entries disabled */
-    CS_AppData.HkPacket.Payload.TablesCSState = CS_STATE_ENABLED;
+    CS_AppData.HkPacket.Payload.TablesCSState = CS_ChecksumState_ENABLED;
     UtAssert_BOOL_FALSE(CS_BackgroundTables());
     UtAssert_UINT16_EQ(CS_AppData.HkPacket.Payload.CurrentEntryInTable, 0);
     UtAssert_UINT16_EQ(CS_AppData.HkPacket.Payload.CurrentCSTable, 2);
 
     /* Enabled, miscompare, not done with entry */
-    CS_AppData.ResTablesTblPtr[0].State = CS_STATE_ENABLED;
+    CS_AppData.ResTablesTblPtr[0].State = CS_ChecksumState_ENABLED;
     UT_SetDeferredRetcode(UT_KEY(CS_ComputeTables), 1, CS_ERROR);
     UtAssert_BOOL_TRUE(CS_BackgroundTables());
     UtAssert_UINT16_EQ(CS_AppData.HkPacket.Payload.TablesCSErrCounter, 1);
@@ -508,7 +483,7 @@ void CS_BackgroundTables_Test(void)
 
     /* Last entry, Enabled, compares, done with entry */
     CS_AppData.HkPacket.Payload.CurrentEntryInTable = CS_MAX_NUM_TABLES_TABLE_ENTRIES - 1;
-    CS_AppData.ResTablesTblPtr[CS_AppData.HkPacket.Payload.CurrentEntryInTable].State = CS_STATE_ENABLED;
+    CS_AppData.ResTablesTblPtr[CS_AppData.HkPacket.Payload.CurrentEntryInTable].State = CS_ChecksumState_ENABLED;
     UT_SetHandlerFunction(UT_KEY(CS_ComputeTables), CS_UTILS_TEST_CS_ComputeHandler, NULL);
     UtAssert_BOOL_TRUE(CS_BackgroundTables());
     UtAssert_UINT16_EQ(CS_AppData.HkPacket.Payload.TablesCSErrCounter, 1);
@@ -520,19 +495,19 @@ void CS_BackgroundTables_Test(void)
 void CS_BackgroundApp_Test(void)
 {
     /* Entirely disabled */
-    CS_AppData.HkPacket.Payload.AppCSState = CS_STATE_DISABLED;
+    CS_AppData.HkPacket.Payload.AppCSState = CS_ChecksumState_DISABLED;
     UtAssert_BOOL_FALSE(CS_BackgroundApp());
     UtAssert_UINT16_EQ(CS_AppData.HkPacket.Payload.CurrentEntryInTable, 0);
     UtAssert_UINT16_EQ(CS_AppData.HkPacket.Payload.CurrentCSTable, 1);
 
     /* All entries disabled */
-    CS_AppData.HkPacket.Payload.AppCSState = CS_STATE_ENABLED;
+    CS_AppData.HkPacket.Payload.AppCSState = CS_ChecksumState_ENABLED;
     UtAssert_BOOL_FALSE(CS_BackgroundApp());
     UtAssert_UINT16_EQ(CS_AppData.HkPacket.Payload.CurrentEntryInTable, 0);
     UtAssert_UINT16_EQ(CS_AppData.HkPacket.Payload.CurrentCSTable, 2);
 
     /* Enabled, miscompare, not done with entry */
-    CS_AppData.ResAppTblPtr[0].State = CS_STATE_ENABLED;
+    CS_AppData.ResAppTblPtr[0].State = CS_ChecksumState_ENABLED;
     UT_SetDeferredRetcode(UT_KEY(CS_ComputeApp), 1, CS_ERROR);
     UtAssert_BOOL_TRUE(CS_BackgroundApp());
     UtAssert_UINT16_EQ(CS_AppData.HkPacket.Payload.AppCSErrCounter, 1);
@@ -552,7 +527,7 @@ void CS_BackgroundApp_Test(void)
 
     /* Last entry, Enabled, compares, done with entry */
     CS_AppData.HkPacket.Payload.CurrentEntryInTable                                = CS_MAX_NUM_APP_TABLE_ENTRIES - 1;
-    CS_AppData.ResAppTblPtr[CS_AppData.HkPacket.Payload.CurrentEntryInTable].State = CS_STATE_ENABLED;
+    CS_AppData.ResAppTblPtr[CS_AppData.HkPacket.Payload.CurrentEntryInTable].State = CS_ChecksumState_ENABLED;
     UT_SetHandlerFunction(UT_KEY(CS_ComputeApp), CS_UTILS_TEST_CS_ComputeHandler, NULL);
     UtAssert_BOOL_TRUE(CS_BackgroundApp());
     UtAssert_UINT16_EQ(CS_AppData.HkPacket.Payload.AppCSErrCounter, 1);
@@ -580,7 +555,8 @@ void CS_ResetTablesTblResultEntry_Test(void)
 
 void CS_HandleRoutineTableUpdates_Test(void)
 {
-    uint16 ChildTaskTable[] = {CS_CFECORE, CS_EEPROM_TABLE, CS_MEMORY_TABLE, CS_APP_TABLE, CS_TABLES_TABLE};
+    uint16 ChildTaskTable[] = {CS_ChecksumType_CFECORE, CS_ChecksumType_EEPROM_TABLE, CS_ChecksumType_MEMORY_TABLE,
+                               CS_ChecksumType_APP_TABLE, CS_ChecksumType_TABLES_TABLE};
     uint16 TblMax           = sizeof(ChildTaskTable) / sizeof(ChildTaskTable[0]);
     uint16 i;
 
@@ -595,7 +571,7 @@ void CS_HandleRoutineTableUpdates_Test(void)
         UtAssert_INT32_EQ(CS_HandleRoutineTableUpdates(), CFE_SUCCESS);
 
         /* Confirm stub call count based on selected table */
-        if (CS_AppData.ChildTaskTable == CS_CFECORE)
+        if (CS_AppData.ChildTaskTable == CS_ChecksumType_CFECORE)
         {
             UtAssert_STUB_COUNT(CS_HandleTableUpdate, 4);
         }
@@ -661,7 +637,7 @@ void CS_AttemptTableReshare_Test(void)
     /* Execute the function being tested */
     UtAssert_INT32_EQ(CS_AttemptTableReshare(&TblEntry, &LocalTblHandle, &TblInfo, &LocalAddress, &ResultGetInfo),
                       CFE_SUCCESS);
-    UtAssert_UINT32_EQ(TblEntry.TblHandle, LocalTblHandle);
+    UtAssert_UINT32_EQ(CFE_TBL_HandleID_AsInt(TblEntry.TblHandleID), CFE_TBL_HANDLE_INT(LocalTblHandle));
     UtAssert_INT32_EQ(ResultGetInfo, CFE_SUCCESS);
     UtAssert_STUB_COUNT(CFE_TBL_ReleaseAddress, 0);
 
@@ -670,7 +646,7 @@ void CS_AttemptTableReshare_Test(void)
     UT_SetDefaultReturnValue(UT_KEY(CFE_TBL_GetInfo), -1);
     UtAssert_INT32_EQ(CS_AttemptTableReshare(&TblEntry, &LocalTblHandle, &TblInfo, &LocalAddress, &ResultGetInfo),
                       CFE_TBL_ERR_NEVER_LOADED);
-    UtAssert_UINT32_EQ(TblEntry.TblHandle, LocalTblHandle);
+    UtAssert_UINT32_EQ(CFE_TBL_HandleID_AsInt(TblEntry.TblHandleID), CFE_TBL_HANDLE_INT(LocalTblHandle));
     UtAssert_INT32_EQ(ResultGetInfo, -1);
     UtAssert_STUB_COUNT(CFE_TBL_ReleaseAddress, 1);
 
@@ -734,7 +710,6 @@ void UtTest_Setup(void)
     UtTest_Add(CS_FindEnabledMemoryEntry_Test, CS_Test_Setup, CS_Test_TearDown, "CS_FindEnabledMemoryEntry_Test");
     UtTest_Add(CS_FindEnabledTablesEntry_Test, CS_Test_Setup, CS_Test_TearDown, "CS_FindEnabledTablesEntry_Test");
     UtTest_Add(CS_FindEnabledAppEntry_Test, CS_Test_Setup, CS_Test_TearDown, "CS_FindEnabledAppEntry_Test");
-    UtTest_Add(CS_VerifyCmdLength_Test, CS_Test_Setup, CS_Test_TearDown, "CS_VerifyCmdLength_Test");
     UtTest_Add(CS_BackgroundCfeCore_Test, CS_Test_Setup, CS_Test_TearDown, "CS_BackgroundCfeCore_Test");
     UtTest_Add(CS_BackgroundOS_Test, CS_Test_Setup, CS_Test_TearDown, "CS_BackgroundOS_Test");
     UtTest_Add(CS_BackgroundEeprom_Test, CS_Test_Setup, CS_Test_TearDown, "CS_BackgroundEeprom_Test");

@@ -29,33 +29,15 @@
  ** Include section
  **
  **************************************************************************/
-#include <cs_tbldefs.h>
+#include "cs_tbl.h"
+#include "cfe_error.h"
+#include "cfe_tbl_api_typedefs.h"
 
 /**************************************************************************
  **
  ** Macro definitions
  **
  **************************************************************************/
-
-/**
- * \brief table names for definition tables
- * \{
- */
-#define CS_DEF_EEPROM_TABLE_NAME "DefEepromTbl"
-#define CS_DEF_MEMORY_TABLE_NAME "DefMemoryTbl"
-#define CS_DEF_TABLES_TABLE_NAME "DefTablesTbl"
-#define CS_DEF_APP_TABLE_NAME    "DefAppTbl"
-/**\}*/
-
-/**
- * \brief names for the results tables
- * \{
- */
-#define CS_RESULTS_EEPROM_TABLE_NAME "ResEepromTbl"
-#define CS_RESULTS_MEMORY_TABLE_NAME "ResMemoryTbl"
-#define CS_RESULTS_TABLES_TABLE_NAME "ResTablesTbl"
-#define CS_RESULTS_APP_TABLE_NAME    "ResAppTbl"
-/**\}*/
 
 /**************************************************************************
  **
@@ -158,7 +140,7 @@ CFE_Status_t CS_ValidateAppChecksumDefinitionTable(void *TblPtr);
  */
 void CS_ProcessNewEepromMemoryDefinitionTable(const CS_Def_EepromMemory_Table_Entry_t *DefinitionTblPtr,
                                               CS_Res_EepromMemory_Table_Entry_t *ResultsTblPtr, uint16 NumEntries,
-                                              uint16 Table);
+                                              CS_ChecksumType_Enum_t Table);
 
 /**
  * \brief Processes a new definition table for the Tables table
@@ -281,10 +263,11 @@ void CS_ProcessNewAppDefinitionTable(const CS_Def_App_Table_Entry_t *DefinitionT
  * \retval #CFE_SUCCESS \copybrief CFE_SUCCESS
  */
 CFE_Status_t CS_TableInit(CFE_TBL_Handle_t *DefinitionTableHandle, CFE_TBL_Handle_t *ResultsTableHandle,
-                          void **DefinitionTblPtr, void **ResultsTblPtr, uint16 Table, const char *DefinitionTableName,
-                          const char *ResultsTableName, uint16 NumEntries, const char *DefinitionTableFileName,
-                          const void *DefaultDefTableAddress, uint16 SizeofDefinitionTableEntry,
-                          uint16 SizeofResultsTableEntry, CFE_TBL_CallbackFuncPtr_t CallBackFunction);
+                          void **DefinitionTblPtr, void **ResultsTblPtr, CS_ChecksumType_Enum_t Table,
+                          const char *DefinitionTableName, const char *ResultsTableName, uint16 NumEntries,
+                          const char *DefinitionTableFileName, const void *DefaultDefTableAddress,
+                          uint16 SizeofDefinitionTableEntry, uint16 SizeofResultsTableEntry,
+                          CFE_TBL_CallbackFuncPtr_t CallBackFunction);
 
 /**
  * \brief Handles table updates for all CS tables
@@ -316,6 +299,6 @@ CFE_Status_t CS_TableInit(CFE_TBL_Handle_t *DefinitionTableHandle, CFE_TBL_Handl
  * \retval #CFE_SUCCESS \copybrief CFE_SUCCESS
  */
 CFE_Status_t CS_HandleTableUpdate(void **DefinitionTblPtr, void **ResultsTblPtr, CFE_TBL_Handle_t DefinitionTableHandle,
-                                  CFE_TBL_Handle_t ResultsTableHandle, uint16 Table, uint16 NumEntries);
+                                  CFE_TBL_Handle_t ResultsTableHandle, CS_ChecksumType_Enum_t Table, uint16 NumEntries);
 
 #endif

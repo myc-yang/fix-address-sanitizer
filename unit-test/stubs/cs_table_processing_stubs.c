@@ -32,7 +32,7 @@
  * ----------------------------------------------------
  */
 CFE_Status_t CS_HandleTableUpdate(void **DefinitionTblPtr, void **ResultsTblPtr, CFE_TBL_Handle_t DefinitionTableHandle,
-                                  CFE_TBL_Handle_t ResultsTableHandle, uint16 Table, uint16 NumEntries)
+                                  CFE_TBL_Handle_t ResultsTableHandle, CS_ChecksumType_Enum_t Table, uint16 NumEntries)
 {
     UT_GenStub_SetupReturnBuffer(CS_HandleTableUpdate, CFE_Status_t);
 
@@ -40,7 +40,7 @@ CFE_Status_t CS_HandleTableUpdate(void **DefinitionTblPtr, void **ResultsTblPtr,
     UT_GenStub_AddParam(CS_HandleTableUpdate, void **, ResultsTblPtr);
     UT_GenStub_AddParam(CS_HandleTableUpdate, CFE_TBL_Handle_t, DefinitionTableHandle);
     UT_GenStub_AddParam(CS_HandleTableUpdate, CFE_TBL_Handle_t, ResultsTableHandle);
-    UT_GenStub_AddParam(CS_HandleTableUpdate, uint16, Table);
+    UT_GenStub_AddParam(CS_HandleTableUpdate, CS_ChecksumType_Enum_t, Table);
     UT_GenStub_AddParam(CS_HandleTableUpdate, uint16, NumEntries);
 
     UT_GenStub_Execute(CS_HandleTableUpdate, Basic, NULL);
@@ -69,13 +69,13 @@ void CS_ProcessNewAppDefinitionTable(const CS_Def_App_Table_Entry_t *DefinitionT
  */
 void CS_ProcessNewEepromMemoryDefinitionTable(const CS_Def_EepromMemory_Table_Entry_t *DefinitionTblPtr,
                                               CS_Res_EepromMemory_Table_Entry_t *ResultsTblPtr, uint16 NumEntries,
-                                              uint16 Table)
+                                              CS_ChecksumType_Enum_t Table)
 {
     UT_GenStub_AddParam(CS_ProcessNewEepromMemoryDefinitionTable, const CS_Def_EepromMemory_Table_Entry_t *,
                         DefinitionTblPtr);
     UT_GenStub_AddParam(CS_ProcessNewEepromMemoryDefinitionTable, CS_Res_EepromMemory_Table_Entry_t *, ResultsTblPtr);
     UT_GenStub_AddParam(CS_ProcessNewEepromMemoryDefinitionTable, uint16, NumEntries);
-    UT_GenStub_AddParam(CS_ProcessNewEepromMemoryDefinitionTable, uint16, Table);
+    UT_GenStub_AddParam(CS_ProcessNewEepromMemoryDefinitionTable, CS_ChecksumType_Enum_t, Table);
 
     UT_GenStub_Execute(CS_ProcessNewEepromMemoryDefinitionTable, Basic, NULL);
 }
@@ -100,10 +100,11 @@ void CS_ProcessNewTablesDefinitionTable(const CS_Def_Tables_Table_Entry_t *Defin
  * ----------------------------------------------------
  */
 CFE_Status_t CS_TableInit(CFE_TBL_Handle_t *DefinitionTableHandle, CFE_TBL_Handle_t *ResultsTableHandle,
-                          void **DefinitionTblPtr, void **ResultsTblPtr, uint16 Table, const char *DefinitionTableName,
-                          const char *ResultsTableName, uint16 NumEntries, const char *DefinitionTableFileName,
-                          const void *DefaultDefTableAddress, uint16 SizeofDefinitionTableEntry,
-                          uint16 SizeofResultsTableEntry, CFE_TBL_CallbackFuncPtr_t CallBackFunction)
+                          void **DefinitionTblPtr, void **ResultsTblPtr, CS_ChecksumType_Enum_t Table,
+                          const char *DefinitionTableName, const char *ResultsTableName, uint16 NumEntries,
+                          const char *DefinitionTableFileName, const void *DefaultDefTableAddress,
+                          uint16 SizeofDefinitionTableEntry, uint16 SizeofResultsTableEntry,
+                          CFE_TBL_CallbackFuncPtr_t CallBackFunction)
 {
     UT_GenStub_SetupReturnBuffer(CS_TableInit, CFE_Status_t);
 
@@ -111,7 +112,7 @@ CFE_Status_t CS_TableInit(CFE_TBL_Handle_t *DefinitionTableHandle, CFE_TBL_Handl
     UT_GenStub_AddParam(CS_TableInit, CFE_TBL_Handle_t *, ResultsTableHandle);
     UT_GenStub_AddParam(CS_TableInit, void **, DefinitionTblPtr);
     UT_GenStub_AddParam(CS_TableInit, void **, ResultsTblPtr);
-    UT_GenStub_AddParam(CS_TableInit, uint16, Table);
+    UT_GenStub_AddParam(CS_TableInit, CS_ChecksumType_Enum_t, Table);
     UT_GenStub_AddParam(CS_TableInit, const char *, DefinitionTableName);
     UT_GenStub_AddParam(CS_TableInit, const char *, ResultsTableName);
     UT_GenStub_AddParam(CS_TableInit, uint16, NumEntries);

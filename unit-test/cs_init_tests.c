@@ -24,7 +24,7 @@
 #include "cs_init.h"
 #include "cs_msg.h"
 #include "cs_msgdefs.h"
-#include "cs_events.h"
+#include "cs_eventids.h"
 #include "cs_version.h"
 #include "cs_utils.h"
 #include "cs_test_utils.h"

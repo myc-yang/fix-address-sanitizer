@@ -29,8 +29,8 @@
  **************************************************************************/
 #include "cfe.h"
 #include "cs_app.h"
-#include "cs_events.h"
-#include "cs_tbldefs.h"
+#include "cs_eventids.h"
+#include "cs_tbl.h"
 #include "cs_utils.h"
 #include "cs_table_processing.h"
 
@@ -47,18 +47,19 @@
 /* Call respective table update handler function (helper)          */
 /*                                                                 */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-void CS_CallTableUpdateHandler(uint32 Table, const void *DefinitionPtr, void *ResultsPtr, size_t NumEntries)
+void CS_CallTableUpdateHandler(CS_ChecksumType_Enum_t Table, const void *DefinitionPtr, void *ResultsPtr,
+                               size_t NumEntries)
 {
     switch (Table)
     {
-        case CS_APP_TABLE:
+        case CS_ChecksumType_APP_TABLE:
             CS_ProcessNewAppDefinitionTable(DefinitionPtr, ResultsPtr);
             break;
-        case CS_TABLES_TABLE:
+        case CS_ChecksumType_TABLES_TABLE:
             CS_ProcessNewTablesDefinitionTable(DefinitionPtr, ResultsPtr);
             break;
-        case CS_EEPROM_TABLE:
-        case CS_MEMORY_TABLE:
+        case CS_ChecksumType_EEPROM_TABLE:
+        case CS_ChecksumType_MEMORY_TABLE:
             CS_ProcessNewEepromMemoryDefinitionTable(DefinitionPtr, ResultsPtr, NumEntries, Table);
             break;
         default:
@@ -79,7 +80,7 @@ CFE_Status_t CS_ValidateEepromChecksumDefinitionTable(void *TblPtr)
     CS_Def_EepromMemory_Table_Entry_t *StartOfTable = NULL;
     CS_Def_EepromMemory_Table_Entry_t *OuterEntry   = NULL;
     int32                              OuterLoop    = 0;
-    uint32                             StateField   = 0;
+    CS_ChecksumState_Enum_t            StateField   = 0;
     cpuaddr                            Address      = 0;
     uint32                             Size         = 0;
     int32                              GoodCount    = 0;
@@ -96,10 +97,11 @@ CFE_Status_t CS_ValidateEepromChecksumDefinitionTable(void *TblPtr)
         Address    = OuterEntry->StartAddress;
         Size       = OuterEntry->NumBytesToChecksum;
 
-        if ((StateField == CS_STATE_EMPTY) || (StateField == CS_STATE_ENABLED) || (StateField == CS_STATE_DISABLED))
+        if ((StateField == CS_ChecksumState_EMPTY) || (StateField == CS_ChecksumState_ENABLED) ||
+            (StateField == CS_ChecksumState_DISABLED))
         {
             /* If the StateField is within this range, it's check if it's not empty. */
-            if (StateField == CS_STATE_DISABLED || StateField == CS_STATE_ENABLED)
+            if (StateField == CS_ChecksumState_DISABLED || StateField == CS_ChecksumState_ENABLED)
             {
                 Status = CFE_PSP_MemValidateRange(Address, Size, CFE_PSP_MEM_EEPROM);
                 if (Status != OS_SUCCESS)
@@ -111,8 +113,8 @@ CFE_Status_t CS_ValidateEepromChecksumDefinitionTable(void *TblPtr)
                                           "EEPROM Table Validate: Illegal checksum range found in Entry ID %d, "
                                           "CFE_PSP_MemValidateRange returned: 0x%08X",
                                           (int)OuterLoop, (unsigned int)Status);
-                        Result = CS_TABLE_ERROR;
-                        CS_AppData.HkPacket.Payload.EepromCSState = CS_STATE_DISABLED;
+                        Result                                    = CS_TABLE_ERROR;
+                        CS_AppData.HkPacket.Payload.EepromCSState = CS_ChecksumState_DISABLED;
                     }
                 }
                 else
@@ -136,8 +138,8 @@ CFE_Status_t CS_ValidateEepromChecksumDefinitionTable(void *TblPtr)
                 CFE_EVS_SendEvent(CS_VAL_EEPROM_STATE_ERR_EID, CFE_EVS_EventType_ERROR,
                                   "EEPROM Table Validate: Illegal State Field (0x%04X) found in Entry ID %d",
                                   (unsigned short)StateField, (int)OuterLoop);
-                Result = CS_TABLE_ERROR;
-                CS_AppData.HkPacket.Payload.EepromCSState = CS_STATE_DISABLED;
+                Result                                    = CS_TABLE_ERROR;
+                CS_AppData.HkPacket.Payload.EepromCSState = CS_ChecksumState_DISABLED;
             }
         }
     } /* for (OuterLoop = 0; OuterLoop < CS_MAX_NUM_EEPROM_TABLE_ENTRIES; OuterLoop++) */
@@ -161,7 +163,7 @@ CFE_Status_t CS_ValidateMemoryChecksumDefinitionTable(void *TblPtr)
     CS_Def_EepromMemory_Table_Entry_t *StartOfTable = NULL;
     CS_Def_EepromMemory_Table_Entry_t *OuterEntry   = NULL;
     int32                              OuterLoop    = 0;
-    uint32                             StateField   = 0;
+    CS_ChecksumState_Enum_t            StateField   = 0;
     cpuaddr                            Address      = 0;
     uint32                             Size         = 0;
     int32                              GoodCount    = 0;
@@ -180,10 +182,11 @@ CFE_Status_t CS_ValidateMemoryChecksumDefinitionTable(void *TblPtr)
         Address    = OuterEntry->StartAddress;
         Size       = OuterEntry->NumBytesToChecksum;
 
-        if ((StateField == CS_STATE_EMPTY) || (StateField == CS_STATE_ENABLED) || (StateField == CS_STATE_DISABLED))
+        if ((StateField == CS_ChecksumState_EMPTY) || (StateField == CS_ChecksumState_ENABLED) ||
+            (StateField == CS_ChecksumState_DISABLED))
         {
             /* If the StateField is within this range, check if it's not empty. */
-            if (StateField == CS_STATE_DISABLED || StateField == CS_STATE_ENABLED)
+            if (StateField == CS_ChecksumState_DISABLED || StateField == CS_ChecksumState_ENABLED)
             {
                 Status = CFE_PSP_MemValidateRange(Address, Size, CFE_PSP_MEM_ANY);
                 if (Status != OS_SUCCESS)
@@ -195,8 +198,8 @@ CFE_Status_t CS_ValidateMemoryChecksumDefinitionTable(void *TblPtr)
                                           "Memory Table Validate: Illegal checksum range found in Entry ID %d, "
                                           "CFE_PSP_MemValidateRange returned: 0x%08X",
                                           (int)OuterLoop, (unsigned int)Status);
-                        Result = CS_TABLE_ERROR;
-                        CS_AppData.HkPacket.Payload.MemoryCSState = CS_STATE_DISABLED;
+                        Result                                    = CS_TABLE_ERROR;
+                        CS_AppData.HkPacket.Payload.MemoryCSState = CS_ChecksumState_DISABLED;
                     }
                 }
                 else
@@ -221,8 +224,8 @@ CFE_Status_t CS_ValidateMemoryChecksumDefinitionTable(void *TblPtr)
                                   "Memory Table Validate: Illegal State Field (0x%04X) found in Entry ID %d",
                                   (unsigned short)StateField, (int)OuterLoop);
 
-                Result = CS_TABLE_ERROR;
-                CS_AppData.HkPacket.Payload.MemoryCSState = CS_STATE_DISABLED;
+                Result                                    = CS_TABLE_ERROR;
+                CS_AppData.HkPacket.Payload.MemoryCSState = CS_ChecksumState_DISABLED;
             }
         }
 
@@ -247,7 +250,7 @@ CFE_Status_t CS_ValidateTablesChecksumDefinitionTable(void *TblPtr)
     CS_Def_Tables_Table_Entry_t *OuterEntry     = NULL;
     int32                        OuterLoop      = 0;
     int32                        InnerLoop      = 0;
-    uint32                       StateField     = 0;
+    CS_ChecksumState_Enum_t      StateField     = 0;
     int32                        GoodCount      = 0;
     int32                        BadCount       = 0;
     int32                        EmptyCount     = 0;
@@ -265,8 +268,8 @@ CFE_Status_t CS_ValidateTablesChecksumDefinitionTable(void *TblPtr)
         if (OS_strnlen(OuterEntry->Name, CFE_TBL_MAX_FULL_NAME_LEN) != 0)
         {
             /* Verify valid state definition */
-            if (((StateField == CS_STATE_EMPTY) || (StateField == CS_STATE_ENABLED) ||
-                 (StateField == CS_STATE_DISABLED)))
+            if (((StateField == CS_ChecksumState_EMPTY) || (StateField == CS_ChecksumState_ENABLED) ||
+                 (StateField == CS_ChecksumState_DISABLED)))
             {
                 DuplicateFound = false;
 
@@ -289,8 +292,8 @@ CFE_Status_t CS_ValidateTablesChecksumDefinitionTable(void *TblPtr)
                                 "CS Tables Table Validate: Duplicate Name (%s) found at entries %d and %d",
                                 OuterEntry->Name, (int)InnerLoop, (int)OuterLoop);
 
-                            Result = CS_TABLE_ERROR;
-                            CS_AppData.HkPacket.Payload.TablesCSState = CS_STATE_DISABLED;
+                            Result                                    = CS_TABLE_ERROR;
+                            CS_AppData.HkPacket.Payload.TablesCSState = CS_ChecksumState_DISABLED;
                         }
                     }
                 }
@@ -298,7 +301,7 @@ CFE_Status_t CS_ValidateTablesChecksumDefinitionTable(void *TblPtr)
                 /* Increment success/empty counter if name wasn't duplicated */
                 if (DuplicateFound != true)
                 {
-                    if (StateField != CS_STATE_EMPTY)
+                    if (StateField != CS_ChecksumState_EMPTY)
                     {
                         GoodCount++;
                     }
@@ -318,14 +321,14 @@ CFE_Status_t CS_ValidateTablesChecksumDefinitionTable(void *TblPtr)
 
                     Result = CS_TABLE_ERROR;
                     BadCount++;
-                    CS_AppData.HkPacket.Payload.TablesCSState = CS_STATE_DISABLED;
+                    CS_AppData.HkPacket.Payload.TablesCSState = CS_ChecksumState_DISABLED;
                 }
             }
         }
         else
         {
             /* Only entries marked as Empty can have zero-length names */
-            if (StateField != CS_STATE_EMPTY)
+            if (StateField != CS_ChecksumState_EMPTY)
             {
                 /* Bad state for empty name */
                 if (Result != CS_TABLE_ERROR)
@@ -336,7 +339,7 @@ CFE_Status_t CS_ValidateTablesChecksumDefinitionTable(void *TblPtr)
 
                     Result = CS_TABLE_ERROR;
                     BadCount++;
-                    CS_AppData.HkPacket.Payload.TablesCSState = CS_STATE_DISABLED;
+                    CS_AppData.HkPacket.Payload.TablesCSState = CS_ChecksumState_DISABLED;
                 }
             }
             else
@@ -366,7 +369,7 @@ CFE_Status_t CS_ValidateAppChecksumDefinitionTable(void *TblPtr)
     CS_Def_App_Table_Entry_t *OuterEntry;
     int32                     OuterLoop;
     int32                     InnerLoop;
-    uint32                    StateField;
+    CS_ChecksumState_Enum_t   StateField;
     int32                     GoodCount  = 0;
     int32                     BadCount   = 0;
     int32                     EmptyCount = 0;
@@ -387,16 +390,16 @@ CFE_Status_t CS_ValidateAppChecksumDefinitionTable(void *TblPtr)
             {
                 CFE_EVS_SendEvent(CS_VAL_APP_DEF_TBL_LONG_NAME_ERR_EID, CFE_EVS_EventType_ERROR,
                                   "CS Apps Table Validate: Unterminated Name found at entry %d", (int)OuterLoop);
-                Result = CS_TABLE_ERROR;
-                CS_AppData.HkPacket.Payload.AppCSState = CS_STATE_DISABLED;
+                Result                                 = CS_TABLE_ERROR;
+                CS_AppData.HkPacket.Payload.AppCSState = CS_ChecksumState_DISABLED;
             }
             BadCount++;
         }
         else if (OS_strnlen(OuterEntry->Name, CFE_TBL_MAX_FULL_NAME_LEN) != 0)
         {
             /* Verify valid state definition */
-            if (((StateField == CS_STATE_EMPTY) || (StateField == CS_STATE_ENABLED) ||
-                 (StateField == CS_STATE_DISABLED)))
+            if (((StateField == CS_ChecksumState_EMPTY) || (StateField == CS_ChecksumState_ENABLED) ||
+                 (StateField == CS_ChecksumState_DISABLED)))
             {
                 DuplicateFound = false;
 
@@ -418,8 +421,8 @@ CFE_Status_t CS_ValidateAppChecksumDefinitionTable(void *TblPtr)
                                               "CS Apps Table Validate: Duplicate Name (%s) found at entries %d and %d",
                                               OuterEntry->Name, (int)InnerLoop, (int)OuterLoop);
 
-                            Result = CS_TABLE_ERROR;
-                            CS_AppData.HkPacket.Payload.AppCSState = CS_STATE_DISABLED;
+                            Result                                 = CS_TABLE_ERROR;
+                            CS_AppData.HkPacket.Payload.AppCSState = CS_ChecksumState_DISABLED;
                         }
                     }
                 }
@@ -427,7 +430,7 @@ CFE_Status_t CS_ValidateAppChecksumDefinitionTable(void *TblPtr)
                 /* Increment success/empty counter if name wasn't duplicated */
                 if (DuplicateFound != true)
                 {
-                    if (StateField != CS_STATE_EMPTY)
+                    if (StateField != CS_ChecksumState_EMPTY)
                     {
                         GoodCount++;
                     }
@@ -447,14 +450,14 @@ CFE_Status_t CS_ValidateAppChecksumDefinitionTable(void *TblPtr)
 
                     Result = CS_TABLE_ERROR;
                     BadCount++;
-                    CS_AppData.HkPacket.Payload.AppCSState = CS_STATE_DISABLED;
+                    CS_AppData.HkPacket.Payload.AppCSState = CS_ChecksumState_DISABLED;
                 }
             }
         }
         else
         {
             /* Only entries marked as Empty can have zero-length names */
-            if (StateField != CS_STATE_EMPTY)
+            if (StateField != CS_ChecksumState_EMPTY)
             {
                 /* Bad state for empty name */
                 if (Result != CS_TABLE_ERROR)
@@ -465,7 +468,7 @@ CFE_Status_t CS_ValidateAppChecksumDefinitionTable(void *TblPtr)
 
                     Result = CS_TABLE_ERROR;
                     BadCount++;
-                    CS_AppData.HkPacket.Payload.AppCSState = CS_STATE_DISABLED;
+                    CS_AppData.HkPacket.Payload.AppCSState = CS_ChecksumState_DISABLED;
                 }
             }
             else
@@ -490,24 +493,24 @@ CFE_Status_t CS_ValidateAppChecksumDefinitionTable(void *TblPtr)
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 void CS_ProcessNewEepromMemoryDefinitionTable(const CS_Def_EepromMemory_Table_Entry_t *StartOfDefTable,
                                               CS_Res_EepromMemory_Table_Entry_t *StartOfResultsTable, uint16 NumEntries,
-                                              uint16 Table)
+                                              CS_ChecksumType_Enum_t Table)
 {
     const CS_Def_EepromMemory_Table_Entry_t *DefEntry          = NULL;
     CS_Res_EepromMemory_Table_Entry_t *      ResultsEntry      = NULL;
     uint16                                   Loop              = 0;
     uint16                                   NumRegionsInTable = 0;
-    uint16                                   PreviousState     = CS_STATE_EMPTY;
+    CS_ChecksumState_Enum_t                  PreviousState     = CS_ChecksumState_EMPTY;
 
     /* We don't want to be doing chekcksums while changing the table out */
-    if (Table == CS_EEPROM_TABLE)
+    if (Table == CS_ChecksumType_EEPROM_TABLE)
     {
         PreviousState                             = CS_AppData.HkPacket.Payload.EepromCSState;
-        CS_AppData.HkPacket.Payload.EepromCSState = CS_STATE_DISABLED;
+        CS_AppData.HkPacket.Payload.EepromCSState = CS_ChecksumState_DISABLED;
     }
-    if (Table == CS_MEMORY_TABLE)
+    if (Table == CS_ChecksumType_MEMORY_TABLE)
     {
         PreviousState                             = CS_AppData.HkPacket.Payload.MemoryCSState;
-        CS_AppData.HkPacket.Payload.MemoryCSState = CS_STATE_DISABLED;
+        CS_AppData.HkPacket.Payload.MemoryCSState = CS_ChecksumState_DISABLED;
     }
 
     for (Loop = 0; Loop < NumEntries; Loop++)
@@ -515,7 +518,7 @@ void CS_ProcessNewEepromMemoryDefinitionTable(const CS_Def_EepromMemory_Table_En
         DefEntry     = &(StartOfDefTable[Loop]);
         ResultsEntry = &(StartOfResultsTable[Loop]);
 
-        if (DefEntry->State != CS_STATE_EMPTY)
+        if (DefEntry->State != CS_ChecksumState_EMPTY)
         {
             /* This is just a real simple test, because all of the exception handling
              has already been done by the Validation routine above */
@@ -531,7 +534,7 @@ void CS_ProcessNewEepromMemoryDefinitionTable(const CS_Def_EepromMemory_Table_En
         }
         else
         {
-            ResultsEntry->State              = CS_STATE_EMPTY;
+            ResultsEntry->State              = CS_ChecksumState_EMPTY;
             ResultsEntry->ComputedYet        = false;
             ResultsEntry->NumBytesToChecksum = 0;
             ResultsEntry->ComparisonValue    = 0;
@@ -542,13 +545,13 @@ void CS_ProcessNewEepromMemoryDefinitionTable(const CS_Def_EepromMemory_Table_En
     }
 
     /* Reset the table back to the original checksumming state */
-    if (Table == CS_EEPROM_TABLE)
+    if (Table == CS_ChecksumType_EEPROM_TABLE)
     {
         CS_AppData.HkPacket.Payload.EepromCSState = PreviousState;
         CS_ResetTablesTblResultEntry(CS_AppData.EepResTablesTblPtr);
     }
 
-    if (Table == CS_MEMORY_TABLE)
+    if (Table == CS_ChecksumType_MEMORY_TABLE)
     {
         CS_AppData.HkPacket.Payload.MemoryCSState = PreviousState;
         CS_ResetTablesTblResultEntry(CS_AppData.MemResTablesTblPtr);
@@ -573,7 +576,7 @@ void CS_ProcessNewTablesDefinitionTable(const CS_Def_Tables_Table_Entry_t *Start
     CS_Res_Tables_Table_Entry_t *      ResultsEntry      = NULL;
     uint16                             Loop              = 0;
     uint16                             NumRegionsInTable = 0;
-    uint16                             PreviousState     = CS_STATE_EMPTY;
+    CS_ChecksumState_Enum_t            PreviousState     = CS_ChecksumState_EMPTY;
     CFE_ES_AppId_t                     AppID             = CFE_ES_APPID_UNDEFINED;
     CFE_TBL_Handle_t                   TableHandle       = CFE_TBL_BAD_TABLE_HANDLE;
     bool                               Owned             = false;
@@ -589,7 +592,7 @@ void CS_ProcessNewTablesDefinitionTable(const CS_Def_Tables_Table_Entry_t *Start
 
     /* We don't want to be doing chekcksums while changing the table out */
     PreviousState                             = CS_AppData.HkPacket.Payload.TablesCSState;
-    CS_AppData.HkPacket.Payload.TablesCSState = CS_STATE_DISABLED;
+    CS_AppData.HkPacket.Payload.TablesCSState = CS_ChecksumState_DISABLED;
 
     /* Assume none of the CS tables are listed in the new Tables table */
     CS_AppData.EepResTablesTblPtr = NULL;
@@ -603,7 +606,7 @@ void CS_ProcessNewTablesDefinitionTable(const CS_Def_Tables_Table_Entry_t *Start
 
         ResultsEntry = &(StartOfResultsTable[Loop]);
 
-        if (DefEntry->State != CS_STATE_EMPTY)
+        if (DefEntry->State != CS_ChecksumState_EMPTY)
         {
             /* initialize buffer index values */
             DefNameIndex   = 0;
@@ -718,21 +721,21 @@ void CS_ProcessNewTablesDefinitionTable(const CS_Def_Tables_Table_Entry_t *Start
             ResultsEntry->ByteOffset         = 0;
             ResultsEntry->TempChecksumValue  = 0;
             ResultsEntry->StartAddress       = 0; /* this is unknown at this time */
-            ResultsEntry->TblHandle          = TableHandle;
+            ResultsEntry->TblHandleID        = CFE_TBL_HandleToID(TableHandle);
             ResultsEntry->IsCSOwner          = Owned;
             CFE_SB_MessageStringGet(ResultsEntry->Name, DefEntry->Name, NULL, sizeof(ResultsEntry->Name),
                                     sizeof(DefEntry->Name));
         }
         else
         {
-            ResultsEntry->State              = CS_STATE_EMPTY;
+            ResultsEntry->State              = CS_ChecksumState_EMPTY;
             ResultsEntry->ComputedYet        = false;
             ResultsEntry->NumBytesToChecksum = 0;
             ResultsEntry->ComparisonValue    = 0;
             ResultsEntry->ByteOffset         = 0;
             ResultsEntry->TempChecksumValue  = 0;
             ResultsEntry->StartAddress       = 0;
-            ResultsEntry->TblHandle          = CFE_TBL_BAD_TABLE_HANDLE;
+            ResultsEntry->TblHandleID        = CFE_TBL_HANDLEID_UNDEFINED;
             ResultsEntry->IsCSOwner          = false;
             ResultsEntry->Name[0]            = '\0';
         }
@@ -761,12 +764,12 @@ void CS_ProcessNewAppDefinitionTable(const CS_Def_App_Table_Entry_t *StartOfDefT
     CS_Res_App_Table_Entry_t *      ResultsEntry      = NULL;
     uint16                          Loop              = 0;
     uint16                          NumRegionsInTable = 0;
-    uint16                          PreviousState     = CS_STATE_EMPTY;
+    CS_ChecksumState_Enum_t         PreviousState     = CS_ChecksumState_EMPTY;
 
     /* We don't want to be doing chekcksums while changing the table out */
 
     PreviousState                          = CS_AppData.HkPacket.Payload.AppCSState;
-    CS_AppData.HkPacket.Payload.AppCSState = CS_STATE_DISABLED;
+    CS_AppData.HkPacket.Payload.AppCSState = CS_ChecksumState_DISABLED;
 
     for (Loop = 0; Loop < CS_MAX_NUM_APP_TABLE_ENTRIES; Loop++)
     {
@@ -774,7 +777,7 @@ void CS_ProcessNewAppDefinitionTable(const CS_Def_App_Table_Entry_t *StartOfDefT
 
         ResultsEntry = &(StartOfResultsTable[Loop]);
 
-        if (DefEntry->State != CS_STATE_EMPTY)
+        if (DefEntry->State != CS_ChecksumState_EMPTY)
         {
             /* This is just a real simple test, because all of the exception handling
              has already been done by the Validation routine above */
@@ -792,7 +795,7 @@ void CS_ProcessNewAppDefinitionTable(const CS_Def_App_Table_Entry_t *StartOfDefT
         }
         else
         {
-            ResultsEntry->State              = CS_STATE_EMPTY;
+            ResultsEntry->State              = CS_ChecksumState_EMPTY;
             ResultsEntry->ComputedYet        = false;
             ResultsEntry->NumBytesToChecksum = 0;
             ResultsEntry->ComparisonValue    = 0;
@@ -822,10 +825,11 @@ void CS_ProcessNewAppDefinitionTable(const CS_Def_App_Table_Entry_t *StartOfDefT
 /*                                                                 */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 CFE_Status_t CS_TableInit(CFE_TBL_Handle_t *DefinitionTableHandle, CFE_TBL_Handle_t *ResultsTableHandle,
-                          void **DefinitionTblPtr, void **ResultsTblPtr, uint16 Table, const char *DefinitionTableName,
-                          const char *ResultsTableName, uint16 NumEntries, const char *DefinitionTableFileName,
-                          const void *DefaultDefTableAddress, uint16 SizeofDefinitionTableEntry,
-                          uint16 SizeofResultsTableEntry, CFE_TBL_CallbackFuncPtr_t CallBackFunction)
+                          void **DefinitionTblPtr, void **ResultsTblPtr, CS_ChecksumType_Enum_t Table,
+                          const char *DefinitionTableName, const char *ResultsTableName, uint16 NumEntries,
+                          const char *DefinitionTableFileName, const void *DefaultDefTableAddress,
+                          uint16 SizeofDefinitionTableEntry, uint16 SizeofResultsTableEntry,
+                          CFE_TBL_CallbackFuncPtr_t CallBackFunction)
 {
     CFE_Status_t Result           = CFE_SUCCESS;
     size_t       SizeOfTable      = 0;
@@ -879,17 +883,17 @@ CFE_Status_t CS_TableInit(CFE_TBL_Handle_t *DefinitionTableHandle, CFE_TBL_Handl
         {
             switch (Table)
             {
-                case CS_EEPROM_TABLE:
-                    CS_AppData.HkPacket.Payload.EepromCSState = CS_STATE_DISABLED;
+                case CS_ChecksumType_EEPROM_TABLE:
+                    CS_AppData.HkPacket.Payload.EepromCSState = CS_ChecksumState_DISABLED;
                     break;
-                case CS_MEMORY_TABLE:
-                    CS_AppData.HkPacket.Payload.MemoryCSState = CS_STATE_DISABLED;
+                case CS_ChecksumType_MEMORY_TABLE:
+                    CS_AppData.HkPacket.Payload.MemoryCSState = CS_ChecksumState_DISABLED;
                     break;
-                case CS_APP_TABLE:
-                    CS_AppData.HkPacket.Payload.AppCSState = CS_STATE_DISABLED;
+                case CS_ChecksumType_APP_TABLE:
+                    CS_AppData.HkPacket.Payload.AppCSState = CS_ChecksumState_DISABLED;
                     break;
-                case CS_TABLES_TABLE:
-                    CS_AppData.HkPacket.Payload.TablesCSState = CS_STATE_DISABLED;
+                case CS_ChecksumType_TABLES_TABLE:
+                    CS_AppData.HkPacket.Payload.TablesCSState = CS_ChecksumState_DISABLED;
                     break;
                 default:
                     break;
@@ -914,7 +918,7 @@ CFE_Status_t CS_TableInit(CFE_TBL_Handle_t *DefinitionTableHandle, CFE_TBL_Handl
 /*                                                                 */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 CFE_Status_t CS_HandleTableUpdate(void **DefinitionTblPtr, void **ResultsTblPtr, CFE_TBL_Handle_t DefinitionTableHandle,
-                                  CFE_TBL_Handle_t ResultsTableHandle, uint16 Table, uint16 NumEntries)
+                                  CFE_TBL_Handle_t ResultsTableHandle, CS_ChecksumType_Enum_t Table, uint16 NumEntries)
 {
     CFE_Status_t ReleaseResult1 = CFE_SUCCESS;
     CFE_Status_t ManageResult1  = CFE_SUCCESS;
@@ -924,6 +928,9 @@ CFE_Status_t CS_HandleTableUpdate(void **DefinitionTblPtr, void **ResultsTblPtr,
     CFE_Status_t GetResult2     = CFE_SUCCESS;
     CFE_Status_t Result         = CFE_SUCCESS;
     int32        Loop           = 0;
+
+    CFE_TBL_Handle_t             Handle;
+    CS_Res_Tables_Table_Entry_t *Entry;
 
     /* Below, there are several values that are returned and assigned, but never evaluated. */
     /* This is done so intentionally, as it helps us with Source-Level debugging this functions. */
@@ -946,17 +953,19 @@ CFE_Status_t CS_HandleTableUpdate(void **DefinitionTblPtr, void **ResultsTblPtr,
 
     if ((Result == CFE_TBL_INFO_UPDATED))
     {
-        if (Table == CS_TABLES_TABLE)
+        if (Table == CS_ChecksumType_TABLES_TABLE)
         {
             /* before we update the results table, we need to release all of the
              table handles that are in the results table */
             for (Loop = 0; Loop < CS_MAX_NUM_TABLES_TABLE_ENTRIES; Loop++)
             {
-                if (CS_AppData.ResTablesTblPtr[Loop].TblHandle != CFE_TBL_BAD_TABLE_HANDLE)
+                Entry  = &CS_AppData.ResTablesTblPtr[Loop];
+                Handle = CFE_TBL_HandleFromID(Entry->TblHandleID);
+                if (CFE_TBL_HANDLE_IS_VALID(Handle))
                 {
-                    if (CS_AppData.ResTablesTblPtr[Loop].IsCSOwner == false)
+                    if (!Entry->IsCSOwner)
                     {
-                        CFE_TBL_Unregister(CS_AppData.ResTablesTblPtr[Loop].TblHandle);
+                        CFE_TBL_Unregister(Handle);
                     }
                 }
             }

@@ -30,7 +30,7 @@
 #include "cfe.h"
 #include "cs_app.h"
 #include <string.h>
-#include "cs_events.h"
+#include "cs_eventids.h"
 #include "cs_compute.h"
 #include "cs_utils.h"
 /**************************************************************************
@@ -57,11 +57,11 @@ CFE_Status_t CS_ComputeEepromMemory(CS_Res_EepromMemory_Table_Entry_t *ResultsEn
     *DoneWithEntry                       = false;
 
     /* By the time we get here, we know we have an enabled entry */
-    
-    if(ResultsEntry->ByteOffset > ResultsEntry->NumBytesToChecksum)
+
+    if (ResultsEntry->ByteOffset > ResultsEntry->NumBytesToChecksum)
     {
         /* Something went wrong. Start at beginning */
-        ResultsEntry->ByteOffset = 0; 
+        ResultsEntry->ByteOffset = 0;
     }
 
     OffsetIntoCurrEntry     = ResultsEntry->ByteOffset;
@@ -148,19 +148,19 @@ CFE_Status_t CS_ComputeTables(CS_Res_Tables_Table_Entry_t *ResultsEntry, uint32 
     /* Handshake with Table Services to get address and size of table */
 
     /* if we already have a table handle for this table, don't get a new one */
-    if (ResultsEntry->TblHandle == CFE_TBL_BAD_TABLE_HANDLE)
+    if (!CFE_TBL_HandleID_IsDefined(ResultsEntry->TblHandleID))
     {
         ResultShare = CFE_TBL_Share(&LocalTblHandle, ResultsEntry->Name);
         Result      = ResultShare;
 
         if (Result == CFE_SUCCESS)
         {
-            ResultsEntry->TblHandle = LocalTblHandle;
+            ResultsEntry->TblHandleID = CFE_TBL_HandleToID(LocalTblHandle);
         }
     }
     else
     {
-        LocalTblHandle = ResultsEntry->TblHandle;
+        LocalTblHandle = CFE_TBL_HandleFromID(ResultsEntry->TblHandleID);
     }
 
     if (Result == CFE_SUCCESS)
@@ -189,7 +189,7 @@ CFE_Status_t CS_ComputeTables(CS_Res_Tables_Table_Entry_t *ResultsEntry, uint32 
 
         /* reset the stored  data in the results table since the
            table went away */
-        ResultsEntry->TblHandle = CFE_TBL_BAD_TABLE_HANDLE;
+        ResultsEntry->TblHandleID = CFE_TBL_HANDLEID_UNDEFINED;
         CS_ResetTablesTblResultEntry(ResultsEntry);
         ResultsEntry->ComparisonValue    = 0;
         ResultsEntry->StartAddress       = 0;
@@ -216,10 +216,10 @@ CFE_Status_t CS_ComputeTables(CS_Res_Tables_Table_Entry_t *ResultsEntry, uint32 
             CS_ResetTablesTblResultEntry(ResultsEntry);
         }
 
-        if(ResultsEntry->ByteOffset > ResultsEntry->NumBytesToChecksum)
+        if (ResultsEntry->ByteOffset > ResultsEntry->NumBytesToChecksum)
         {
             /* Something went wrong. Start at beginning */
-            ResultsEntry->ByteOffset = 0; 
+            ResultsEntry->ByteOffset = 0;
         }
 
         OffsetIntoCurrEntry     = ResultsEntry->ByteOffset;
@@ -374,10 +374,10 @@ CFE_Status_t CS_ComputeApp(CS_Res_App_Table_Entry_t *ResultsEntry, uint32 *Compu
     {
         /* We got valid ResourceID, good info, and valid addresses, so run the checksum */
 
-        if(ResultsEntry->ByteOffset > ResultsEntry->NumBytesToChecksum)
+        if (ResultsEntry->ByteOffset > ResultsEntry->NumBytesToChecksum)
         {
             /* Something went wrong. Start at beginning */
-            ResultsEntry->ByteOffset = 0; 
+            ResultsEntry->ByteOffset = 0;
         }
 
         OffsetIntoCurrEntry     = ResultsEntry->ByteOffset;
@@ -454,11 +454,11 @@ void CS_RecomputeEepromMemoryChildTask(void)
 {
     uint32                             NewChecksumValue     = 0;
     CS_Res_EepromMemory_Table_Entry_t *ResultsEntry         = NULL;
-    uint16                             Table                = 0;
+    CS_ChecksumType_Enum_t             Table                = 0;
     uint16                             EntryID              = 0;
-    uint16                             PreviousState        = CS_STATE_EMPTY;
+    CS_ChecksumState_Enum_t            PreviousState        = CS_ChecksumState_EMPTY;
     bool                               DoneWithEntry        = false;
-    uint16                             PreviousDefState     = CS_STATE_EMPTY;
+    CS_ChecksumState_Enum_t            PreviousDefState     = CS_ChecksumState_EMPTY;
     bool                               DefEntryFound        = false;
     uint16                             DefEntryID           = 0;
     CS_Def_EepromMemory_Table_Entry_t *DefTblPtr            = NULL;
@@ -473,7 +473,7 @@ void CS_RecomputeEepromMemoryChildTask(void)
     /* we want to  make sure that the entry isn't being checksummed in the
      background at the same time we are recomputing */
     PreviousState       = ResultsEntry->State;
-    ResultsEntry->State = CS_STATE_DISABLED;
+    ResultsEntry->State = CS_ChecksumState_DISABLED;
 
     /* Set entry as if this is the first time we are computing the checksum,
        since we want the entry to take on the new value */
@@ -484,9 +484,9 @@ void CS_RecomputeEepromMemoryChildTask(void)
 
     /* Update the definition table entry as well.  We need to determine which memory type is
        being updated as well as which entry in the table is being updated. */
-    if ((Table != CS_OSCORE) && (Table != CS_CFECORE))
+    if ((Table != CS_ChecksumType_OSCORE) && (Table != CS_ChecksumType_CFECORE))
     {
-        if (Table == CS_EEPROM_TABLE)
+        if (Table == CS_ChecksumType_EEPROM_TABLE)
         {
             DefTblPtr            = CS_AppData.DefEepromTblPtr;
             MaxDefEntries        = CS_MAX_NUM_EEPROM_TABLE_ENTRIES;
@@ -506,11 +506,11 @@ void CS_RecomputeEepromMemoryChildTask(void)
             /* This assumes that the definition table entries are in the same order as the
                results table entries, which should be a safe assumption. */
             if ((ResultsEntry->StartAddress == DefTblPtr[EntryID].StartAddress) &&
-                (DefTblPtr[EntryID].State != CS_STATE_EMPTY))
+                (DefTblPtr[EntryID].State != CS_ChecksumState_EMPTY))
             {
                 DefEntryFound            = true;
                 PreviousDefState         = DefTblPtr[EntryID].State;
-                DefTblPtr[EntryID].State = CS_STATE_DISABLED;
+                DefTblPtr[EntryID].State = CS_ChecksumState_DISABLED;
                 DefEntryID               = EntryID;
                 CS_ResetTablesTblResultEntry(TablesTblResultEntry);
                 CFE_TBL_Modified(DefTblHandle);
@@ -544,11 +544,11 @@ void CS_RecomputeEepromMemoryChildTask(void)
     }
 
     /* Update reported value in HK TLM, if applicable */
-    if (Table == CS_CFECORE)
+    if (Table == CS_ChecksumType_CFECORE)
     {
         CS_AppData.HkPacket.Payload.CfeCoreBaseline = NewChecksumValue;
     }
-    if (Table == CS_OSCORE)
+    if (Table == CS_ChecksumType_OSCORE)
     {
         CS_AppData.HkPacket.Payload.OSBaseline = NewChecksumValue;
     }
@@ -571,10 +571,10 @@ void CS_RecomputeAppChildTask(void)
 {
     uint32                    NewChecksumValue = 0;
     CS_Res_App_Table_Entry_t *ResultsEntry     = NULL;
-    uint16                    PreviousState    = CS_STATE_EMPTY;
+    CS_ChecksumState_Enum_t   PreviousState    = CS_ChecksumState_EMPTY;
     bool                      DoneWithEntry    = false;
     CFE_Status_t              Status           = CS_ERROR;
-    uint16                    PreviousDefState = CS_STATE_EMPTY;
+    CS_ChecksumState_Enum_t   PreviousDefState = CS_ChecksumState_EMPTY;
     bool                      DefEntryFound    = false;
     uint16                    DefEntryID       = 0;
     CS_Def_App_Table_Entry_t *DefTblPtr        = NULL;
@@ -588,7 +588,7 @@ void CS_RecomputeAppChildTask(void)
      background at the same time we are recomputing */
 
     PreviousState       = ResultsEntry->State;
-    ResultsEntry->State = CS_STATE_DISABLED;
+    ResultsEntry->State = CS_ChecksumState_DISABLED;
 
     /* Set entry as if this is the first time we are computing the checksum,
        since we want the entry to take on the new value */
@@ -608,11 +608,11 @@ void CS_RecomputeAppChildTask(void)
     while ((!DefEntryFound) && (DefEntryID < MaxDefEntries))
     {
         if ((strncmp(ResultsEntry->Name, DefTblPtr[DefEntryID].Name, OS_MAX_API_NAME) == 0) &&
-            (DefTblPtr[DefEntryID].State != CS_STATE_EMPTY))
+            (DefTblPtr[DefEntryID].State != CS_ChecksumState_EMPTY))
         {
             DefEntryFound               = true;
             PreviousDefState            = DefTblPtr[DefEntryID].State;
-            DefTblPtr[DefEntryID].State = CS_STATE_DISABLED;
+            DefTblPtr[DefEntryID].State = CS_ChecksumState_DISABLED;
             CS_ResetTablesTblResultEntry(CS_AppData.AppResTablesTblPtr);
             CFE_TBL_Modified(DefTblHandle);
         }
@@ -677,10 +677,10 @@ void CS_RecomputeTablesChildTask(void)
 {
     uint32                       NewChecksumValue = 0;
     CS_Res_Tables_Table_Entry_t *ResultsEntry     = NULL;
-    uint16                       PreviousState    = CS_STATE_EMPTY;
+    CS_ChecksumState_Enum_t      PreviousState    = CS_ChecksumState_EMPTY;
     bool                         DoneWithEntry    = false;
     CFE_Status_t                 Status           = CS_ERROR;
-    uint16                       PreviousDefState = CS_STATE_EMPTY;
+    CS_ChecksumState_Enum_t      PreviousDefState = CS_ChecksumState_EMPTY;
     bool                         DefEntryFound    = false;
     uint16                       DefEntryID       = 0;
     CS_Def_Tables_Table_Entry_t *DefTblPtr        = NULL;
@@ -694,7 +694,7 @@ void CS_RecomputeTablesChildTask(void)
      background at the same time we are recomputing */
 
     PreviousState       = ResultsEntry->State;
-    ResultsEntry->State = CS_STATE_DISABLED;
+    ResultsEntry->State = CS_ChecksumState_DISABLED;
 
     /* Set entry as if this is the first time we are computing the checksum,
      since we want the entry to take on the new value */
@@ -714,11 +714,11 @@ void CS_RecomputeTablesChildTask(void)
     while ((!DefEntryFound) && (DefEntryID < MaxDefEntries))
     {
         if ((strncmp(ResultsEntry->Name, DefTblPtr[DefEntryID].Name, CFE_TBL_MAX_FULL_NAME_LEN) == 0) &&
-            (DefTblPtr[DefEntryID].State != CS_STATE_EMPTY))
+            (DefTblPtr[DefEntryID].State != CS_ChecksumState_EMPTY))
         {
             DefEntryFound               = true;
             PreviousDefState            = DefTblPtr[DefEntryID].State;
-            DefTblPtr[DefEntryID].State = CS_STATE_DISABLED;
+            DefTblPtr[DefEntryID].State = CS_ChecksumState_DISABLED;
             CS_ResetTablesTblResultEntry(CS_AppData.TblResTablesTblPtr);
             CFE_TBL_Modified(DefTblHandle);
         }

@@ -30,7 +30,7 @@
  **
  **************************************************************************/
 #include "cfe.h"
-#include "cs_tbldefs.h"
+#include "cs_tbl.h"
 
 /**
  * \brief Computes checksums on EEPROM or Memory types

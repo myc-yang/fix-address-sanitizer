@@ -21,8 +21,8 @@
  * @file
  *   Specification for the CFS Checksum event identifiers.
  */
-#ifndef CS_EVENTS_H
-#define CS_EVENTS_H
+#ifndef CS_EVENTIDS_H
+#define CS_EVENTIDS_H
 
 /**
  * \defgroup cfscsevents CFS Checksum Event IDs
@@ -915,7 +915,7 @@
  *  for the Tables entry specifiedcommand has been received
  *  and there is a baseline computed to report.
  */
-#define CS_BASELINE_TABLES_INF_EID 69
+#define CS_BASELINE_TABLE_INF_EID 69
 
 /**
  * \brief CS Baseline Table Checksum Pending Event ID
@@ -928,7 +928,7 @@
  *  for the command specified table command has been
  *  received but the baseline has not yet been computed.
  */
-#define CS_NO_BASELINE_TABLES_INF_EID 70
+#define CS_NO_BASELINE_TABLE_INF_EID 70
 
 /**
  * \brief CS Baseline Table Checksum Failed Table Not Found Event ID
@@ -940,7 +940,7 @@
  *  This event message is issued when a report baseline
  *  for the command specified table command has been
  *  received but specified table name cannot be found
- *  or is marked as #CS_STATE_EMPTY.
+ *  or is marked as #CS_ChecksumState_EMPTY.
  */
 #define CS_BASELINE_INVALID_NAME_TABLES_ERR_EID 71
 
@@ -981,7 +981,7 @@
  *  This event message is issued when a recompute baseline
  *  for the command specified table command has been
  *  received but specified table cannot be found in CS
- *  or is marked as #CS_STATE_EMPTY.
+ *  or is marked as #CS_ChecksumState_EMPTY.
  */
 #define CS_RECOMPUTE_UNKNOWN_NAME_TABLES_ERR_EID 74
 
@@ -1020,7 +1020,7 @@
  *
  *  This event message is issued when an enable Table name
  *  command is received, but has an unknown name
- *  or is marked as #CS_STATE_EMPTY.
+ *  or is marked as #CS_ChecksumState_EMPTY.
  */
 #define CS_ENABLE_TABLES_UNKNOWN_NAME_ERR_EID 77
 
@@ -1045,7 +1045,7 @@
  *
  *  This event message is issued when a disable name
  *  command is received, but has an unknown name
- *  or is marked as #CS_STATE_EMPTY.
+ *  or is marked as #CS_ChecksumState_EMPTY.
  */
 #define CS_DISABLE_TABLES_UNKNOWN_NAME_ERR_EID 79
 
@@ -1113,7 +1113,7 @@
  *  This event message is issued when a report baseline
  *  for the command specified app command has been
  *  received but specified app name cannot be found
- *  or is marked as #CS_STATE_EMPTY.
+ *  or is marked as #CS_ChecksumState_EMPTY.
  */
 #define CS_BASELINE_INVALID_NAME_APP_ERR_EID 84
 
@@ -1154,7 +1154,7 @@
  *  This event message is issued when a recompute baseline
  *  for the command specified app command has been
  *  received but specified app cannot be found in CS
- *  or is marked as #CS_STATE_EMPTY.
+ *  or is marked as #CS_ChecksumState_EMPTY.
  */
 #define CS_RECOMPUTE_UNKNOWN_NAME_APP_ERR_EID 87
 
@@ -1193,7 +1193,7 @@
  *
  *  This event message is issued when an enable app name
  *  command is received, but has an unknown name
- *  or is marked as #CS_STATE_EMPTY.
+ *  or is marked as #CS_ChecksumState_EMPTY.
  */
 #define CS_ENABLE_APP_UNKNOWN_NAME_ERR_EID 90
 
@@ -1218,7 +1218,7 @@
  *
  *  This event message is issued when a disable app name
  *  command is received, but has an unknown name
- *  or is marked as #CS_STATE_EMPTY.
+ *  or is marked as #CS_ChecksumState_EMPTY.
  */
 #define CS_DISABLE_APP_UNKNOWN_NAME_ERR_EID 92
 
@@ -1663,7 +1663,7 @@
  *
  *  This event message is issued when CS successfully enables an entry (specified
  *  by name) in the Tables results table but is unable to find the same entry
- *  in the definition table (or the entry is marked as #CS_STATE_EMPTY).
+ *  in the definition table (or the entry is marked as #CS_ChecksumState_EMPTY).
  */
 #define CS_ENABLE_TABLE_DEF_NOT_FOUND_DBG_EID 129
 
@@ -1676,7 +1676,7 @@
  *
  *  This event message is issued when CS successfully disables an entry (specified
  *  by name) in the Tables results table but is unable to find the same entry
- *  in the definition table (or the entry is marked as #CS_STATE_EMPTY).
+ *  in the definition table (or the entry is marked as #CS_ChecksumState_EMPTY).
  */
 #define CS_DISABLE_TABLE_DEF_NOT_FOUND_DBG_EID 130
 
@@ -1689,7 +1689,7 @@
  *
  *  This event message is issued when CS successfully enables an entry (specified
  *  by name) in the Apps results table but is unable to find the same entry
- *  in the definition table (or the entry is marked as #CS_STATE_EMPTY).
+ *  in the definition table (or the entry is marked as #CS_ChecksumState_EMPTY).
  */
 #define CS_ENABLE_APP_DEF_NOT_FOUND_DBG_EID 131
 
@@ -1702,7 +1702,7 @@
  *
  *  This event message is issued when CS successfully disables an entry (specified
  *  by name) in the Apps results table but is unable to find the same entry
- *  in the definition table (or the entry is marked as #CS_STATE_EMPTY).
+ *  in the definition table (or the entry is marked as #CS_ChecksumState_EMPTY).
  */
 #define CS_DISABLE_APP_DEF_NOT_FOUND_DBG_EID 132
 
@@ -1715,7 +1715,7 @@
  *
  *  This event message is issued when CS successfully disables an entry (specified
  *  by name) in the Memory results table but identifies the corresponding entry in
- *  the definitions table to be set to #CS_STATE_EMPTY.
+ *  the definitions table to be set to #CS_ChecksumState_EMPTY.
  */
 #define CS_DISABLE_MEMORY_DEF_EMPTY_DBG_EID 133
 
@@ -1728,7 +1728,7 @@
  *
  *  This event message is issued when CS successfully enables an entry (specified
  *  by name) in the Memory results table but identifies the corresponding entry in
- *  the definitions table to be set to #CS_STATE_EMPTY.
+ *  the definitions table to be set to #CS_ChecksumState_EMPTY.
  */
 #define CS_ENABLE_MEMORY_DEF_EMPTY_DBG_EID 134
 
@@ -1741,7 +1741,7 @@
  *
  *  This event message is issued when CS successfully disables an entry (specified
  *  by name) in the EEPROM results table but identifies the corresponding entry in
- *  the definitions table to be set to #CS_STATE_EMPTY.
+ *  the definitions table to be set to #CS_ChecksumState_EMPTY.
  */
 #define CS_DISABLE_EEPROM_DEF_EMPTY_DBG_EID 135
 
@@ -1754,7 +1754,7 @@
  *
  *  This event message is issued when CS successfully enables an entry (specified
  *  by name) in the EEPROM results table but identifies the corresponding entry in
- *  the definitions table to be set to #CS_STATE_EMPTY.
+ *  the definitions table to be set to #CS_ChecksumState_EMPTY.
  */
 #define CS_ENABLE_EEPROM_DEF_EMPTY_DBG_EID 136
 
@@ -1779,7 +1779,7 @@
  *  \par Cause:
  *
  *  This event message is issued when CS validation for the Tables definition table finds an entry
- *  that contains a zero-length name field with a state field that is not marked as #CS_STATE_EMPTY.  This
+ *  that contains a zero-length name field with a state field that is not marked as #CS_ChecksumState_EMPTY.  This
  *  event is only issued if it is the first error found during validation.
  */
 #define CS_VAL_TABLES_DEF_TBL_ZERO_NAME_ERR_EID 138
@@ -1792,9 +1792,9 @@
  *  \par Cause:
  *
  *  This event message when CS completes validation of the tables definition table.  This message
- *  reports the number of successful (#CS_STATE_ENABLED or #CS_STATE_DISABLED) entries, the number of
+ *  reports the number of successful (#CS_ChecksumState_ENABLED or #CS_ChecksumState_DISABLED) entries, the number of
  *  bad entries (due to invalid state definitions or duplicate names), and the number of entries
- *  marked as #CS_STATE_EMPTY.
+ *  marked as #CS_ChecksumState_EMPTY.
  */
 #define CS_VAL_TABLES_INF_EID 139
 
@@ -1819,7 +1819,7 @@
  *  \par Cause:
  *
  *  This event message is issued when CS validation for the Apps definition table finds an entry
- *  that contains a zero-length name field with a state field that is not marked as #CS_STATE_EMPTY.  This
+ *  that contains a zero-length name field with a state field that is not marked as #CS_ChecksumState_EMPTY.  This
  *  event is only issued if it is the first error found during validation.
  */
 #define CS_VAL_APP_DEF_TBL_ZERO_NAME_ERR_EID 141
@@ -1832,9 +1832,9 @@
  *  \par Cause:
  *
  *  This event message when CS completes validation of the Apps definition table.  This message
- *  reports the number of successful (#CS_STATE_ENABLED or #CS_STATE_DISABLED) entries, the number of
+ *  reports the number of successful (#CS_ChecksumState_ENABLED or #CS_ChecksumState_DISABLED) entries, the number of
  *  bad entries (due to invalid state definitions or duplicate names), and the number of entries
- *  marked as #CS_STATE_EMPTY.
+ *  marked as #CS_ChecksumState_EMPTY.
  */
 #define CS_VAL_APP_INF_EID 142
 
@@ -1846,9 +1846,9 @@
  *  \par Cause:
  *
  *  This event message when CS completes validation of the Memory definition table.  This message
- *  reports the number of successful (#CS_STATE_ENABLED or #CS_STATE_DISABLED) entries, the number of
+ *  reports the number of successful (#CS_ChecksumState_ENABLED or #CS_ChecksumState_DISABLED) entries, the number of
  *  bad entries (due to invalid state definitions or bad range), and the number of entries
- *  marked as #CS_STATE_EMPTY.
+ *  marked as #CS_ChecksumState_EMPTY.
  */
 #define CS_VAL_MEMORY_INF_EID 143
 
@@ -1860,9 +1860,9 @@
  *  \par Cause:
  *
  *  This event message when CS completes validation of the EEPROM definition table.  This message
- *  reports the number of successful (#CS_STATE_ENABLED or #CS_STATE_DISABLED) entries, the number of
+ *  reports the number of successful (#CS_ChecksumState_ENABLED or #CS_ChecksumState_DISABLED) entries, the number of
  *  bad entries (due to invalid state definitions or bad range), and the number of entries
- *  marked as #CS_STATE_EMPTY.
+ *  marked as #CS_ChecksumState_EMPTY.
  */
 #define CS_VAL_EEPROM_INF_EID 144
 

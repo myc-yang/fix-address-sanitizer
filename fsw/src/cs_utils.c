@@ -29,7 +29,7 @@
  **************************************************************************/
 #include "cfe.h"
 #include "cs_app.h"
-#include "cs_events.h"
+#include "cs_eventids.h"
 #include "cs_compute.h"
 #include "cs_utils.h"
 #include "cs_table_processing.h"
@@ -45,28 +45,28 @@
 /* Gets a table type ID value as a printable string                */
 /*                                                                 */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-const char *CS_GetTableTypeAsString(uint32 TableId)
+const char *CS_GetTableTypeAsString(CS_ChecksumType_Enum_t TableId)
 {
     const char *TableTypeStr;
 
     switch (TableId)
     {
-        case CS_APP_TABLE:
+        case CS_ChecksumType_APP_TABLE:
             TableTypeStr = "Apps";
             break;
-        case CS_TABLES_TABLE:
+        case CS_ChecksumType_TABLES_TABLE:
             TableTypeStr = "Tables";
             break;
-        case CS_EEPROM_TABLE:
+        case CS_ChecksumType_EEPROM_TABLE:
             TableTypeStr = "EEPROM";
             break;
-        case CS_MEMORY_TABLE:
+        case CS_ChecksumType_MEMORY_TABLE:
             TableTypeStr = "Memory";
             break;
-        case CS_CFECORE:
+        case CS_ChecksumType_CFECORE:
             TableTypeStr = "cFE Core";
             break;
-        case CS_OSCORE:
+        case CS_ChecksumType_OSCORE:
             TableTypeStr = "OS";
             break;
         default:
@@ -174,27 +174,27 @@ void CS_InitializeDefaultTables(void)
 
     for (Loop = 0; Loop < CS_MAX_NUM_EEPROM_TABLE_ENTRIES; Loop++)
     {
-        CS_AppData.DefaultEepromDefTable[Loop].State              = CS_STATE_EMPTY;
+        CS_AppData.DefaultEepromDefTable[Loop].State              = CS_ChecksumState_EMPTY;
         CS_AppData.DefaultEepromDefTable[Loop].NumBytesToChecksum = 0;
         CS_AppData.DefaultEepromDefTable[Loop].StartAddress       = 0;
     }
 
     for (Loop = 0; Loop < CS_MAX_NUM_MEMORY_TABLE_ENTRIES; Loop++)
     {
-        CS_AppData.DefaultMemoryDefTable[Loop].State              = CS_STATE_EMPTY;
+        CS_AppData.DefaultMemoryDefTable[Loop].State              = CS_ChecksumState_EMPTY;
         CS_AppData.DefaultMemoryDefTable[Loop].NumBytesToChecksum = 0;
         CS_AppData.DefaultMemoryDefTable[Loop].StartAddress       = 0;
     }
 
     for (Loop = 0; Loop < CS_MAX_NUM_APP_TABLE_ENTRIES; Loop++)
     {
-        CS_AppData.DefaultAppDefTable[Loop].State   = CS_STATE_EMPTY;
+        CS_AppData.DefaultAppDefTable[Loop].State   = CS_ChecksumState_EMPTY;
         CS_AppData.DefaultAppDefTable[Loop].Name[0] = '\0';
     }
 
     for (Loop = 0; Loop < CS_MAX_NUM_TABLES_TABLE_ENTRIES; Loop++)
     {
-        CS_AppData.DefaultTablesDefTable[Loop].State   = CS_STATE_EMPTY;
+        CS_AppData.DefaultTablesDefTable[Loop].State   = CS_ChecksumState_EMPTY;
         CS_AppData.DefaultTablesDefTable[Loop].Name[0] = '\0';
     }
 }
@@ -241,7 +241,8 @@ bool CS_GetTableResTblEntryByName(CS_Res_Tables_Table_Entry_t **EntryPtr, const 
     {
         ResultsEntry = &StartOfResultsTable[Loop];
 
-        if (strncmp(ResultsEntry->Name, Name, CFE_TBL_MAX_FULL_NAME_LEN) == 0 && ResultsEntry->State != CS_STATE_EMPTY)
+        if (strncmp(ResultsEntry->Name, Name, CFE_TBL_MAX_FULL_NAME_LEN) == 0 &&
+            ResultsEntry->State != CS_ChecksumState_EMPTY)
         {
             Status    = true;
             *EntryPtr = ResultsEntry;
@@ -272,7 +273,7 @@ bool CS_GetTableDefTblEntryByName(CS_Def_Tables_Table_Entry_t **EntryPtr, const 
         DefinitionEntry = &StartOfDefinitionTable[Loop];
 
         if (strncmp(DefinitionEntry->Name, Name, CFE_TBL_MAX_FULL_NAME_LEN) == 0 &&
-            DefinitionEntry->State != CS_STATE_EMPTY)
+            DefinitionEntry->State != CS_ChecksumState_EMPTY)
         {
             Status    = true;
             *EntryPtr = DefinitionEntry;
@@ -302,7 +303,7 @@ bool CS_GetAppResTblEntryByName(CS_Res_App_Table_Entry_t **EntryPtr, const char 
     {
         ResultsEntry = &StartOfResultsTable[Loop];
 
-        if (strncmp(ResultsEntry->Name, Name, OS_MAX_API_NAME) == 0 && ResultsEntry->State != CS_STATE_EMPTY)
+        if (strncmp(ResultsEntry->Name, Name, OS_MAX_API_NAME) == 0 && ResultsEntry->State != CS_ChecksumState_EMPTY)
         {
             Status    = true;
             *EntryPtr = ResultsEntry;
@@ -332,7 +333,8 @@ bool CS_GetAppDefTblEntryByName(CS_Def_App_Table_Entry_t **EntryPtr, const char 
     {
         DefinitionEntry = &StartOfDefinitionTable[Loop];
 
-        if (strncmp(DefinitionEntry->Name, Name, OS_MAX_API_NAME) == 0 && DefinitionEntry->State != CS_STATE_EMPTY)
+        if (strncmp(DefinitionEntry->Name, Name, OS_MAX_API_NAME) == 0 &&
+            DefinitionEntry->State != CS_ChecksumState_EMPTY)
         {
             Status    = true;
             *EntryPtr = DefinitionEntry;
@@ -357,7 +359,7 @@ bool CS_FindEnabledEepromEntry(uint16 *EnabledEntry)
 
     ResultsEntry = &StartOfResultsTable[CS_AppData.HkPacket.Payload.CurrentEntryInTable];
 
-    while (ResultsEntry->State != CS_STATE_ENABLED)
+    while (ResultsEntry->State != CS_ChecksumState_ENABLED)
     {
         CS_AppData.HkPacket.Payload.CurrentEntryInTable++;
 
@@ -390,7 +392,7 @@ bool CS_FindEnabledMemoryEntry(uint16 *EnabledEntry)
     StartOfResultsTable = CS_AppData.ResMemoryTblPtr;
     ResultsEntry        = &StartOfResultsTable[CS_AppData.HkPacket.Payload.CurrentEntryInTable];
 
-    while (ResultsEntry->State != CS_STATE_ENABLED)
+    while (ResultsEntry->State != CS_ChecksumState_ENABLED)
     {
         CS_AppData.HkPacket.Payload.CurrentEntryInTable++;
 
@@ -423,7 +425,7 @@ bool CS_FindEnabledTablesEntry(uint16 *EnabledEntry)
     StartOfResultsTable = CS_AppData.ResTablesTblPtr;
     ResultsEntry        = &StartOfResultsTable[CS_AppData.HkPacket.Payload.CurrentEntryInTable];
 
-    while (ResultsEntry->State != CS_STATE_ENABLED)
+    while (ResultsEntry->State != CS_ChecksumState_ENABLED)
     {
         CS_AppData.HkPacket.Payload.CurrentEntryInTable++;
 
@@ -457,7 +459,7 @@ bool CS_FindEnabledAppEntry(uint16 *EnabledEntry)
     StartOfResultsTable = CS_AppData.ResAppTblPtr;
     ResultsEntry        = &StartOfResultsTable[CS_AppData.HkPacket.Payload.CurrentEntryInTable];
 
-    while (ResultsEntry->State != CS_STATE_ENABLED)
+    while (ResultsEntry->State != CS_ChecksumState_ENABLED)
     {
         CS_AppData.HkPacket.Payload.CurrentEntryInTable++;
 
@@ -479,36 +481,6 @@ bool CS_FindEnabledAppEntry(uint16 *EnabledEntry)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                 */
-/* CS Verify the length of the command                             */
-/*                                                                 */
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-bool CS_VerifyCmdLength(const CFE_MSG_Message_t *msg, size_t ExpectedLength)
-{
-    CFE_SB_MsgId_t    MessageID    = CFE_SB_INVALID_MSG_ID;
-    CFE_MSG_FcnCode_t CommandCode  = 0;
-    bool              Result       = true;
-    size_t            ActualLength = 0;
-
-    CFE_MSG_GetSize(msg, &ActualLength);
-
-    /* Verify the command packet length */
-    if (ExpectedLength != ActualLength)
-    {
-        CFE_MSG_GetMsgId(msg, &MessageID);
-        CFE_MSG_GetFcnCode(msg, &CommandCode);
-
-        CFE_EVS_SendEvent(CS_CMD_LEN_ERR_EID, CFE_EVS_EventType_ERROR,
-                          "Invalid msg length: ID = 0x%08lX, CC = %d, Len = %lu, Expected = %lu",
-                          (unsigned long)CFE_SB_MsgIdToValue(MessageID), CommandCode, (unsigned long)ActualLength,
-                          (unsigned long)ExpectedLength);
-        Result = false;
-        CS_AppData.HkPacket.Payload.CmdErrCounter++;
-    }
-    return Result;
-}
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-/*                                                                 */
 /* Background check cFE core                                       */
 /*                                                                 */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -520,13 +492,13 @@ bool CS_BackgroundCfeCore(void)
     uint32                             ComputedCSValue = 0;
     CFE_Status_t                       Status;
 
-    if (CS_AppData.HkPacket.Payload.CfeCoreCSState == CS_STATE_ENABLED)
+    if (CS_AppData.HkPacket.Payload.CfeCoreCSState == CS_ChecksumState_ENABLED)
     {
         ResultsEntry = &CS_AppData.CfeCoreCodeSeg;
 
         /* Check if the code segment state is enabled (could be disabled for
            a ground-commanded recompute) */
-        if (ResultsEntry->State == CS_STATE_ENABLED)
+        if (ResultsEntry->State == CS_ChecksumState_ENABLED)
         {
             /* If we complete an entry's checksum, this function will update it for us */
             Status = CS_ComputeEepromMemory(ResultsEntry, &ComputedCSValue, &DoneWithEntry);
@@ -587,13 +559,13 @@ bool CS_BackgroundOS(void)
     uint32                             ComputedCSValue = 0;
     CFE_Status_t                       Status;
 
-    if (CS_AppData.HkPacket.Payload.OSCSState == CS_STATE_ENABLED)
+    if (CS_AppData.HkPacket.Payload.OSCSState == CS_ChecksumState_ENABLED)
     {
         ResultsEntry = &CS_AppData.OSCodeSeg;
 
         /* Check if the code segment state is enabled (could be disabled for
          a ground-commanded recompute) */
-        if (ResultsEntry->State == CS_STATE_ENABLED)
+        if (ResultsEntry->State == CS_ChecksumState_ENABLED)
         {
             /* If we complete an entry's checksum, this function will update it for us */
             Status = CS_ComputeEepromMemory(ResultsEntry, &ComputedCSValue, &DoneWithEntry);
@@ -656,7 +628,7 @@ bool CS_BackgroundEeprom(void)
     uint16                             CurrEntry;
     CFE_Status_t                       Status;
 
-    if (CS_AppData.HkPacket.Payload.EepromCSState == CS_STATE_ENABLED)
+    if (CS_AppData.HkPacket.Payload.EepromCSState == CS_ChecksumState_ENABLED)
     {
         if (CS_FindEnabledEepromEntry(&CurrEntry) == true)
         {
@@ -729,7 +701,7 @@ bool CS_BackgroundMemory(void)
     uint16                             CurrEntry;
     CFE_Status_t                       Status;
 
-    if (CS_AppData.HkPacket.Payload.MemoryCSState == CS_STATE_ENABLED)
+    if (CS_AppData.HkPacket.Payload.MemoryCSState == CS_ChecksumState_ENABLED)
     {
         /* If we complete an entry's checksum, this function will update it for us */
 
@@ -798,7 +770,7 @@ bool CS_BackgroundTables(void)
     uint16                       CurrEntry;
     CFE_Status_t                 Status;
 
-    if (CS_AppData.HkPacket.Payload.TablesCSState == CS_STATE_ENABLED)
+    if (CS_AppData.HkPacket.Payload.TablesCSState == CS_ChecksumState_ENABLED)
     {
         /* If we complete an entry's checksum, this function will update it for us */
 
@@ -875,7 +847,7 @@ bool CS_BackgroundApp(void)
     uint16                    CurrEntry;
     CFE_Status_t              Status;
 
-    if (CS_AppData.HkPacket.Payload.AppCSState == CS_STATE_ENABLED)
+    if (CS_AppData.HkPacket.Payload.AppCSState == CS_ChecksumState_ENABLED)
     {
         if (CS_FindEnabledAppEntry(&CurrEntry) == true)
         {
@@ -961,15 +933,16 @@ CFE_Status_t CS_HandleRoutineTableUpdates(void)
     CFE_Status_t ErrorCode = CFE_SUCCESS;
 
     if (!((CS_AppData.HkPacket.Payload.RecomputeInProgress == true) &&
-          (CS_AppData.HkPacket.Payload.OneShotInProgress == false) && (CS_AppData.ChildTaskTable == CS_EEPROM_TABLE)))
+          (CS_AppData.HkPacket.Payload.OneShotInProgress == false) &&
+          (CS_AppData.ChildTaskTable == CS_ChecksumType_EEPROM_TABLE)))
     {
         Result = CS_HandleTableUpdate((void **)&CS_AppData.DefEepromTblPtr, (void **)&CS_AppData.ResEepromTblPtr,
-                                      CS_AppData.DefEepromTableHandle, CS_AppData.ResEepromTableHandle, CS_EEPROM_TABLE,
-                                      CS_MAX_NUM_EEPROM_TABLE_ENTRIES);
+                                      CS_AppData.DefEepromTableHandle, CS_AppData.ResEepromTableHandle,
+                                      CS_ChecksumType_EEPROM_TABLE, CS_MAX_NUM_EEPROM_TABLE_ENTRIES);
 
         if (Result != CFE_SUCCESS)
         {
-            CS_AppData.HkPacket.Payload.EepromCSState = CS_STATE_DISABLED;
+            CS_AppData.HkPacket.Payload.EepromCSState = CS_ChecksumState_DISABLED;
             Result    = CFE_EVS_SendEvent(CS_UPDATE_EEPROM_ERR_EID, CFE_EVS_EventType_ERROR,
                                        "Table update failed for EEPROM: 0x%08X, checksumming EEPROM is disabled",
                                        (unsigned int)Result);
@@ -978,14 +951,15 @@ CFE_Status_t CS_HandleRoutineTableUpdates(void)
     }
 
     if (!((CS_AppData.HkPacket.Payload.RecomputeInProgress == true) &&
-          (CS_AppData.HkPacket.Payload.OneShotInProgress == false) && (CS_AppData.ChildTaskTable == CS_MEMORY_TABLE)))
+          (CS_AppData.HkPacket.Payload.OneShotInProgress == false) &&
+          (CS_AppData.ChildTaskTable == CS_ChecksumType_MEMORY_TABLE)))
     {
         Result = CS_HandleTableUpdate((void **)&CS_AppData.DefMemoryTblPtr, (void **)&CS_AppData.ResMemoryTblPtr,
-                                      CS_AppData.DefMemoryTableHandle, CS_AppData.ResMemoryTableHandle, CS_MEMORY_TABLE,
-                                      CS_MAX_NUM_MEMORY_TABLE_ENTRIES);
+                                      CS_AppData.DefMemoryTableHandle, CS_AppData.ResMemoryTableHandle,
+                                      CS_ChecksumType_MEMORY_TABLE, CS_MAX_NUM_MEMORY_TABLE_ENTRIES);
         if (Result != CFE_SUCCESS)
         {
-            CS_AppData.HkPacket.Payload.MemoryCSState = CS_STATE_DISABLED;
+            CS_AppData.HkPacket.Payload.MemoryCSState = CS_ChecksumState_DISABLED;
             Result = CFE_EVS_SendEvent(CS_UPDATE_MEMORY_ERR_EID, CFE_EVS_EventType_ERROR,
                                        "Table update failed for Memory: 0x%08X, checksumming Memory is disabled",
                                        (unsigned int)Result);
@@ -998,14 +972,15 @@ CFE_Status_t CS_HandleRoutineTableUpdates(void)
     }
 
     if (!((CS_AppData.HkPacket.Payload.RecomputeInProgress == true) &&
-          (CS_AppData.HkPacket.Payload.OneShotInProgress == false) && (CS_AppData.ChildTaskTable == CS_APP_TABLE)))
+          (CS_AppData.HkPacket.Payload.OneShotInProgress == false) &&
+          (CS_AppData.ChildTaskTable == CS_ChecksumType_APP_TABLE)))
     {
         Result = CS_HandleTableUpdate((void **)&CS_AppData.DefAppTblPtr, (void **)&CS_AppData.ResAppTblPtr,
-                                      CS_AppData.DefAppTableHandle, CS_AppData.ResAppTableHandle, CS_APP_TABLE,
-                                      CS_MAX_NUM_APP_TABLE_ENTRIES);
+                                      CS_AppData.DefAppTableHandle, CS_AppData.ResAppTableHandle,
+                                      CS_ChecksumType_APP_TABLE, CS_MAX_NUM_APP_TABLE_ENTRIES);
         if (Result != CFE_SUCCESS)
         {
-            CS_AppData.HkPacket.Payload.AppCSState = CS_STATE_DISABLED;
+            CS_AppData.HkPacket.Payload.AppCSState = CS_ChecksumState_DISABLED;
             Result                                 = CFE_EVS_SendEvent(CS_UPDATE_APP_ERR_EID, CFE_EVS_EventType_ERROR,
                                        "Table update failed for Apps: 0x%08X, checksumming Apps is disabled",
                                        (unsigned int)Result);
@@ -1017,15 +992,16 @@ CFE_Status_t CS_HandleRoutineTableUpdates(void)
     }
 
     if (!((CS_AppData.HkPacket.Payload.RecomputeInProgress == true) &&
-          (CS_AppData.HkPacket.Payload.OneShotInProgress == false) && (CS_AppData.ChildTaskTable == CS_TABLES_TABLE)))
+          (CS_AppData.HkPacket.Payload.OneShotInProgress == false) &&
+          (CS_AppData.ChildTaskTable == CS_ChecksumType_TABLES_TABLE)))
     {
         Result = CS_HandleTableUpdate((void **)&CS_AppData.DefTablesTblPtr, (void **)&CS_AppData.ResTablesTblPtr,
-                                      CS_AppData.DefTablesTableHandle, CS_AppData.ResTablesTableHandle, CS_TABLES_TABLE,
-                                      CS_MAX_NUM_TABLES_TABLE_ENTRIES);
+                                      CS_AppData.DefTablesTableHandle, CS_AppData.ResTablesTableHandle,
+                                      CS_ChecksumType_TABLES_TABLE, CS_MAX_NUM_TABLES_TABLE_ENTRIES);
 
         if (Result != CFE_SUCCESS)
         {
-            CS_AppData.HkPacket.Payload.TablesCSState = CS_STATE_DISABLED;
+            CS_AppData.HkPacket.Payload.TablesCSState = CS_ChecksumState_DISABLED;
             Result = CFE_EVS_SendEvent(CS_UPDATE_TABLES_ERR_EID, CFE_EVS_EventType_ERROR,
                                        "Table update failed for Tables: 0x%08X, checksumming Tables is disabled",
                                        (unsigned int)Result);
@@ -1049,7 +1025,7 @@ CFE_Status_t CS_AttemptTableReshare(CS_Res_Tables_Table_Entry_t *ResultsEntry, C
 
     if (Result == CFE_SUCCESS)
     {
-        ResultsEntry->TblHandle = *LocalTblHandle;
+        ResultsEntry->TblHandleID = CFE_TBL_HandleToID(*LocalTblHandle);
 
         *ResultGetInfo = CFE_TBL_GetInfo(TblInfo, ResultsEntry->Name);
 

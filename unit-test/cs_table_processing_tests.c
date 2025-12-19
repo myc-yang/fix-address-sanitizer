@@ -23,7 +23,7 @@
 
 #include "cs_msg.h"
 #include "cs_msgdefs.h"
-#include "cs_events.h"
+#include "cs_eventids.h"
 #include "cs_version.h"
 #include "cs_utils.h"
 #include "cs_test_utils.h"
@@ -34,6 +34,8 @@
 #include "uttest.h"
 #include "utassert.h"
 #include "utstubs.h"
+
+#define CS_UT_TABLE_HANDLE(x) CFE_TBL_HandleFromID(CFE_TBL_HANDLEID_C(CFE_ResourceId_FromInteger(x)))
 
 /* cs_table_processing_tests globals */
 uint8 call_count_CFE_EVS_SendEvent;
@@ -71,8 +73,8 @@ void CS_ValidateEepromChecksumDefinitionTable_Test_Nominal(void)
     snprintf(ExpectedEventString, CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "CS EEPROM Table verification results: good = %%d, bad = %%d, unused = %%d");
 
-    CS_AppData.DefEepromTblPtr[0].State = CS_STATE_ENABLED; /* All other states are empty by default, and so this test
-                                                               also covers CS_STATE_EMPTY branch */
+    CS_AppData.DefEepromTblPtr[0].State = CS_ChecksumState_ENABLED; /* All other states are empty by default, and so
+                                                               this test also covers CS_ChecksumState_EMPTY branch */
 
     /* Execute the function being tested */
     Result = CS_ValidateEepromChecksumDefinitionTable(CS_AppData.DefEepromTblPtr);
@@ -106,7 +108,7 @@ void CS_ValidateEepromChecksumDefinitionTable_Test_IllegalChecksumRangeStateEnab
     snprintf(ExpectedEventString[1], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "CS EEPROM Table verification results: good = %%d, bad = %%d, unused = %%d");
 
-    CS_AppData.DefEepromTblPtr[0].State = CS_STATE_ENABLED;
+    CS_AppData.DefEepromTblPtr[0].State = CS_ChecksumState_ENABLED;
 
     /* Set to generate error message CS_VAL_EEPROM_RANGE_ERR_EID */
     UT_SetDeferredRetcode(UT_KEY(CFE_PSP_MemValidateRange), 1, -1);
@@ -153,7 +155,7 @@ void CS_ValidateEepromChecksumDefinitionTable_Test_IllegalChecksumRangeStateDisa
     snprintf(ExpectedEventString[1], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "CS EEPROM Table verification results: good = %%d, bad = %%d, unused = %%d");
 
-    CS_AppData.DefEepromTblPtr[0].State = CS_STATE_DISABLED;
+    CS_AppData.DefEepromTblPtr[0].State = CS_ChecksumState_DISABLED;
 
     /* Set to generate error message CS_VAL_EEPROM_RANGE_ERR_EID */
     UT_SetDeferredRetcode(UT_KEY(CFE_PSP_MemValidateRange), 1, -1);
@@ -243,8 +245,8 @@ void CS_ValidateEepromChecksumDefinitionTable_Test_TableErrorResult(void)
     snprintf(ExpectedEventString[1], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "CS EEPROM Table verification results: good = %%d, bad = %%d, unused = %%d");
 
-    CS_AppData.DefEepromTblPtr[0].State = CS_STATE_DISABLED;
-    CS_AppData.DefEepromTblPtr[1].State = CS_STATE_DISABLED;
+    CS_AppData.DefEepromTblPtr[0].State = CS_ChecksumState_DISABLED;
+    CS_AppData.DefEepromTblPtr[1].State = CS_ChecksumState_DISABLED;
 
     /* Set to generate error message CS_VAL_EEPROM_RANGE_ERR_EID */
     UT_SetDefaultReturnValue(UT_KEY(CFE_PSP_MemValidateRange), -1);
@@ -290,8 +292,8 @@ void CS_ValidateEepromChecksumDefinitionTable_Test_UndefTableErrorResult(void)
     snprintf(ExpectedEventString[1], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "CS EEPROM Table verification results: good = %%d, bad = %%d, unused = %%d");
 
-    CS_AppData.DefEepromTblPtr[0].State = CS_STATE_DISABLED;
-    CS_AppData.DefEepromTblPtr[1].State = CS_STATE_UNDEFINED;
+    CS_AppData.DefEepromTblPtr[0].State = CS_ChecksumState_DISABLED;
+    CS_AppData.DefEepromTblPtr[1].State = CS_ChecksumState_UNDEFINED;
 
     /* Set to generate error message CS_VAL_EEPROM_RANGE_ERR_EID */
     UT_SetDefaultReturnValue(UT_KEY(CFE_PSP_MemValidateRange), -1);
@@ -333,8 +335,8 @@ void CS_ValidateMemoryChecksumDefinitionTable_Test_Nominal(void)
     snprintf(ExpectedEventString, CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "CS Memory Table verification results: good = %%d, bad = %%d, unused = %%d");
 
-    CS_AppData.DefMemoryTblPtr[0].State = CS_STATE_ENABLED; /* All other states are empty by default, and so this test
-                                                               also covers CS_STATE_EMPTY branch */
+    CS_AppData.DefMemoryTblPtr[0].State = CS_ChecksumState_ENABLED; /* All other states are empty by default, and so
+                                                               this test also covers CS_ChecksumState_EMPTY branch */
 
     /* Execute the function being tested */
     Result = CS_ValidateMemoryChecksumDefinitionTable(CS_AppData.DefMemoryTblPtr);
@@ -368,7 +370,7 @@ void CS_ValidateMemoryChecksumDefinitionTable_Test_IllegalChecksumRangeStateEnab
     snprintf(ExpectedEventString[1], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "CS Memory Table verification results: good = %%d, bad = %%d, unused = %%d");
 
-    CS_AppData.DefMemoryTblPtr[0].State = CS_STATE_ENABLED;
+    CS_AppData.DefMemoryTblPtr[0].State = CS_ChecksumState_ENABLED;
 
     /* Set to generate error message CS_VAL_MEMORY_RANGE_ERR_EID */
     UT_SetDeferredRetcode(UT_KEY(CFE_PSP_MemValidateRange), 1, -1);
@@ -415,7 +417,7 @@ void CS_ValidateMemoryChecksumDefinitionTable_Test_IllegalChecksumRangeStateDisa
     snprintf(ExpectedEventString[1], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "CS Memory Table verification results: good = %%d, bad = %%d, unused = %%d");
 
-    CS_AppData.DefMemoryTblPtr[0].State = CS_STATE_DISABLED;
+    CS_AppData.DefMemoryTblPtr[0].State = CS_ChecksumState_DISABLED;
 
     /* Set to generate error message CS_VAL_MEMORY_RANGE_ERR_EID */
     UT_SetDeferredRetcode(UT_KEY(CFE_PSP_MemValidateRange), 1, -1);
@@ -505,8 +507,8 @@ void CS_ValidateMemoryChecksumDefinitionTable_Test_TableErrorResult(void)
     snprintf(ExpectedEventString[1], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "CS Memory Table verification results: good = %%d, bad = %%d, unused = %%d");
 
-    CS_AppData.DefMemoryTblPtr[0].State = CS_STATE_DISABLED;
-    CS_AppData.DefMemoryTblPtr[1].State = CS_STATE_DISABLED;
+    CS_AppData.DefMemoryTblPtr[0].State = CS_ChecksumState_DISABLED;
+    CS_AppData.DefMemoryTblPtr[1].State = CS_ChecksumState_DISABLED;
 
     /* Set to generate error message CS_VAL_MEMORY_RANGE_ERR_EID */
     UT_SetDefaultReturnValue(UT_KEY(CFE_PSP_MemValidateRange), -1);
@@ -552,8 +554,8 @@ void CS_ValidateMemoryChecksumDefinitionTable_Test_UndefTableErrorResult(void)
     snprintf(ExpectedEventString[1], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "CS Memory Table verification results: good = %%d, bad = %%d, unused = %%d");
 
-    CS_AppData.DefMemoryTblPtr[0].State = CS_STATE_DISABLED;
-    CS_AppData.DefMemoryTblPtr[1].State = CS_STATE_UNDEFINED;
+    CS_AppData.DefMemoryTblPtr[0].State = CS_ChecksumState_DISABLED;
+    CS_AppData.DefMemoryTblPtr[1].State = CS_ChecksumState_UNDEFINED;
 
     /* Set to generate error message CS_VAL_MEMORY_RANGE_ERR_EID */
     UT_SetDefaultReturnValue(UT_KEY(CFE_PSP_MemValidateRange), -1);
@@ -595,8 +597,8 @@ void CS_ValidateTablesChecksumDefinitionTable_Test_Nominal(void)
     snprintf(ExpectedEventString, CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "CS Tables Table verification results: good = %%d, bad = %%d, unused = %%d");
 
-    CS_AppData.DefTablesTblPtr[0].State = CS_STATE_ENABLED; /* All other states are empty by default, and so this test
-                                                               also covers CS_STATE_EMPTY branch */
+    CS_AppData.DefTablesTblPtr[0].State = CS_ChecksumState_ENABLED; /* All other states are empty by default, and so
+                                                               this test also covers CS_ChecksumState_EMPTY branch */
 
     strncpy(CS_AppData.DefTablesTblPtr[0].Name, "name", 10);
 
@@ -677,10 +679,10 @@ void CS_ValidateTablesChecksumDefinitionTable_Test_DuplicateNameStateEnabled(voi
     snprintf(ExpectedEventString[1], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "CS Tables Table verification results: good = %%d, bad = %%d, unused = %%d");
 
-    CS_AppData.DefTablesTblPtr[0].State = CS_STATE_ENABLED; /* All other states are empty by default, and so this test
-                                                               also covers CS_STATE_EMPTY branch */
-    CS_AppData.DefTablesTblPtr[1].State = CS_STATE_ENABLED; /* All other states are empty by default, and so this test
-                                                               also covers CS_STATE_EMPTY branch */
+    CS_AppData.DefTablesTblPtr[0].State = CS_ChecksumState_ENABLED; /* All other states are empty by default, and so
+                                                               this test also covers CS_ChecksumState_EMPTY branch */
+    CS_AppData.DefTablesTblPtr[1].State = CS_ChecksumState_ENABLED; /* All other states are empty by default, and so
+                                                               this test also covers CS_ChecksumState_EMPTY branch */
 
     strncpy(CS_AppData.DefTablesTblPtr[0].Name, "name", 10);
     strncpy(CS_AppData.DefTablesTblPtr[1].Name, "name", 10);
@@ -726,10 +728,10 @@ void CS_ValidateTablesChecksumDefinitionTable_Test_DuplicateNameStateDisabled(vo
     snprintf(ExpectedEventString[1], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "CS Tables Table verification results: good = %%d, bad = %%d, unused = %%d");
 
-    CS_AppData.DefTablesTblPtr[0].State = CS_STATE_DISABLED; /* All other states are empty by default, and so this test
-                                                                also covers CS_STATE_EMPTY branch */
-    CS_AppData.DefTablesTblPtr[1].State = CS_STATE_DISABLED; /* All other states are empty by default, and so this test
-                                                                also covers CS_STATE_EMPTY branch */
+    CS_AppData.DefTablesTblPtr[0].State = CS_ChecksumState_DISABLED; /* All other states are empty by default, and so
+                                                                this test also covers CS_ChecksumState_EMPTY branch */
+    CS_AppData.DefTablesTblPtr[1].State = CS_ChecksumState_DISABLED; /* All other states are empty by default, and so
+                                                                this test also covers CS_ChecksumState_EMPTY branch */
 
     strncpy(CS_AppData.DefTablesTblPtr[0].Name, "name", 10);
     strncpy(CS_AppData.DefTablesTblPtr[1].Name, "name", 10);
@@ -820,7 +822,7 @@ void CS_ValidateTablesChecksumDefinitionTable_Test_IllegalStateEmptyName(void)
     snprintf(ExpectedEventString[1], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "CS Tables Table verification results: good = %%d, bad = %%d, unused = %%d");
 
-    CS_AppData.DefTablesTblPtr[0].State = CS_STATE_ENABLED;
+    CS_AppData.DefTablesTblPtr[0].State = CS_ChecksumState_ENABLED;
 
     /* Execute the function being tested */
     Result = CS_ValidateTablesChecksumDefinitionTable(CS_AppData.DefTablesTblPtr);
@@ -864,9 +866,9 @@ void CS_ValidateTablesChecksumDefinitionTable_Test_TableErrorResult(void)
              "CS Tables Table verification results: good = %%d, bad = %%d, unused = %%d");
 
     /* All states are empty by default */
-    CS_AppData.DefTablesTblPtr[0].State = CS_STATE_DISABLED;
-    CS_AppData.DefTablesTblPtr[1].State = CS_STATE_DISABLED;
-    CS_AppData.DefTablesTblPtr[2].State = CS_STATE_DISABLED;
+    CS_AppData.DefTablesTblPtr[0].State = CS_ChecksumState_DISABLED;
+    CS_AppData.DefTablesTblPtr[1].State = CS_ChecksumState_DISABLED;
+    CS_AppData.DefTablesTblPtr[2].State = CS_ChecksumState_DISABLED;
 
     strncpy(CS_AppData.DefTablesTblPtr[0].Name, "name", 10);
     strncpy(CS_AppData.DefTablesTblPtr[1].Name, "name", 10);
@@ -913,9 +915,9 @@ void CS_ValidateTablesChecksumDefinitionTable_Test_UndefTableErrorResult(void)
     snprintf(ExpectedEventString[1], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "CS Tables Table verification results: good = %%d, bad = %%d, unused = %%d");
 
-    CS_AppData.DefTablesTblPtr[0].State = CS_STATE_DISABLED;
-    CS_AppData.DefTablesTblPtr[1].State = CS_STATE_DISABLED;
-    CS_AppData.DefTablesTblPtr[2].State = CS_STATE_UNDEFINED;
+    CS_AppData.DefTablesTblPtr[0].State = CS_ChecksumState_DISABLED;
+    CS_AppData.DefTablesTblPtr[1].State = CS_ChecksumState_DISABLED;
+    CS_AppData.DefTablesTblPtr[2].State = CS_ChecksumState_UNDEFINED;
 
     strncpy(CS_AppData.DefTablesTblPtr[0].Name, "name", 10);
     strncpy(CS_AppData.DefTablesTblPtr[1].Name, "name", 10);
@@ -961,9 +963,9 @@ void CS_ValidateTablesChecksumDefinitionTable_Test_CsTableError(void)
     snprintf(ExpectedEventString[1], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "CS Tables Table verification results: good = %%d, bad = %%d, unused = %%d");
 
-    CS_AppData.DefTablesTblPtr[0].State = CS_STATE_DISABLED;
-    CS_AppData.DefTablesTblPtr[1].State = CS_STATE_DISABLED;
-    CS_AppData.DefTablesTblPtr[2].State = CS_STATE_UNDEFINED;
+    CS_AppData.DefTablesTblPtr[0].State = CS_ChecksumState_DISABLED;
+    CS_AppData.DefTablesTblPtr[1].State = CS_ChecksumState_DISABLED;
+    CS_AppData.DefTablesTblPtr[2].State = CS_ChecksumState_UNDEFINED;
 
     strncpy(CS_AppData.DefTablesTblPtr[0].Name, "name", 10);
     strncpy(CS_AppData.DefTablesTblPtr[1].Name, "name", 10);
@@ -998,9 +1000,9 @@ void CS_ValidateTablesChecksumDefinitionTable_Test_CsTableError(void)
 
 void CS_ValidateAppChecksumDefinitionTable_Test_Nominal(void)
 {
-    CS_AppData.DefAppTblPtr[0].State = CS_STATE_ENABLED;
+    CS_AppData.DefAppTblPtr[0].State = CS_ChecksumState_ENABLED;
     strncpy(CS_AppData.DefAppTblPtr[0].Name, "app1", sizeof(CS_AppData.DefAppTblPtr[0].Name));
-    CS_AppData.DefAppTblPtr[1].State = CS_STATE_ENABLED;
+    CS_AppData.DefAppTblPtr[1].State = CS_ChecksumState_ENABLED;
     strncpy(CS_AppData.DefAppTblPtr[1].Name, "app2", sizeof(CS_AppData.DefAppTblPtr[1].Name));
 
     /* Execute the function being tested */
@@ -1070,10 +1072,10 @@ void CS_ValidateAppChecksumDefinitionTable_Test_DuplicateNameStateEnabled(void)
     snprintf(ExpectedEventString[1], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "CS Apps Table verification results: good = %%d, bad = %%d, unused = %%d");
 
-    CS_AppData.DefAppTblPtr[0].State = CS_STATE_ENABLED; /* All other states are empty by default, and so this test also
-                                                            covers CS_STATE_EMPTY branch */
-    CS_AppData.DefAppTblPtr[1].State = CS_STATE_ENABLED; /* All other states are empty by default, and so this test also
-                                                            covers CS_STATE_EMPTY branch */
+    CS_AppData.DefAppTblPtr[0].State = CS_ChecksumState_ENABLED; /* All other states are empty by default, and so this
+                                                            test also covers CS_ChecksumState_EMPTY branch */
+    CS_AppData.DefAppTblPtr[1].State = CS_ChecksumState_ENABLED; /* All other states are empty by default, and so this
+                                                            test also covers CS_ChecksumState_EMPTY branch */
 
     strncpy(CS_AppData.DefAppTblPtr[0].Name, "name", 10);
     strncpy(CS_AppData.DefAppTblPtr[1].Name, "name", 10);
@@ -1119,10 +1121,10 @@ void CS_ValidateAppChecksumDefinitionTable_Test_DuplicateNameStateDisabled(void)
     snprintf(ExpectedEventString[1], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "CS Apps Table verification results: good = %%d, bad = %%d, unused = %%d");
 
-    CS_AppData.DefAppTblPtr[0].State = CS_STATE_DISABLED; /* All other states are empty by default, and so this test
-                                                             also covers CS_STATE_EMPTY branch */
-    CS_AppData.DefAppTblPtr[1].State = CS_STATE_DISABLED; /* All other states are empty by default, and so this test
-                                                             also covers CS_STATE_EMPTY branch */
+    CS_AppData.DefAppTblPtr[0].State = CS_ChecksumState_DISABLED; /* All other states are empty by default, and so this
+                                                             test also covers CS_ChecksumState_EMPTY branch */
+    CS_AppData.DefAppTblPtr[1].State = CS_ChecksumState_DISABLED; /* All other states are empty by default, and so this
+                                                             test also covers CS_ChecksumState_EMPTY branch */
 
     strncpy(CS_AppData.DefAppTblPtr[0].Name, "name", 10);
     strncpy(CS_AppData.DefAppTblPtr[1].Name, "name", 10);
@@ -1213,7 +1215,7 @@ void CS_ValidateAppChecksumDefinitionTable_Test_IllegalStateEmptyName(void)
     snprintf(ExpectedEventString[1], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "CS Apps Table verification results: good = %%d, bad = %%d, unused = %%d");
 
-    CS_AppData.DefAppTblPtr[0].State = CS_STATE_ENABLED;
+    CS_AppData.DefAppTblPtr[0].State = CS_ChecksumState_ENABLED;
 
     /* Execute the function being tested */
     Result = CS_ValidateAppChecksumDefinitionTable(CS_AppData.DefAppTblPtr);
@@ -1272,9 +1274,9 @@ void CS_ValidateAppChecksumDefinitionTable_Test_TableErrorResult(void)
              "CS Apps Table verification results: good = %%d, bad = %%d, unused = %%d");
 
     /* All states are empty by default */
-    CS_AppData.DefAppTblPtr[0].State = CS_STATE_DISABLED;
-    CS_AppData.DefAppTblPtr[1].State = CS_STATE_DISABLED;
-    CS_AppData.DefAppTblPtr[2].State = CS_STATE_DISABLED;
+    CS_AppData.DefAppTblPtr[0].State = CS_ChecksumState_DISABLED;
+    CS_AppData.DefAppTblPtr[1].State = CS_ChecksumState_DISABLED;
+    CS_AppData.DefAppTblPtr[2].State = CS_ChecksumState_DISABLED;
 
     strncpy(CS_AppData.DefAppTblPtr[0].Name, "name", 10);
     strncpy(CS_AppData.DefAppTblPtr[1].Name, "name", 10);
@@ -1320,9 +1322,9 @@ void CS_ValidateAppChecksumDefinitionTable_Test_UndefTableErrorResult(void)
     snprintf(ExpectedEventString[1], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "CS Apps Table verification results: good = %%d, bad = %%d, unused = %%d");
 
-    CS_AppData.DefAppTblPtr[0].State = CS_STATE_DISABLED;
-    CS_AppData.DefAppTblPtr[1].State = CS_STATE_DISABLED;
-    CS_AppData.DefAppTblPtr[2].State = CS_STATE_UNDEFINED;
+    CS_AppData.DefAppTblPtr[0].State = CS_ChecksumState_DISABLED;
+    CS_AppData.DefAppTblPtr[1].State = CS_ChecksumState_DISABLED;
+    CS_AppData.DefAppTblPtr[2].State = CS_ChecksumState_UNDEFINED;
 
     strncpy(CS_AppData.DefAppTblPtr[0].Name, "name", 10);
     strncpy(CS_AppData.DefAppTblPtr[1].Name, "name", 10);
@@ -1368,9 +1370,9 @@ void CS_ValidateAppChecksumDefinitionTable_Test_EmptyNameTableResult(void)
     snprintf(ExpectedEventString[1], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "CS Apps Table verification results: good = %%d, bad = %%d, unused = %%d");
 
-    CS_AppData.DefAppTblPtr[0].State = CS_STATE_ENABLED;
-    CS_AppData.DefAppTblPtr[1].State = CS_STATE_ENABLED;
-    CS_AppData.DefAppTblPtr[2].State = CS_STATE_ENABLED;
+    CS_AppData.DefAppTblPtr[0].State = CS_ChecksumState_ENABLED;
+    CS_AppData.DefAppTblPtr[1].State = CS_ChecksumState_ENABLED;
+    CS_AppData.DefAppTblPtr[2].State = CS_ChecksumState_ENABLED;
 
     /* Execute the function being tested */
     Result = CS_ValidateAppChecksumDefinitionTable(CS_AppData.DefAppTblPtr);
@@ -1406,7 +1408,7 @@ void CS_ProcessNewEepromMemoryDefinitionTable_Test_EEPROMTableNominal(void)
     /* Handles both cases of "DefEntry -> State" */
 
     uint16 NumEntries = 1;
-    uint16 Table      = CS_EEPROM_TABLE;
+    uint16 Table      = CS_ChecksumType_EEPROM_TABLE;
 
     CS_AppData.HkPacket.Payload.EepromCSState        = 99;
     CS_AppData.DefEepromTblPtr[0].State              = 1;
@@ -1431,8 +1433,8 @@ void CS_ProcessNewEepromMemoryDefinitionTable_Test_EEPROMTableNominal(void)
                   "CS_AppData.ResEepromTblPtr[0].TempChecksumValue == 0");
     UtAssert_True(CS_AppData.ResEepromTblPtr[0].StartAddress == 3, "CS_AppData.ResEepromTblPtr[0].StartAddress == 3");
 
-    UtAssert_True(CS_AppData.ResEepromTblPtr[1].State == CS_STATE_EMPTY,
-                  "CS_AppData.ResEepromTblPtr[1].State == CS_STATE_EMPTY");
+    UtAssert_True(CS_AppData.ResEepromTblPtr[1].State == CS_ChecksumState_EMPTY,
+                  "CS_AppData.ResEepromTblPtr[1].State == CS_ChecksumState_EMPTY");
     UtAssert_True(CS_AppData.ResEepromTblPtr[1].ComputedYet == false,
                   "CS_AppData.ResEepromTblPtr[1].ComputedYet == false");
     UtAssert_True(CS_AppData.ResEepromTblPtr[1].NumBytesToChecksum == 0,
@@ -1455,7 +1457,7 @@ void CS_ProcessNewEepromMemoryDefinitionTable_Test_MemoryTableNominal(void)
     /* Handles both cases of "DefEntry -> State" */
 
     uint16 NumEntries = 1;
-    uint16 Table      = CS_MEMORY_TABLE;
+    uint16 Table      = CS_ChecksumType_MEMORY_TABLE;
 
     CS_AppData.HkPacket.Payload.MemoryCSState        = 99;
     CS_AppData.DefMemoryTblPtr[0].State              = 1;
@@ -1480,8 +1482,8 @@ void CS_ProcessNewEepromMemoryDefinitionTable_Test_MemoryTableNominal(void)
                   "CS_AppData.ResMemoryTblPtr[0].TempChecksumValue == 0");
     UtAssert_True(CS_AppData.ResMemoryTblPtr[0].StartAddress == 3, "CS_AppData.ResMemoryTblPtr[0].StartAddress == 3");
 
-    UtAssert_True(CS_AppData.ResMemoryTblPtr[1].State == CS_STATE_EMPTY,
-                  "CS_AppData.ResMemoryTblPtr[1].State == CS_STATE_EMPTY");
+    UtAssert_True(CS_AppData.ResMemoryTblPtr[1].State == CS_ChecksumState_EMPTY,
+                  "CS_AppData.ResMemoryTblPtr[1].State == CS_ChecksumState_EMPTY");
     UtAssert_True(CS_AppData.ResMemoryTblPtr[1].ComputedYet == false,
                   "CS_AppData.ResMemoryTblPtr[1].ComputedYet == false");
     UtAssert_True(CS_AppData.ResMemoryTblPtr[1].NumBytesToChecksum == 0,
@@ -1509,7 +1511,7 @@ void CS_ProcessNewEepromMemoryDefinitionTable_Test_EEPROMTableNoValidEntries(voi
     /* Handles both cases of "DefEntry -> State" */
 
     uint16 NumEntries = 1;
-    uint16 Table      = CS_EEPROM_TABLE;
+    uint16 Table      = CS_ChecksumType_EEPROM_TABLE;
 
     CS_AppData.HkPacket.Payload.MemoryCSState = 99;
 
@@ -1542,7 +1544,7 @@ void CS_ProcessNewEepromMemoryDefinitionTable_Test_MemoryTableNoValidEntries(voi
     /* Handles both cases of "DefEntry -> State" */
 
     uint16 NumEntries = 1;
-    uint16 Table      = CS_MEMORY_TABLE;
+    uint16 Table      = CS_ChecksumType_MEMORY_TABLE;
 
     CS_AppData.HkPacket.Payload.MemoryCSState = 99;
 
@@ -1572,7 +1574,7 @@ void CS_ProcessNewTablesDefinitionTable_Test_DefEepromTableHandle(void)
 
     strncpy(CS_AppData.DefTablesTblPtr[0].Name, "CS.DefEepromTbl", 20);
 
-    CS_AppData.DefEepromTableHandle = 11;
+    CS_AppData.DefEepromTableHandle = CS_UT_TABLE_HANDLE(11);
 
     /* Sets AppName to "CS" */
     UT_SetHandlerFunction(UT_KEY(CFE_ES_GetAppName), CS_TABLE_PROCESSING_TEST_CFE_ES_GetAppNameHandler1, NULL);
@@ -1600,7 +1602,6 @@ void CS_ProcessNewTablesDefinitionTable_Test_DefEepromTableHandle(void)
                   "CS_AppData.ResTablesTblPtr[0].TempChecksumValue == 0");
     UtAssert_True(CS_AppData.ResTablesTblPtr[0].StartAddress == 0, "CS_AppData.ResTablesTblPtr[0].StartAddress == 0");
 
-    UtAssert_True(CS_AppData.ResTablesTblPtr[0].TblHandle == 11, "CS_AppData.ResTablesTblPtr[0].TblHandle == 11");
     UtAssert_True(CS_AppData.ResTablesTblPtr[0].IsCSOwner == true, "CS_AppData.ResTablesTblPtr[0].IsCSOwner == true");
     UtAssert_True(strncmp(CS_AppData.ResTablesTblPtr[0].Name, "CS.DefEepromTbl", 20) == 0,
                   "strncmp(CS_AppData.ResTablesTblPtr[0].Name, 'CS.DefEepromTbl', 20) == 0");
@@ -1620,7 +1621,7 @@ void CS_ProcessNewTablesDefinitionTable_Test_DefMemoryTableHandle(void)
 
     strncpy(CS_AppData.DefTablesTblPtr[0].Name, "CS.DefMemoryTbl", 20);
 
-    CS_AppData.DefMemoryTableHandle = 11;
+    CS_AppData.DefMemoryTableHandle = CS_UT_TABLE_HANDLE(11);
 
     /* Sets AppName to "CS" */
     UT_SetHandlerFunction(UT_KEY(CFE_ES_GetAppName), CS_TABLE_PROCESSING_TEST_CFE_ES_GetAppNameHandler1, NULL);
@@ -1648,7 +1649,6 @@ void CS_ProcessNewTablesDefinitionTable_Test_DefMemoryTableHandle(void)
                   "CS_AppData.ResTablesTblPtr[0].TempChecksumValue == 0");
     UtAssert_True(CS_AppData.ResTablesTblPtr[0].StartAddress == 0, "CS_AppData.ResTablesTblPtr[0].StartAddress == 0");
 
-    UtAssert_True(CS_AppData.ResTablesTblPtr[0].TblHandle == 11, "CS_AppData.ResTablesTblPtr[0].TblHandle == 11");
     UtAssert_True(CS_AppData.ResTablesTblPtr[0].IsCSOwner == true, "CS_AppData.ResTablesTblPtr[0].IsCSOwner == true");
     UtAssert_True(strncmp(CS_AppData.ResTablesTblPtr[0].Name, "CS.DefMemoryTbl", 20) == 0,
                   "strncmp(CS_AppData.ResTablesTblPtr[0].Name, 'CS.DefMemoryTbl', 20) == 0");
@@ -1668,7 +1668,7 @@ void CS_ProcessNewTablesDefinitionTable_Test_DefTablesTableHandle(void)
 
     strncpy(CS_AppData.DefTablesTblPtr[0].Name, "CS.DefTablesTbl", 20);
 
-    CS_AppData.DefTablesTableHandle = 11;
+    CS_AppData.DefTablesTableHandle = CS_UT_TABLE_HANDLE(11);
 
     /* Sets AppName to "CS" */
     UT_SetHandlerFunction(UT_KEY(CFE_ES_GetAppName), CS_TABLE_PROCESSING_TEST_CFE_ES_GetAppNameHandler1, NULL);
@@ -1696,7 +1696,6 @@ void CS_ProcessNewTablesDefinitionTable_Test_DefTablesTableHandle(void)
                   "CS_AppData.ResTablesTblPtr[0].TempChecksumValue == 0");
     UtAssert_True(CS_AppData.ResTablesTblPtr[0].StartAddress == 0, "CS_AppData.ResTablesTblPtr[0].StartAddress == 0");
 
-    UtAssert_True(CS_AppData.ResTablesTblPtr[0].TblHandle == 11, "CS_AppData.ResTablesTblPtr[0].TblHandle == 11");
     UtAssert_True(CS_AppData.ResTablesTblPtr[0].IsCSOwner == true, "CS_AppData.ResTablesTblPtr[0].IsCSOwner == true");
     UtAssert_True(strncmp(CS_AppData.ResTablesTblPtr[0].Name, "CS.DefTablesTbl", 20) == 0,
                   "strncmp(CS_AppData.ResTablesTblPtr[0].Name, 'CS.DefTablesTbl', 20) == 0");
@@ -1716,7 +1715,7 @@ void CS_ProcessNewTablesDefinitionTable_Test_DefAppTableHandle(void)
 
     strncpy(CS_AppData.DefTablesTblPtr[0].Name, "CS.DefAppTbl", 20);
 
-    CS_AppData.DefAppTableHandle = 11;
+    CS_AppData.DefAppTableHandle = CS_UT_TABLE_HANDLE(11);
 
     /* Sets AppName to "CS" */
     UT_SetHandlerFunction(UT_KEY(CFE_ES_GetAppName), CS_TABLE_PROCESSING_TEST_CFE_ES_GetAppNameHandler1, NULL);
@@ -1744,7 +1743,6 @@ void CS_ProcessNewTablesDefinitionTable_Test_DefAppTableHandle(void)
                   "CS_AppData.ResTablesTblPtr[0].TempChecksumValue == 0");
     UtAssert_True(CS_AppData.ResTablesTblPtr[0].StartAddress == 0, "CS_AppData.ResTablesTblPtr[0].StartAddress == 0");
 
-    UtAssert_True(CS_AppData.ResTablesTblPtr[0].TblHandle == 11, "CS_AppData.ResTablesTblPtr[0].TblHandle == 11");
     UtAssert_True(CS_AppData.ResTablesTblPtr[0].IsCSOwner == true, "CS_AppData.ResTablesTblPtr[0].IsCSOwner == true");
     UtAssert_True(strncmp(CS_AppData.ResTablesTblPtr[0].Name, "CS.DefAppTbl", 20) == 0,
                   "strncmp(CS_AppData.ResTablesTblPtr[0].Name, 'CS.DefAppTbl', 20) == 0");
@@ -1764,7 +1762,7 @@ void CS_ProcessNewTablesDefinitionTable_Test_ResEepromTableHandle(void)
 
     strncpy(CS_AppData.DefTablesTblPtr[0].Name, "CS.ResEepromTbl", 20);
 
-    CS_AppData.ResEepromTableHandle = 11;
+    CS_AppData.ResEepromTableHandle = CS_UT_TABLE_HANDLE(11);
 
     /* Sets AppName to "CS" */
     UT_SetHandlerFunction(UT_KEY(CFE_ES_GetAppName), CS_TABLE_PROCESSING_TEST_CFE_ES_GetAppNameHandler1, NULL);
@@ -1790,7 +1788,6 @@ void CS_ProcessNewTablesDefinitionTable_Test_ResEepromTableHandle(void)
                   "CS_AppData.ResTablesTblPtr[0].TempChecksumValue == 0");
     UtAssert_True(CS_AppData.ResTablesTblPtr[0].StartAddress == 0, "CS_AppData.ResTablesTblPtr[0].StartAddress == 0");
 
-    UtAssert_True(CS_AppData.ResTablesTblPtr[0].TblHandle == 11, "CS_AppData.ResTablesTblPtr[0].TblHandle == 11");
     UtAssert_True(CS_AppData.ResTablesTblPtr[0].IsCSOwner == true, "CS_AppData.ResTablesTblPtr[0].IsCSOwner == true");
     UtAssert_True(strncmp(CS_AppData.ResTablesTblPtr[0].Name, "CS.ResEepromTbl", 20) == 0,
                   "strncmp(CS_AppData.ResTablesTblPtr[0].Name, 'CS.ResEepromTbl', 20) == 0");
@@ -1810,7 +1807,7 @@ void CS_ProcessNewTablesDefinitionTable_Test_ResMemoryTableHandle(void)
 
     strncpy(CS_AppData.DefTablesTblPtr[0].Name, "CS.ResMemoryTbl", 20);
 
-    CS_AppData.ResMemoryTableHandle = 11;
+    CS_AppData.ResMemoryTableHandle = CS_UT_TABLE_HANDLE(11);
 
     /* Sets AppName to "CS" */
     UT_SetHandlerFunction(UT_KEY(CFE_ES_GetAppName), CS_TABLE_PROCESSING_TEST_CFE_ES_GetAppNameHandler1, NULL);
@@ -1836,7 +1833,6 @@ void CS_ProcessNewTablesDefinitionTable_Test_ResMemoryTableHandle(void)
                   "CS_AppData.ResTablesTblPtr[0].TempChecksumValue == 0");
     UtAssert_True(CS_AppData.ResTablesTblPtr[0].StartAddress == 0, "CS_AppData.ResTablesTblPtr[0].StartAddress == 0");
 
-    UtAssert_True(CS_AppData.ResTablesTblPtr[0].TblHandle == 11, "CS_AppData.ResTablesTblPtr[0].TblHandle == 11");
     UtAssert_True(CS_AppData.ResTablesTblPtr[0].IsCSOwner == true, "CS_AppData.ResTablesTblPtr[0].IsCSOwner == true");
     UtAssert_True(strncmp(CS_AppData.ResTablesTblPtr[0].Name, "CS.ResMemoryTbl", 20) == 0,
                   "strncmp(CS_AppData.ResTablesTblPtr[0].Name, 'CS.ResMemoryTbl', 20) == 0");
@@ -1856,7 +1852,7 @@ void CS_ProcessNewTablesDefinitionTable_Test_ResTablesTableHandle(void)
 
     strncpy(CS_AppData.DefTablesTblPtr[0].Name, "CS.ResTablesTbl", 20);
 
-    CS_AppData.ResTablesTableHandle = 11;
+    CS_AppData.ResTablesTableHandle = CS_UT_TABLE_HANDLE(11);
 
     /* Sets AppName to "CS" */
     UT_SetHandlerFunction(UT_KEY(CFE_ES_GetAppName), CS_TABLE_PROCESSING_TEST_CFE_ES_GetAppNameHandler1, NULL);
@@ -1882,7 +1878,6 @@ void CS_ProcessNewTablesDefinitionTable_Test_ResTablesTableHandle(void)
                   "CS_AppData.ResTablesTblPtr[0].TempChecksumValue == 0");
     UtAssert_True(CS_AppData.ResTablesTblPtr[0].StartAddress == 0, "CS_AppData.ResTablesTblPtr[0].StartAddress == 0");
 
-    UtAssert_True(CS_AppData.ResTablesTblPtr[0].TblHandle == 11, "CS_AppData.ResTablesTblPtr[0].TblHandle == 11");
     UtAssert_True(CS_AppData.ResTablesTblPtr[0].IsCSOwner == true, "CS_AppData.ResTablesTblPtr[0].IsCSOwner == true");
     UtAssert_True(strncmp(CS_AppData.ResTablesTblPtr[0].Name, "CS.ResTablesTbl", 20) == 0,
                   "strncmp(CS_AppData.ResTablesTblPtr[0].Name, 'CS.ResTablesTbl', 20) == 0");
@@ -1902,7 +1897,7 @@ void CS_ProcessNewTablesDefinitionTable_Test_ResAppTableHandle(void)
 
     strncpy(CS_AppData.DefTablesTblPtr[0].Name, "CS.ResAppTbl", 20);
 
-    CS_AppData.ResAppTableHandle = 11;
+    CS_AppData.ResAppTableHandle = CS_UT_TABLE_HANDLE(11);
 
     /* Sets AppName to "CS" */
     UT_SetHandlerFunction(UT_KEY(CFE_ES_GetAppName), CS_TABLE_PROCESSING_TEST_CFE_ES_GetAppNameHandler1, NULL);
@@ -1928,7 +1923,6 @@ void CS_ProcessNewTablesDefinitionTable_Test_ResAppTableHandle(void)
                   "CS_AppData.ResTablesTblPtr[0].TempChecksumValue == 0");
     UtAssert_True(CS_AppData.ResTablesTblPtr[0].StartAddress == 0, "CS_AppData.ResTablesTblPtr[0].StartAddress == 0");
 
-    UtAssert_True(CS_AppData.ResTablesTblPtr[0].TblHandle == 11, "CS_AppData.ResTablesTblPtr[0].TblHandle == 11");
     UtAssert_True(CS_AppData.ResTablesTblPtr[0].IsCSOwner == true, "CS_AppData.ResTablesTblPtr[0].IsCSOwner == true");
     UtAssert_True(strncmp(CS_AppData.ResTablesTblPtr[0].Name, "CS.ResAppTbl", 20) == 0,
                   "strncmp(CS_AppData.ResTablesTblPtr[0].Name, 'CS.ResAppTbl', 20) == 0");
@@ -1949,7 +1943,7 @@ void CS_ProcessNewTablesDefinitionTable_Test_StateEmptyNoValidEntries(void)
     snprintf(ExpectedEventString, CFE_MISSION_EVS_MAX_MESSAGE_LENGTH, "CS Tables Table: No valid entries in the table");
 
     CS_AppData.HkPacket.Payload.TablesCSState = 99;
-    CS_AppData.DefTablesTblPtr[0].State       = CS_STATE_EMPTY;
+    CS_AppData.DefTablesTblPtr[0].State       = CS_ChecksumState_EMPTY;
 
     /* Sets AppName to "CS" */
     UT_SetHandlerFunction(UT_KEY(CFE_ES_GetAppName), CS_TABLE_PROCESSING_TEST_CFE_ES_GetAppNameHandler1, NULL);
@@ -1963,8 +1957,8 @@ void CS_ProcessNewTablesDefinitionTable_Test_StateEmptyNoValidEntries(void)
     UtAssert_True(CS_AppData.AppResTablesTblPtr == NULL, "CS_AppData.AppResTablesTblPtr == NULL");
     UtAssert_True(CS_AppData.TblResTablesTblPtr == NULL, "CS_AppData.TblResTablesTblPtr == NULL");
 
-    UtAssert_True(CS_AppData.ResTablesTblPtr[0].State == CS_STATE_EMPTY,
-                  "CS_AppData.ResTablesTblPtr[0].State == CS_STATE_EMPTY");
+    UtAssert_True(CS_AppData.ResTablesTblPtr[0].State == CS_ChecksumState_EMPTY,
+                  "CS_AppData.ResTablesTblPtr[0].State == CS_ChecksumState_EMPTY");
     UtAssert_True(CS_AppData.ResTablesTblPtr[0].ComputedYet == false,
                   "CS_AppData.ResTablesTblPtr[0].ComputedYet == false");
     UtAssert_True(CS_AppData.ResTablesTblPtr[0].NumBytesToChecksum == 0,
@@ -1976,8 +1970,6 @@ void CS_ProcessNewTablesDefinitionTable_Test_StateEmptyNoValidEntries(void)
                   "CS_AppData.ResTablesTblPtr[0].TempChecksumValue == 0");
     UtAssert_True(CS_AppData.ResTablesTblPtr[0].StartAddress == 0, "CS_AppData.ResTablesTblPtr[0].StartAddress == 0");
 
-    UtAssert_True(CS_AppData.ResTablesTblPtr[0].TblHandle == CFE_TBL_BAD_TABLE_HANDLE,
-                  "CS_AppData.ResTablesTblPtr[0].TblHandle == CFE_TBL_BAD_TABLE_HANDLE");
     UtAssert_True(CS_AppData.ResTablesTblPtr[0].IsCSOwner == false, "CS_AppData.ResTablesTblPtr[0].IsCSOwner == false");
     UtAssert_True(CS_AppData.ResTablesTblPtr[0].Name[0] == 0, "CS_AppData.ResTablesTblPtr[0].Name[0] == 0");
 
@@ -2014,7 +2006,7 @@ void CS_ProcessNewTablesDefinitionTable_Test_LimitApplicationNameLength(void)
 
     strncat(CS_AppData.DefTablesTblPtr[0].Name, ".DefEepromTbl", OS_MAX_API_NAME);
 
-    CS_AppData.DefEepromTableHandle = 11;
+    CS_AppData.DefEepromTableHandle = CS_UT_TABLE_HANDLE(11);
 
     /* Sets AppName to string of x's of length OS_MAX_API_NAME */
     UT_SetDataBuffer(UT_KEY(CFE_ES_GetAppName), (uint8 *)AppNameX, sizeof(AppNameX), false);
@@ -2053,7 +2045,7 @@ void CS_ProcessNewTablesDefinitionTable_Test_LimitTableNameLength(void)
         strncat(CS_AppData.DefTablesTblPtr[0].Name, "x", CFE_TBL_MAX_FULL_NAME_LEN);
     }
 
-    CS_AppData.DefEepromTableHandle = 11;
+    CS_AppData.DefEepromTableHandle = CS_UT_TABLE_HANDLE(11);
 
     /* Sets AppName to "CS" */
     UT_SetHandlerFunction(UT_KEY(CFE_ES_GetAppName), CS_TABLE_PROCESSING_TEST_CFE_ES_GetAppNameHandler1, NULL);
@@ -2092,7 +2084,7 @@ void CS_ProcessNewTablesDefinitionTable_Test_MaxTableNameLength(void)
         strncat(CS_AppData.DefTablesTblPtr[0].Name, "x", CFE_TBL_MAX_FULL_NAME_LEN);
     }
 
-    CS_AppData.DefEepromTableHandle = 11;
+    CS_AppData.DefEepromTableHandle = CS_UT_TABLE_HANDLE(11);
 
     /* Sets AppName to "CS" */
     UT_SetHandlerFunction(UT_KEY(CFE_ES_GetAppName), CS_TABLE_PROCESSING_TEST_CFE_ES_GetAppNameHandler1, NULL);
@@ -2153,14 +2145,14 @@ void CS_ProcessNewAppDefinitionTable_Test_StateEmptyNoValidEntries(void)
     snprintf(ExpectedEventString, CFE_MISSION_EVS_MAX_MESSAGE_LENGTH, "CS Apps Table: No valid entries in the table");
 
     CS_AppData.HkPacket.Payload.AppCSState = 99;
-    CS_AppData.DefAppTblPtr[0].State       = CS_STATE_EMPTY;
+    CS_AppData.DefAppTblPtr[0].State       = CS_ChecksumState_EMPTY;
 
     /* Execute the function being tested */
     CS_ProcessNewAppDefinitionTable(CS_AppData.DefAppTblPtr, CS_AppData.ResAppTblPtr);
 
     /* Verify results */
-    UtAssert_True(CS_AppData.ResAppTblPtr[0].State == CS_STATE_EMPTY,
-                  "CS_AppData.ResAppTblPtr[0].State == CS_STATE_EMPTY");
+    UtAssert_True(CS_AppData.ResAppTblPtr[0].State == CS_ChecksumState_EMPTY,
+                  "CS_AppData.ResAppTblPtr[0].State == CS_ChecksumState_EMPTY");
     UtAssert_True(CS_AppData.ResAppTblPtr[0].ComputedYet == false, "CS_AppData.ResAppTblPtr[0].ComputedYet == false");
     UtAssert_True(CS_AppData.ResAppTblPtr[0].NumBytesToChecksum == 0,
                   "CS_AppData.ResAppTblPtr[0].NumBytesToChecksum == 0");
@@ -2189,8 +2181,8 @@ void CS_ProcessNewAppDefinitionTable_Test_StateEmptyNoValidEntries(void)
 void CS_TableInit_Test_DefaultDefinitionTableLoadErrorEEPROM(void)
 {
     CFE_Status_t     Result;
-    CFE_TBL_Handle_t DefinitionTableHandle = 0;
-    CFE_TBL_Handle_t ResultsTableHandle    = 0;
+    CFE_TBL_Handle_t DefinitionTableHandle;
+    CFE_TBL_Handle_t ResultsTableHandle;
     int32            strCmpResult;
     char             ExpectedEventString[CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
 
@@ -2202,7 +2194,7 @@ void CS_TableInit_Test_DefaultDefinitionTableLoadErrorEEPROM(void)
 
     /* Execute the function being tested */
     Result = CS_TableInit(&DefinitionTableHandle, &ResultsTableHandle, (void **)&CS_AppData.DefEepromTblPtr,
-                          (void **)&CS_AppData.ResEepromTblPtr, CS_EEPROM_TABLE, CS_DEF_EEPROM_TABLE_NAME,
+                          (void **)&CS_AppData.ResEepromTblPtr, CS_ChecksumType_EEPROM_TABLE, CS_DEF_EEPROM_TABLE_NAME,
                           CS_RESULTS_EEPROM_TABLE_NAME, CS_MAX_NUM_EEPROM_TABLE_ENTRIES, CS_DEF_EEPROM_TABLE_FILENAME,
                           &CS_AppData.DefaultEepromDefTable, sizeof(CS_Def_EepromMemory_Table_Entry_t),
                           sizeof(CS_Res_EepromMemory_Table_Entry_t), NULL);
@@ -2226,8 +2218,8 @@ void CS_TableInit_Test_DefaultDefinitionTableLoadErrorEEPROM(void)
 void CS_TableInit_Test_DefinitionTableGetAddressErrorEEPROM(void)
 {
     CFE_Status_t     Result;
-    CFE_TBL_Handle_t DefinitionTableHandle = 0;
-    CFE_TBL_Handle_t ResultsTableHandle    = 0;
+    CFE_TBL_Handle_t DefinitionTableHandle;
+    CFE_TBL_Handle_t ResultsTableHandle;
     int32            strCmpResult;
     char             ExpectedEventString[CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
 
@@ -2242,7 +2234,7 @@ void CS_TableInit_Test_DefinitionTableGetAddressErrorEEPROM(void)
 
     /* Execute the function being tested */
     Result = CS_TableInit(&DefinitionTableHandle, &ResultsTableHandle, (void **)&CS_AppData.DefEepromTblPtr,
-                          (void **)&CS_AppData.ResEepromTblPtr, CS_EEPROM_TABLE, CS_DEF_EEPROM_TABLE_NAME,
+                          (void **)&CS_AppData.ResEepromTblPtr, CS_ChecksumType_EEPROM_TABLE, CS_DEF_EEPROM_TABLE_NAME,
                           CS_RESULTS_EEPROM_TABLE_NAME, CS_MAX_NUM_EEPROM_TABLE_ENTRIES, CS_DEF_EEPROM_TABLE_FILENAME,
                           &CS_AppData.DefaultEepromDefTable, sizeof(CS_Def_EepromMemory_Table_Entry_t),
                           sizeof(CS_Res_EepromMemory_Table_Entry_t), NULL);
@@ -2266,8 +2258,8 @@ void CS_TableInit_Test_DefinitionTableGetAddressErrorEEPROM(void)
 void CS_TableInit_Test_DefinitionTableGetAddressErrorMemory(void)
 {
     CFE_Status_t     Result;
-    CFE_TBL_Handle_t DefinitionTableHandle = 0;
-    CFE_TBL_Handle_t ResultsTableHandle    = 0;
+    CFE_TBL_Handle_t DefinitionTableHandle;
+    CFE_TBL_Handle_t ResultsTableHandle;
     int32            strCmpResult;
     char             ExpectedEventString[CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
 
@@ -2282,7 +2274,7 @@ void CS_TableInit_Test_DefinitionTableGetAddressErrorMemory(void)
 
     /* Execute the function being tested */
     Result = CS_TableInit(&DefinitionTableHandle, &ResultsTableHandle, (void **)&CS_AppData.DefMemoryTblPtr,
-                          (void **)&CS_AppData.ResMemoryTblPtr, CS_MEMORY_TABLE, CS_DEF_MEMORY_TABLE_NAME,
+                          (void **)&CS_AppData.ResMemoryTblPtr, CS_ChecksumType_MEMORY_TABLE, CS_DEF_MEMORY_TABLE_NAME,
                           CS_RESULTS_MEMORY_TABLE_NAME, CS_MAX_NUM_MEMORY_TABLE_ENTRIES, CS_DEF_MEMORY_TABLE_FILENAME,
                           &CS_AppData.DefaultMemoryDefTable, sizeof(CS_Def_EepromMemory_Table_Entry_t),
                           sizeof(CS_Res_EepromMemory_Table_Entry_t), NULL);
@@ -2306,8 +2298,8 @@ void CS_TableInit_Test_DefinitionTableGetAddressErrorMemory(void)
 void CS_TableInit_Test_DefinitionTableGetAddressErrorTables(void)
 {
     CFE_Status_t     Result;
-    CFE_TBL_Handle_t DefinitionTableHandle = 0;
-    CFE_TBL_Handle_t ResultsTableHandle    = 0;
+    CFE_TBL_Handle_t DefinitionTableHandle;
+    CFE_TBL_Handle_t ResultsTableHandle;
     int32            strCmpResult;
     char             ExpectedEventString[CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
 
@@ -2322,7 +2314,7 @@ void CS_TableInit_Test_DefinitionTableGetAddressErrorTables(void)
 
     /* Execute the function being tested */
     Result = CS_TableInit(&DefinitionTableHandle, &ResultsTableHandle, (void **)&CS_AppData.DefTablesTblPtr,
-                          (void **)&CS_AppData.ResTablesTblPtr, CS_TABLES_TABLE, CS_DEF_TABLES_TABLE_NAME,
+                          (void **)&CS_AppData.ResTablesTblPtr, CS_ChecksumType_TABLES_TABLE, CS_DEF_TABLES_TABLE_NAME,
                           CS_RESULTS_TABLES_TABLE_NAME, CS_MAX_NUM_TABLES_TABLE_ENTRIES, CS_DEF_TABLES_TABLE_FILENAME,
                           &CS_AppData.DefaultTablesDefTable, sizeof(CS_Def_Tables_Table_Entry_t),
                           sizeof(CS_Res_Tables_Table_Entry_t), NULL);
@@ -2346,8 +2338,8 @@ void CS_TableInit_Test_DefinitionTableGetAddressErrorTables(void)
 void CS_TableInit_Test_DefinitionTableGetAddressErrorApps(void)
 {
     CFE_Status_t     Result;
-    CFE_TBL_Handle_t DefinitionTableHandle = 0;
-    CFE_TBL_Handle_t ResultsTableHandle    = 0;
+    CFE_TBL_Handle_t DefinitionTableHandle;
+    CFE_TBL_Handle_t ResultsTableHandle;
     int32            strCmpResult;
     char             ExpectedEventString[CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
 
@@ -2361,11 +2353,11 @@ void CS_TableInit_Test_DefinitionTableGetAddressErrorApps(void)
     UT_SetDeferredRetcode(UT_KEY(CFE_TBL_GetAddress), 2, -1);
 
     /* Execute the function being tested */
-    Result =
-        CS_TableInit(&DefinitionTableHandle, &ResultsTableHandle, (void **)&CS_AppData.DefAppTblPtr,
-                     (void **)&CS_AppData.ResAppTblPtr, CS_APP_TABLE, CS_DEF_APP_TABLE_NAME, CS_RESULTS_APP_TABLE_NAME,
-                     CS_MAX_NUM_APP_TABLE_ENTRIES, CS_DEF_APP_TABLE_FILENAME, &CS_AppData.DefaultAppDefTable,
-                     sizeof(CS_Def_App_Table_Entry_t), sizeof(CS_Res_App_Table_Entry_t), NULL);
+    Result = CS_TableInit(&DefinitionTableHandle, &ResultsTableHandle, (void **)&CS_AppData.DefAppTblPtr,
+                          (void **)&CS_AppData.ResAppTblPtr, CS_ChecksumType_APP_TABLE, CS_DEF_APP_TABLE_NAME,
+                          CS_RESULTS_APP_TABLE_NAME, CS_MAX_NUM_APP_TABLE_ENTRIES, CS_DEF_APP_TABLE_FILENAME,
+                          &CS_AppData.DefaultAppDefTable, sizeof(CS_Def_App_Table_Entry_t),
+                          sizeof(CS_Res_App_Table_Entry_t), NULL);
 
     /* Verify results */
     UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventID, CS_TBL_INIT_ERR_EID);
@@ -2386,8 +2378,8 @@ void CS_TableInit_Test_DefinitionTableGetAddressErrorApps(void)
 void CS_TableInit_Test_EepromTableAndNotLoadedFromMemory(void)
 {
     CFE_Status_t     Result;
-    CFE_TBL_Handle_t DefinitionTableHandle = 0;
-    CFE_TBL_Handle_t ResultsTableHandle    = 0;
+    CFE_TBL_Handle_t DefinitionTableHandle;
+    CFE_TBL_Handle_t ResultsTableHandle;
 
     /* Set to prevent unintended errors */
     UT_SetDefaultReturnValue(UT_KEY(CFE_TBL_Load), CFE_SUCCESS);
@@ -2397,7 +2389,7 @@ void CS_TableInit_Test_EepromTableAndNotLoadedFromMemory(void)
 
     /* Execute the function being tested */
     Result = CS_TableInit(&DefinitionTableHandle, &ResultsTableHandle, (void **)&CS_AppData.DefEepromTblPtr,
-                          (void **)&CS_AppData.ResEepromTblPtr, CS_EEPROM_TABLE, CS_DEF_EEPROM_TABLE_NAME,
+                          (void **)&CS_AppData.ResEepromTblPtr, CS_ChecksumType_EEPROM_TABLE, CS_DEF_EEPROM_TABLE_NAME,
                           CS_RESULTS_EEPROM_TABLE_NAME, CS_MAX_NUM_EEPROM_TABLE_ENTRIES, CS_DEF_EEPROM_TABLE_FILENAME,
                           &CS_AppData.DefaultEepromDefTable, sizeof(CS_Def_EepromMemory_Table_Entry_t),
                           sizeof(CS_Res_EepromMemory_Table_Entry_t), NULL);
@@ -2415,8 +2407,8 @@ void CS_TableInit_Test_EepromTableAndNotLoadedFromMemory(void)
 void CS_TableInit_Test_EepromTableAndLoadedFromMemoryAfterResultsTableRegisterError(void)
 {
     CFE_Status_t     Result;
-    CFE_TBL_Handle_t DefinitionTableHandle = 0;
-    CFE_TBL_Handle_t ResultsTableHandle    = 0;
+    CFE_TBL_Handle_t DefinitionTableHandle;
+    CFE_TBL_Handle_t ResultsTableHandle;
 
     /* Set to satisfy condition "ResultFromLoad != CFE_SUCCESS" */
     UT_SetDeferredRetcode(UT_KEY(CFE_TBL_Register), 1, -1);
@@ -2429,7 +2421,7 @@ void CS_TableInit_Test_EepromTableAndLoadedFromMemoryAfterResultsTableRegisterEr
 
     /* Execute the function being tested */
     Result = CS_TableInit(&DefinitionTableHandle, &ResultsTableHandle, (void **)&CS_AppData.DefEepromTblPtr,
-                          (void **)&CS_AppData.ResEepromTblPtr, CS_EEPROM_TABLE, CS_DEF_EEPROM_TABLE_NAME,
+                          (void **)&CS_AppData.ResEepromTblPtr, CS_ChecksumType_EEPROM_TABLE, CS_DEF_EEPROM_TABLE_NAME,
                           CS_RESULTS_EEPROM_TABLE_NAME, CS_MAX_NUM_EEPROM_TABLE_ENTRIES, CS_DEF_EEPROM_TABLE_FILENAME,
                           &CS_AppData.DefaultEepromDefTable, sizeof(CS_Def_EepromMemory_Table_Entry_t),
                           sizeof(CS_Res_EepromMemory_Table_Entry_t), NULL);
@@ -2443,8 +2435,8 @@ void CS_TableInit_Test_EepromTableAndLoadedFromMemoryAfterResultsTableRegisterEr
 void CS_TableInit_Test_EepromTableAndLoadedFromMemoryAfterResultsTableGetAddressError(void)
 {
     CFE_Status_t     Result;
-    CFE_TBL_Handle_t DefinitionTableHandle = 0;
-    CFE_TBL_Handle_t ResultsTableHandle    = 0;
+    CFE_TBL_Handle_t DefinitionTableHandle;
+    CFE_TBL_Handle_t ResultsTableHandle;
 
     /* Set to prevent unintended errors */
     UT_SetDefaultReturnValue(UT_KEY(CFE_TBL_Load), CFE_SUCCESS);
@@ -2454,7 +2446,7 @@ void CS_TableInit_Test_EepromTableAndLoadedFromMemoryAfterResultsTableGetAddress
 
     /* Execute the function being tested */
     Result = CS_TableInit(&DefinitionTableHandle, &ResultsTableHandle, (void **)&CS_AppData.DefEepromTblPtr,
-                          (void **)&CS_AppData.ResEepromTblPtr, CS_EEPROM_TABLE, CS_DEF_EEPROM_TABLE_NAME,
+                          (void **)&CS_AppData.ResEepromTblPtr, CS_ChecksumType_EEPROM_TABLE, CS_DEF_EEPROM_TABLE_NAME,
                           CS_RESULTS_EEPROM_TABLE_NAME, CS_MAX_NUM_EEPROM_TABLE_ENTRIES, CS_DEF_EEPROM_TABLE_FILENAME,
                           &CS_AppData.DefaultEepromDefTable, sizeof(CS_Def_EepromMemory_Table_Entry_t),
                           sizeof(CS_Res_EepromMemory_Table_Entry_t), NULL);
@@ -2468,8 +2460,8 @@ void CS_TableInit_Test_EepromTableAndLoadedFromMemoryAfterResultsTableGetAddress
 void CS_TableInit_Test_EepromTableAndLoadedFromMemoryAfterDefinitionTableRegisterError(void)
 {
     CFE_Status_t     Result;
-    CFE_TBL_Handle_t DefinitionTableHandle = 0;
-    CFE_TBL_Handle_t ResultsTableHandle    = 0;
+    CFE_TBL_Handle_t DefinitionTableHandle;
+    CFE_TBL_Handle_t ResultsTableHandle;
 
     /* Set to satisfy condition "ResultFromLoad != CFE_SUCCESS" on 2nd call to TBL_Register */
     UT_SetDeferredRetcode(UT_KEY(CFE_TBL_Register), 2, -1);
@@ -2482,7 +2474,7 @@ void CS_TableInit_Test_EepromTableAndLoadedFromMemoryAfterDefinitionTableRegiste
 
     /* Execute the function being tested */
     Result = CS_TableInit(&DefinitionTableHandle, &ResultsTableHandle, (void **)&CS_AppData.DefEepromTblPtr,
-                          (void **)&CS_AppData.ResEepromTblPtr, CS_EEPROM_TABLE, CS_DEF_EEPROM_TABLE_NAME,
+                          (void **)&CS_AppData.ResEepromTblPtr, CS_ChecksumType_EEPROM_TABLE, CS_DEF_EEPROM_TABLE_NAME,
                           CS_RESULTS_EEPROM_TABLE_NAME, CS_MAX_NUM_EEPROM_TABLE_ENTRIES, CS_DEF_EEPROM_TABLE_FILENAME,
                           &CS_AppData.DefaultEepromDefTable, sizeof(CS_Def_EepromMemory_Table_Entry_t),
                           sizeof(CS_Res_EepromMemory_Table_Entry_t), NULL);
@@ -2496,11 +2488,11 @@ void CS_TableInit_Test_EepromTableAndLoadedFromMemoryAfterDefinitionTableRegiste
 void CS_TableInit_Test_EepromTableAndLoadedFromMemoryAfterDefinitionTableFileLoadError(void)
 {
     CFE_Status_t     Result;
-    CFE_TBL_Handle_t DefinitionTableHandle = 0;
-    CFE_TBL_Handle_t ResultsTableHandle    = 0;
+    CFE_TBL_Handle_t DefinitionTableHandle;
+    CFE_TBL_Handle_t ResultsTableHandle;
 
     /* So this can detect the switch to DISABLED */
-    CS_AppData.HkPacket.Payload.EepromCSState = CS_STATE_ENABLED;
+    CS_AppData.HkPacket.Payload.EepromCSState = CS_ChecksumState_ENABLED;
 
     /* On 1st call, return -1 to satisfy condition "ResultFromLoad != CFE_SUCCESS".  On 2nd call, return CFE_SUCCESS to
      * prevent error */
@@ -2511,13 +2503,13 @@ void CS_TableInit_Test_EepromTableAndLoadedFromMemoryAfterDefinitionTableFileLoa
 
     /* Execute the function being tested */
     Result = CS_TableInit(&DefinitionTableHandle, &ResultsTableHandle, (void **)&CS_AppData.DefEepromTblPtr,
-                          (void **)&CS_AppData.ResEepromTblPtr, CS_EEPROM_TABLE, CS_DEF_EEPROM_TABLE_NAME,
+                          (void **)&CS_AppData.ResEepromTblPtr, CS_ChecksumType_EEPROM_TABLE, CS_DEF_EEPROM_TABLE_NAME,
                           CS_RESULTS_EEPROM_TABLE_NAME, CS_MAX_NUM_EEPROM_TABLE_ENTRIES, CS_DEF_EEPROM_TABLE_FILENAME,
                           &CS_AppData.DefaultEepromDefTable, sizeof(CS_Def_EepromMemory_Table_Entry_t),
                           sizeof(CS_Res_EepromMemory_Table_Entry_t), NULL);
 
     /* Verify results */
-    UtAssert_UINT8_EQ(CS_AppData.HkPacket.Payload.EepromCSState, CS_STATE_DISABLED);
+    UtAssert_UINT8_EQ(CS_AppData.HkPacket.Payload.EepromCSState, CS_ChecksumState_DISABLED);
     UtAssert_INT32_EQ(Result, CFE_SUCCESS);
     UtAssert_STUB_COUNT(CFE_EVS_SendEvent, 0);
 }
@@ -2525,11 +2517,11 @@ void CS_TableInit_Test_EepromTableAndLoadedFromMemoryAfterDefinitionTableFileLoa
 void CS_TableInit_Test_MemoryTableAndNotLoadedFromMemory(void)
 {
     CFE_Status_t     Result;
-    CFE_TBL_Handle_t DefinitionTableHandle = 0;
-    CFE_TBL_Handle_t ResultsTableHandle    = 0;
+    CFE_TBL_Handle_t DefinitionTableHandle;
+    CFE_TBL_Handle_t ResultsTableHandle;
 
     /* So this can detect a switch */
-    CS_AppData.HkPacket.Payload.MemoryCSState = CS_STATE_ENABLED;
+    CS_AppData.HkPacket.Payload.MemoryCSState = CS_ChecksumState_ENABLED;
 
     /* Set to prevent unintended errors */
     UT_SetDefaultReturnValue(UT_KEY(CFE_TBL_Load), CFE_SUCCESS);
@@ -2539,13 +2531,13 @@ void CS_TableInit_Test_MemoryTableAndNotLoadedFromMemory(void)
 
     /* Execute the function being tested */
     Result = CS_TableInit(&DefinitionTableHandle, &ResultsTableHandle, (void **)&CS_AppData.DefMemoryTblPtr,
-                          (void **)&CS_AppData.ResMemoryTblPtr, CS_MEMORY_TABLE, CS_DEF_MEMORY_TABLE_NAME,
+                          (void **)&CS_AppData.ResMemoryTblPtr, CS_ChecksumType_MEMORY_TABLE, CS_DEF_MEMORY_TABLE_NAME,
                           CS_RESULTS_MEMORY_TABLE_NAME, CS_MAX_NUM_MEMORY_TABLE_ENTRIES, CS_DEF_MEMORY_TABLE_FILENAME,
                           &CS_AppData.DefaultMemoryDefTable, sizeof(CS_Def_EepromMemory_Table_Entry_t),
                           sizeof(CS_Res_EepromMemory_Table_Entry_t), NULL);
 
     /* Verify results */
-    UtAssert_UINT8_EQ(CS_AppData.HkPacket.Payload.MemoryCSState, CS_STATE_ENABLED);
+    UtAssert_UINT8_EQ(CS_AppData.HkPacket.Payload.MemoryCSState, CS_ChecksumState_ENABLED);
     UtAssert_INT32_EQ(Result, CFE_SUCCESS);
 
     /* Note this may generate an event in the new table processing, checked in other test */
@@ -2554,11 +2546,11 @@ void CS_TableInit_Test_MemoryTableAndNotLoadedFromMemory(void)
 void CS_TableInit_Test_MemoryTableAndLoadedFromMemory(void)
 {
     CFE_Status_t     Result;
-    CFE_TBL_Handle_t DefinitionTableHandle = 0;
-    CFE_TBL_Handle_t ResultsTableHandle    = 0;
+    CFE_TBL_Handle_t DefinitionTableHandle;
+    CFE_TBL_Handle_t ResultsTableHandle;
 
     /* So this can detect a switch */
-    CS_AppData.HkPacket.Payload.MemoryCSState = CS_STATE_ENABLED;
+    CS_AppData.HkPacket.Payload.MemoryCSState = CS_ChecksumState_ENABLED;
 
     /* First call fails so it proceeds to load from memory */
     UT_SetDeferredRetcode(UT_KEY(CFE_TBL_Load), 1, -1);
@@ -2571,13 +2563,13 @@ void CS_TableInit_Test_MemoryTableAndLoadedFromMemory(void)
 
     /* Execute the function being tested */
     Result = CS_TableInit(&DefinitionTableHandle, &ResultsTableHandle, (void **)&CS_AppData.DefMemoryTblPtr,
-                          (void **)&CS_AppData.ResMemoryTblPtr, CS_MEMORY_TABLE, CS_DEF_MEMORY_TABLE_NAME,
+                          (void **)&CS_AppData.ResMemoryTblPtr, CS_ChecksumType_MEMORY_TABLE, CS_DEF_MEMORY_TABLE_NAME,
                           CS_RESULTS_MEMORY_TABLE_NAME, CS_MAX_NUM_MEMORY_TABLE_ENTRIES, CS_DEF_MEMORY_TABLE_FILENAME,
                           &CS_AppData.DefaultMemoryDefTable, sizeof(CS_Def_EepromMemory_Table_Entry_t),
                           sizeof(CS_Res_EepromMemory_Table_Entry_t), NULL);
 
     /* Verify results */
-    UtAssert_UINT8_EQ(CS_AppData.HkPacket.Payload.MemoryCSState, CS_STATE_DISABLED);
+    UtAssert_UINT8_EQ(CS_AppData.HkPacket.Payload.MemoryCSState, CS_ChecksumState_DISABLED);
     UtAssert_INT32_EQ(Result, CFE_SUCCESS);
     UtAssert_STUB_COUNT(CFE_EVS_SendEvent, 0);
 }
@@ -2585,11 +2577,11 @@ void CS_TableInit_Test_MemoryTableAndLoadedFromMemory(void)
 void CS_TableInit_Test_AppTableAndNotLoadedFromMemory(void)
 {
     CFE_Status_t     Result;
-    CFE_TBL_Handle_t DefinitionTableHandle = 0;
-    CFE_TBL_Handle_t ResultsTableHandle    = 0;
+    CFE_TBL_Handle_t DefinitionTableHandle;
+    CFE_TBL_Handle_t ResultsTableHandle;
 
     /* So this can detect a switch */
-    CS_AppData.HkPacket.Payload.AppCSState = CS_STATE_ENABLED;
+    CS_AppData.HkPacket.Payload.AppCSState = CS_ChecksumState_ENABLED;
 
     /* Set to prevent unintended errors */
     UT_SetDefaultReturnValue(UT_KEY(CFE_TBL_Load), CFE_SUCCESS);
@@ -2598,14 +2590,14 @@ void CS_TableInit_Test_AppTableAndNotLoadedFromMemory(void)
     UT_SetDeferredRetcode(UT_KEY(CFE_TBL_GetAddress), 2, CFE_TBL_INFO_UPDATED);
 
     /* Execute the function being tested */
-    Result =
-        CS_TableInit(&DefinitionTableHandle, &ResultsTableHandle, (void **)&CS_AppData.DefAppTblPtr,
-                     (void **)&CS_AppData.ResAppTblPtr, CS_APP_TABLE, CS_DEF_APP_TABLE_NAME, CS_RESULTS_APP_TABLE_NAME,
-                     CS_MAX_NUM_APP_TABLE_ENTRIES, CS_DEF_APP_TABLE_FILENAME, &CS_AppData.DefaultAppDefTable,
-                     sizeof(CS_Def_App_Table_Entry_t), sizeof(CS_Res_App_Table_Entry_t), NULL);
+    Result = CS_TableInit(&DefinitionTableHandle, &ResultsTableHandle, (void **)&CS_AppData.DefAppTblPtr,
+                          (void **)&CS_AppData.ResAppTblPtr, CS_ChecksumType_APP_TABLE, CS_DEF_APP_TABLE_NAME,
+                          CS_RESULTS_APP_TABLE_NAME, CS_MAX_NUM_APP_TABLE_ENTRIES, CS_DEF_APP_TABLE_FILENAME,
+                          &CS_AppData.DefaultAppDefTable, sizeof(CS_Def_App_Table_Entry_t),
+                          sizeof(CS_Res_App_Table_Entry_t), NULL);
 
     /* Verify results */
-    UtAssert_UINT8_EQ(CS_AppData.HkPacket.Payload.AppCSState, CS_STATE_ENABLED);
+    UtAssert_UINT8_EQ(CS_AppData.HkPacket.Payload.AppCSState, CS_ChecksumState_ENABLED);
     UtAssert_INT32_EQ(Result, CFE_SUCCESS);
     /* Note this may generate an event in the new table processing, checked in other test */
 }
@@ -2613,11 +2605,11 @@ void CS_TableInit_Test_AppTableAndNotLoadedFromMemory(void)
 void CS_TableInit_Test_AppTableAndLoadedFromMemory(void)
 {
     CFE_Status_t     Result;
-    CFE_TBL_Handle_t DefinitionTableHandle = 0;
-    CFE_TBL_Handle_t ResultsTableHandle    = 0;
+    CFE_TBL_Handle_t DefinitionTableHandle;
+    CFE_TBL_Handle_t ResultsTableHandle;
 
     /* So this can detect a switch */
-    CS_AppData.HkPacket.Payload.AppCSState = CS_STATE_ENABLED;
+    CS_AppData.HkPacket.Payload.AppCSState = CS_ChecksumState_ENABLED;
 
     /* Set to satisfy condition "ResultFromLoad != CFE_SUCCESS" */
     UT_SetDeferredRetcode(UT_KEY(CFE_TBL_Load), 1, -1);
@@ -2629,14 +2621,14 @@ void CS_TableInit_Test_AppTableAndLoadedFromMemory(void)
     UT_SetDefaultReturnValue(UT_KEY(CFE_TBL_GetAddress), CFE_SUCCESS);
 
     /* Execute the function being tested */
-    Result =
-        CS_TableInit(&DefinitionTableHandle, &ResultsTableHandle, (void **)&CS_AppData.DefAppTblPtr,
-                     (void **)&CS_AppData.ResAppTblPtr, CS_APP_TABLE, CS_DEF_APP_TABLE_NAME, CS_RESULTS_APP_TABLE_NAME,
-                     CS_MAX_NUM_APP_TABLE_ENTRIES, CS_DEF_APP_TABLE_FILENAME, &CS_AppData.DefaultAppDefTable,
-                     sizeof(CS_Def_App_Table_Entry_t), sizeof(CS_Res_App_Table_Entry_t), NULL);
+    Result = CS_TableInit(&DefinitionTableHandle, &ResultsTableHandle, (void **)&CS_AppData.DefAppTblPtr,
+                          (void **)&CS_AppData.ResAppTblPtr, CS_ChecksumType_APP_TABLE, CS_DEF_APP_TABLE_NAME,
+                          CS_RESULTS_APP_TABLE_NAME, CS_MAX_NUM_APP_TABLE_ENTRIES, CS_DEF_APP_TABLE_FILENAME,
+                          &CS_AppData.DefaultAppDefTable, sizeof(CS_Def_App_Table_Entry_t),
+                          sizeof(CS_Res_App_Table_Entry_t), NULL);
 
     /* Verify results */
-    UtAssert_UINT8_EQ(CS_AppData.HkPacket.Payload.AppCSState, CS_STATE_DISABLED);
+    UtAssert_UINT8_EQ(CS_AppData.HkPacket.Payload.AppCSState, CS_ChecksumState_DISABLED);
     UtAssert_INT32_EQ(Result, CFE_SUCCESS);
     UtAssert_STUB_COUNT(CFE_EVS_SendEvent, 0);
 }
@@ -2644,11 +2636,11 @@ void CS_TableInit_Test_AppTableAndLoadedFromMemory(void)
 void CS_TableInit_Test_TablesTableAndNotLoadedFromMemory(void)
 {
     CFE_Status_t     Result;
-    CFE_TBL_Handle_t DefinitionTableHandle = 0;
-    CFE_TBL_Handle_t ResultsTableHandle    = 0;
+    CFE_TBL_Handle_t DefinitionTableHandle;
+    CFE_TBL_Handle_t ResultsTableHandle;
 
     /* So this can detect a switch */
-    CS_AppData.HkPacket.Payload.TablesCSState = CS_STATE_ENABLED;
+    CS_AppData.HkPacket.Payload.TablesCSState = CS_ChecksumState_ENABLED;
 
     /* Set to prevent unintended errors */
     UT_SetDefaultReturnValue(UT_KEY(CFE_TBL_Load), CFE_SUCCESS);
@@ -2658,13 +2650,13 @@ void CS_TableInit_Test_TablesTableAndNotLoadedFromMemory(void)
 
     /* Execute the function being tested */
     Result = CS_TableInit(&DefinitionTableHandle, &ResultsTableHandle, (void **)&CS_AppData.DefTablesTblPtr,
-                          (void **)&CS_AppData.ResTablesTblPtr, CS_TABLES_TABLE, CS_DEF_TABLES_TABLE_NAME,
+                          (void **)&CS_AppData.ResTablesTblPtr, CS_ChecksumType_TABLES_TABLE, CS_DEF_TABLES_TABLE_NAME,
                           CS_RESULTS_TABLES_TABLE_NAME, CS_MAX_NUM_TABLES_TABLE_ENTRIES, CS_DEF_TABLES_TABLE_FILENAME,
                           &CS_AppData.DefaultTablesDefTable, sizeof(CS_Def_Tables_Table_Entry_t),
                           sizeof(CS_Res_Tables_Table_Entry_t), NULL);
 
     /* Verify results */
-    UtAssert_UINT8_EQ(CS_AppData.HkPacket.Payload.TablesCSState, CS_STATE_ENABLED);
+    UtAssert_UINT8_EQ(CS_AppData.HkPacket.Payload.TablesCSState, CS_ChecksumState_ENABLED);
     UtAssert_INT32_EQ(Result, CFE_SUCCESS);
     /* Note this may generate an event in the new table processing, checked in other test */
 }
@@ -2672,11 +2664,11 @@ void CS_TableInit_Test_TablesTableAndNotLoadedFromMemory(void)
 void CS_TableInit_Test_TablesTableAndLoadedFromMemory(void)
 {
     CFE_Status_t     Result;
-    CFE_TBL_Handle_t DefinitionTableHandle = 0;
-    CFE_TBL_Handle_t ResultsTableHandle    = 0;
+    CFE_TBL_Handle_t DefinitionTableHandle;
+    CFE_TBL_Handle_t ResultsTableHandle;
 
     /* So this can detect a switch */
-    CS_AppData.HkPacket.Payload.TablesCSState = CS_STATE_ENABLED;
+    CS_AppData.HkPacket.Payload.TablesCSState = CS_ChecksumState_ENABLED;
 
     /* Set to satisfy condition "ResultFromLoad != CFE_SUCCESS" */
     UT_SetDeferredRetcode(UT_KEY(CFE_TBL_Load), 1, -1);
@@ -2689,13 +2681,13 @@ void CS_TableInit_Test_TablesTableAndLoadedFromMemory(void)
 
     /* Execute the function being tested */
     Result = CS_TableInit(&DefinitionTableHandle, &ResultsTableHandle, (void **)&CS_AppData.DefTablesTblPtr,
-                          (void **)&CS_AppData.ResTablesTblPtr, CS_TABLES_TABLE, CS_DEF_TABLES_TABLE_NAME,
+                          (void **)&CS_AppData.ResTablesTblPtr, CS_ChecksumType_TABLES_TABLE, CS_DEF_TABLES_TABLE_NAME,
                           CS_RESULTS_TABLES_TABLE_NAME, CS_MAX_NUM_TABLES_TABLE_ENTRIES, CS_DEF_TABLES_TABLE_FILENAME,
                           &CS_AppData.DefaultTablesDefTable, sizeof(CS_Def_Tables_Table_Entry_t),
                           sizeof(CS_Res_Tables_Table_Entry_t), NULL);
 
     /* Verify results */
-    UtAssert_UINT8_EQ(CS_AppData.HkPacket.Payload.TablesCSState, CS_STATE_DISABLED);
+    UtAssert_UINT8_EQ(CS_AppData.HkPacket.Payload.TablesCSState, CS_ChecksumState_DISABLED);
     UtAssert_INT32_EQ(Result, CFE_SUCCESS);
     UtAssert_STUB_COUNT(CFE_EVS_SendEvent, 0);
 }
@@ -2703,8 +2695,8 @@ void CS_TableInit_Test_TablesTableAndLoadedFromMemory(void)
 void CS_TableInit_Test_DefaultAndLoadedFromMemory(void)
 {
     CFE_Status_t     Result;
-    CFE_TBL_Handle_t DefinitionTableHandle = 0;
-    CFE_TBL_Handle_t ResultsTableHandle    = 0;
+    CFE_TBL_Handle_t DefinitionTableHandle;
+    CFE_TBL_Handle_t ResultsTableHandle;
 
     /* Note this is not really a valid case; this only covers a possible path
      * where the table ID value is not one of the expected values.  It exists
@@ -2734,9 +2726,9 @@ void CS_TableInit_Test_DefaultAndLoadedFromMemory(void)
 void CS_HandleTableUpdate_Test_ProcessNewTablesDefinitionTable(void)
 {
     CFE_Status_t     Result;
-    CFE_TBL_Handle_t DefinitionTableHandle = 0;
-    CFE_TBL_Handle_t ResultsTableHandle    = 0;
-    uint16           Table                 = CS_TABLES_TABLE;
+    CFE_TBL_Handle_t DefinitionTableHandle = CS_UT_TABLE_HANDLE(100);
+    CFE_TBL_Handle_t ResultsTableHandle    = CS_UT_TABLE_HANDLE(101);
+    uint16           Table                 = CS_ChecksumType_TABLES_TABLE;
 
     void *DefTblPtr    = CS_AppData.DefTablesTblPtr;
     void *ResultTblPtr = CS_AppData.ResTablesTblPtr;
@@ -2745,7 +2737,7 @@ void CS_HandleTableUpdate_Test_ProcessNewTablesDefinitionTable(void)
      * condition "Result == CFE_TBL_INFO_UPDATED". */
     UT_SetDeferredRetcode(UT_KEY(CFE_TBL_GetAddress), 2, CFE_TBL_INFO_UPDATED);
 
-    CS_AppData.ResTablesTblPtr[0].TblHandle = 99;
+    UT_SetDeferredRetcode(UT_KEY(CFE_TBL_HandleFromID), 1, 99);
     CS_AppData.ResTablesTblPtr[0].IsCSOwner = false;
 
     /* Execute the function being tested */
@@ -2765,9 +2757,9 @@ void CS_HandleTableUpdate_Test_ProcessNewTablesDefinitionTable(void)
 void CS_HandleTableUpdate_Test_ProcessNewAppDefinitionTable(void)
 {
     CFE_Status_t     Result;
-    CFE_TBL_Handle_t DefinitionTableHandle = 0;
-    CFE_TBL_Handle_t ResultsTableHandle    = 0;
-    uint16           Table                 = CS_APP_TABLE;
+    CFE_TBL_Handle_t DefinitionTableHandle = CS_UT_TABLE_HANDLE(100);
+    CFE_TBL_Handle_t ResultsTableHandle    = CS_UT_TABLE_HANDLE(101);
+    uint16           Table                 = CS_ChecksumType_APP_TABLE;
     uint16           NumEntries            = 0;
 
     void *DefTblPtr    = CS_AppData.DefAppTblPtr;
@@ -2794,9 +2786,9 @@ void CS_HandleTableUpdate_Test_ProcessNewAppDefinitionTable(void)
 void CS_HandleTableUpdate_Test_ProcessNewEepromMemoryDefinitionTable(void)
 {
     CFE_Status_t     Result;
-    CFE_TBL_Handle_t DefinitionTableHandle = 0;
-    CFE_TBL_Handle_t ResultsTableHandle    = 0;
-    uint16           Table                 = CS_EEPROM_TABLE;
+    CFE_TBL_Handle_t DefinitionTableHandle = CS_UT_TABLE_HANDLE(100);
+    CFE_TBL_Handle_t ResultsTableHandle    = CS_UT_TABLE_HANDLE(101);
+    uint16           Table                 = CS_ChecksumType_EEPROM_TABLE;
     uint16           NumEntries            = CS_MAX_NUM_EEPROM_TABLE_ENTRIES;
 
     void *DefTblPtr    = CS_AppData.DefEepromTblPtr;
@@ -2823,9 +2815,9 @@ void CS_HandleTableUpdate_Test_ProcessNewEepromMemoryDefinitionTable(void)
 void CS_HandleTableUpdate_Test_ResultsTableGetAddressErrorEEPROM(void)
 {
     CFE_Status_t     Result;
-    CFE_TBL_Handle_t DefinitionTableHandle = 0;
-    CFE_TBL_Handle_t ResultsTableHandle    = 0;
-    uint16           Table                 = CS_EEPROM_TABLE;
+    CFE_TBL_Handle_t DefinitionTableHandle = CS_UT_TABLE_HANDLE(100);
+    CFE_TBL_Handle_t ResultsTableHandle    = CS_UT_TABLE_HANDLE(101);
+    uint16           Table                 = CS_ChecksumType_EEPROM_TABLE;
     uint16           NumEntries            = 0;
     int32            strCmpResult;
     char             ExpectedEventString[CFE_MISSION_EVS_MAX_MESSAGE_LENGTH * 2];
@@ -2866,9 +2858,9 @@ void CS_HandleTableUpdate_Test_ResultsTableGetAddressErrorEEPROM(void)
 void CS_HandleTableUpdate_Test_DefinitionTableGetAddressErrorEEPROM(void)
 {
     CFE_Status_t     Result;
-    CFE_TBL_Handle_t DefinitionTableHandle = 0;
-    CFE_TBL_Handle_t ResultsTableHandle    = 0;
-    uint16           Table                 = CS_EEPROM_TABLE;
+    CFE_TBL_Handle_t DefinitionTableHandle = CS_UT_TABLE_HANDLE(100);
+    CFE_TBL_Handle_t ResultsTableHandle    = CS_UT_TABLE_HANDLE(101);
+    uint16           Table                 = CS_ChecksumType_EEPROM_TABLE;
     uint16           NumEntries            = 0;
     int32            strCmpResult;
     char             ExpectedEventString[CFE_MISSION_EVS_MAX_MESSAGE_LENGTH * 2];
@@ -2910,9 +2902,9 @@ void CS_HandleTableUpdate_Test_DefinitionTableGetAddressErrorEEPROM(void)
 void CS_HandleTableUpdate_Test_DefinitionTableGetAddressErrorMemory(void)
 {
     CFE_Status_t     Result;
-    CFE_TBL_Handle_t DefinitionTableHandle = 0;
-    CFE_TBL_Handle_t ResultsTableHandle    = 0;
-    uint16           Table                 = CS_MEMORY_TABLE;
+    CFE_TBL_Handle_t DefinitionTableHandle = CS_UT_TABLE_HANDLE(100);
+    CFE_TBL_Handle_t ResultsTableHandle    = CS_UT_TABLE_HANDLE(101);
+    uint16           Table                 = CS_ChecksumType_MEMORY_TABLE;
     uint16           NumEntries            = 0;
     int32            strCmpResult;
     char             ExpectedEventString[CFE_MISSION_EVS_MAX_MESSAGE_LENGTH * 2];
@@ -2954,9 +2946,9 @@ void CS_HandleTableUpdate_Test_DefinitionTableGetAddressErrorMemory(void)
 void CS_HandleTableUpdate_Test_DefinitionTableGetAddressErrorTables(void)
 {
     CFE_Status_t     Result;
-    CFE_TBL_Handle_t DefinitionTableHandle = 0;
-    CFE_TBL_Handle_t ResultsTableHandle    = 0;
-    uint16           Table                 = CS_TABLES_TABLE;
+    CFE_TBL_Handle_t DefinitionTableHandle = CS_UT_TABLE_HANDLE(100);
+    CFE_TBL_Handle_t ResultsTableHandle    = CS_UT_TABLE_HANDLE(101);
+    uint16           Table                 = CS_ChecksumType_TABLES_TABLE;
     uint16           NumEntries            = 0;
     int32            strCmpResult;
     char             ExpectedEventString[CFE_MISSION_EVS_MAX_MESSAGE_LENGTH * 2];
@@ -2998,9 +2990,9 @@ void CS_HandleTableUpdate_Test_DefinitionTableGetAddressErrorTables(void)
 void CS_HandleTableUpdate_Test_DefinitionTableGetAddressErrorApps(void)
 {
     CFE_Status_t     Result;
-    CFE_TBL_Handle_t DefinitionTableHandle = 0;
-    CFE_TBL_Handle_t ResultsTableHandle    = 0;
-    uint16           Table                 = CS_APP_TABLE;
+    CFE_TBL_Handle_t DefinitionTableHandle = CS_UT_TABLE_HANDLE(100);
+    CFE_TBL_Handle_t ResultsTableHandle    = CS_UT_TABLE_HANDLE(101);
+    uint16           Table                 = CS_ChecksumType_APP_TABLE;
     uint16           NumEntries            = 0;
     int32            strCmpResult;
     char             ExpectedEventString[CFE_MISSION_EVS_MAX_MESSAGE_LENGTH * 2];
@@ -3042,9 +3034,9 @@ void CS_HandleTableUpdate_Test_DefinitionTableGetAddressErrorApps(void)
 void CS_HandleTableUpdate_Test_BadTableHandle(void)
 {
     CFE_Status_t     Result;
-    CFE_TBL_Handle_t DefinitionTableHandle = 0;
-    CFE_TBL_Handle_t ResultsTableHandle    = 0;
-    uint16           Table                 = CS_TABLES_TABLE;
+    CFE_TBL_Handle_t DefinitionTableHandle = CS_UT_TABLE_HANDLE(100);
+    CFE_TBL_Handle_t ResultsTableHandle    = CS_UT_TABLE_HANDLE(101);
+    uint16           Table                 = CS_ChecksumType_TABLES_TABLE;
 
     void *DefTblPtr    = CS_AppData.DefTablesTblPtr;
     void *ResultTblPtr = CS_AppData.ResTablesTblPtr;
@@ -3053,8 +3045,7 @@ void CS_HandleTableUpdate_Test_BadTableHandle(void)
      * condition "Result == CFE_TBL_INFO_UPDATED". */
     UT_SetDeferredRetcode(UT_KEY(CFE_TBL_GetAddress), 2, CFE_TBL_INFO_UPDATED);
 
-    CS_AppData.ResTablesTblPtr[0].TblHandle = CFE_TBL_BAD_TABLE_HANDLE;
-    CS_AppData.ResTablesTblPtr[0].IsCSOwner = true;
+    UT_SetDeferredRetcode(UT_KEY(CFE_TBL_HandleFromID), 1, 0);
 
     /* Execute the function being tested */
     Result = CS_HandleTableUpdate(&DefTblPtr, &ResultTblPtr, DefinitionTableHandle, ResultsTableHandle, Table,
@@ -3073,9 +3064,9 @@ void CS_HandleTableUpdate_Test_BadTableHandle(void)
 void CS_HandleTableUpdate_Test_CsOwner(void)
 {
     CFE_Status_t     Result;
-    CFE_TBL_Handle_t DefinitionTableHandle = 0;
-    CFE_TBL_Handle_t ResultsTableHandle    = 0;
-    uint16           Table                 = CS_TABLES_TABLE;
+    CFE_TBL_Handle_t DefinitionTableHandle = CS_UT_TABLE_HANDLE(100);
+    CFE_TBL_Handle_t ResultsTableHandle    = CS_UT_TABLE_HANDLE(101);
+    uint16           Table                 = CS_ChecksumType_TABLES_TABLE;
 
     void *DefTblPtr    = CS_AppData.DefTablesTblPtr;
     void *ResultTblPtr = CS_AppData.ResTablesTblPtr;
@@ -3084,7 +3075,7 @@ void CS_HandleTableUpdate_Test_CsOwner(void)
      * condition "Result == CFE_TBL_INFO_UPDATED". */
     UT_SetDeferredRetcode(UT_KEY(CFE_TBL_GetAddress), 2, CFE_TBL_INFO_UPDATED);
 
-    CS_AppData.ResTablesTblPtr[0].TblHandle = 99;
+    UT_SetDeferredRetcode(UT_KEY(CFE_TBL_HandleFromID), 1, 99);
     CS_AppData.ResTablesTblPtr[0].IsCSOwner = true;
 
     /* Execute the function being tested */
@@ -3104,17 +3095,17 @@ void CS_HandleTableUpdate_Test_CsOwner(void)
 void CS_HandleTableUpdate_Test_GetAddressError(void)
 {
     CFE_Status_t     Result;
-    CFE_TBL_Handle_t DefinitionTableHandle = 0;
-    CFE_TBL_Handle_t ResultsTableHandle    = 0;
-    uint16           Table                 = CS_TABLES_TABLE;
+    CFE_TBL_Handle_t DefinitionTableHandle = CS_UT_TABLE_HANDLE(100);
+    CFE_TBL_Handle_t ResultsTableHandle    = CS_UT_TABLE_HANDLE(101);
+    uint16           Table                 = CS_ChecksumType_TABLES_TABLE;
 
     void *DefTblPtr    = CS_AppData.DefTablesTblPtr;
     void *ResultTblPtr = CS_AppData.ResTablesTblPtr;
 
     UT_SetDeferredRetcode(UT_KEY(CFE_TBL_GetAddress), 1, 1);
 
-    CS_AppData.ResTablesTblPtr[0].TblHandle = 99;
-    CS_AppData.ResTablesTblPtr[0].IsCSOwner = true;
+    CS_AppData.ResTablesTblPtr[0].TblHandleID = CFE_TBL_HANDLEID_C(CFE_ResourceId_FromInteger(99));
+    CS_AppData.ResTablesTblPtr[0].IsCSOwner   = true;
 
     /* Execute the function being tested */
     Result = CS_HandleTableUpdate(&DefTblPtr, &ResultTblPtr, DefinitionTableHandle, ResultsTableHandle, Table,
