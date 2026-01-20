@@ -199,6 +199,7 @@ CFE_Status_t CS_DisableNameAppCmd(const CS_DisableNameAppCmd_t *CmdPtr)
     /* command verification variables */
     CS_Res_App_Table_Entry_t *ResultsEntry;
     CS_Def_App_Table_Entry_t *DefinitionEntry;
+    CS_TableWrapper_t *       tw = &CS_AppData.Tbl[CS_ChecksumType_APP_TABLE];
     char                      Name[OS_MAX_API_NAME];
 
     if (CS_CheckRecomputeOneshot() == false)
@@ -217,9 +218,7 @@ CFE_Status_t CS_DisableNameAppCmd(const CS_DisableNameAppCmd_t *CmdPtr)
 
             if (CS_GetAppDefTblEntryByName(&DefinitionEntry, Name))
             {
-                DefinitionEntry->State = CS_ChecksumState_DISABLED;
-                CS_ResetTablesTblResultEntry(CS_AppData.AppResTablesTblPtr);
-                CFE_TBL_Modified(CS_AppData.DefAppTableHandle);
+                CS_SetDefEntryState(tw, DefinitionEntry, CS_ChecksumState_DISABLED);
             }
             else
             {
@@ -251,6 +250,7 @@ CFE_Status_t CS_EnableNameAppCmd(const CS_EnableNameAppCmd_t *CmdPtr)
     /* command verification variables */
     CS_Res_App_Table_Entry_t *ResultsEntry;
     CS_Def_App_Table_Entry_t *DefinitionEntry;
+    CS_TableWrapper_t *       tw = &CS_AppData.Tbl[CS_ChecksumType_APP_TABLE];
     char                      Name[OS_MAX_API_NAME];
 
     if (CS_CheckRecomputeOneshot() == false)
@@ -267,9 +267,7 @@ CFE_Status_t CS_EnableNameAppCmd(const CS_EnableNameAppCmd_t *CmdPtr)
 
             if (CS_GetAppDefTblEntryByName(&DefinitionEntry, Name))
             {
-                DefinitionEntry->State = CS_ChecksumState_ENABLED;
-                CS_ResetTablesTblResultEntry(CS_AppData.AppResTablesTblPtr);
-                CFE_TBL_Modified(CS_AppData.DefAppTableHandle);
+                CS_SetDefEntryState(tw, DefinitionEntry, CS_ChecksumState_ENABLED);
             }
             else
             {

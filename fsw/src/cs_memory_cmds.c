@@ -102,13 +102,20 @@ CFE_Status_t CS_ReportBaselineEntryIDMemoryCmd(const CS_ReportBaselineEntryIDMem
     uint16                             EntryID      = 0;
     CS_ChecksumState_Enum_t            State        = CS_ChecksumState_EMPTY;
 
-    EntryID = CmdPtr->Payload.EntryID;
+    EntryID      = CmdPtr->Payload.EntryID;
+    ResultsEntry = CS_GetMemoryResEntry(EntryID);
 
-    if ((EntryID < CS_MAX_NUM_MEMORY_TABLE_ENTRIES) &&
-        (CS_AppData.ResMemoryTblPtr[EntryID].State != CS_ChecksumState_EMPTY))
+    if (ResultsEntry == NULL)
     {
-        ResultsEntry = &CS_AppData.ResMemoryTblPtr[EntryID];
+        State = CS_ChecksumState_UNDEFINED;
+    }
+    else
+    {
+        State = ResultsEntry->State;
+    }
 
+    if (CS_StateValid(State))
+    {
         if (ResultsEntry->ComputedYet == true)
         {
             Baseline = ResultsEntry->ComparisonValue;
@@ -125,15 +132,6 @@ CFE_Status_t CS_ReportBaselineEntryIDMemoryCmd(const CS_ReportBaselineEntryIDMem
     }
     else
     {
-        if (EntryID >= CS_MAX_NUM_MEMORY_TABLE_ENTRIES)
-        {
-            State = CS_ChecksumState_UNDEFINED;
-        }
-        else
-        {
-            State = CS_AppData.ResMemoryTblPtr[EntryID].State;
-        }
-
         CFE_EVS_SendEvent(CS_BASELINE_INVALID_ENTRY_MEMORY_ERR_EID, CFE_EVS_EventType_ERROR,
                           "Memory report baseline failed, Entry ID invalid: %d, State: %d Max ID: %d", EntryID, State,
                           (CS_MAX_NUM_MEMORY_TABLE_ENTRIES - 1));
@@ -151,19 +149,29 @@ CFE_Status_t CS_ReportBaselineEntryIDMemoryCmd(const CS_ReportBaselineEntryIDMem
 CFE_Status_t CS_RecomputeBaselineMemoryCmd(const CS_RecomputeBaselineMemoryCmd_t *CmdPtr)
 {
     /* command verification variables */
-    CFE_ES_TaskId_t         ChildTaskID = CFE_ES_TASKID_UNDEFINED;
-    CFE_Status_t            Status      = CS_ERROR;
-    uint16                  EntryID     = 0;
-    CS_ChecksumState_Enum_t State       = CS_ChecksumState_EMPTY;
+    CS_Res_EepromMemory_Table_Entry_t *ResultsEntry = NULL;
+    CFE_ES_TaskId_t                    ChildTaskID  = CFE_ES_TASKID_UNDEFINED;
+    CFE_Status_t                       Status       = CS_ERROR;
+    uint16                             EntryID      = 0;
+    CS_ChecksumState_Enum_t            State        = CS_ChecksumState_EMPTY;
 
     EntryID = CmdPtr->Payload.EntryID;
 
     if (CS_AppData.HkPacket.Payload.RecomputeInProgress == false &&
         CS_AppData.HkPacket.Payload.OneShotInProgress == false)
     {
-        /* make sure the entry is a valid number and is defined in the table */
-        if ((EntryID < CS_MAX_NUM_MEMORY_TABLE_ENTRIES) &&
-            (CS_AppData.ResMemoryTblPtr[EntryID].State != CS_ChecksumState_EMPTY))
+        ResultsEntry = CS_GetMemoryResEntry(EntryID);
+
+        if (ResultsEntry == NULL)
+        {
+            State = CS_ChecksumState_UNDEFINED;
+        }
+        else
+        {
+            State = ResultsEntry->State;
+        }
+
+        if (CS_StateValid(State))
         {
             /* There is no child task running right now, we can use it*/
             CS_AppData.HkPacket.Payload.RecomputeInProgress = true;
@@ -172,7 +180,7 @@ CFE_Status_t CS_RecomputeBaselineMemoryCmd(const CS_RecomputeBaselineMemoryCmd_t
             CS_AppData.ChildTaskTable   = CS_ChecksumType_MEMORY_TABLE;
             CS_AppData.ChildTaskEntryID = EntryID;
 
-            CS_AppData.RecomputeEepromMemoryEntryPtr = &CS_AppData.ResMemoryTblPtr[EntryID];
+            CS_AppData.RecomputeEepromMemoryEntryPtr = ResultsEntry;
 
             Status = CFE_ES_CreateChildTask(&ChildTaskID, CS_RECOMP_MEMORY_TASK_NAME, CS_RecomputeEepromMemoryChildTask,
                                             NULL, CFE_PLATFORM_ES_DEFAULT_STACK_SIZE, CS_CHILD_TASK_PRIORITY, 0);
@@ -194,15 +202,6 @@ CFE_Status_t CS_RecomputeBaselineMemoryCmd(const CS_RecomputeBaselineMemoryCmd_t
         }
         else
         {
-            if (EntryID >= CS_MAX_NUM_MEMORY_TABLE_ENTRIES)
-            {
-                State = CS_ChecksumState_UNDEFINED;
-            }
-            else
-            {
-                State = CS_AppData.ResMemoryTblPtr[EntryID].State;
-            }
-
             CFE_EVS_SendEvent(CS_RECOMPUTE_INVALID_ENTRY_MEMORY_ERR_EID, CFE_EVS_EventType_ERROR,
                               "Memory recompute baseline of entry failed, Entry ID invalid: %d, State: %d, Max ID: %d",
                               EntryID, State, (CS_MAX_NUM_MEMORY_TABLE_ENTRIES - 1));
@@ -230,30 +229,35 @@ CFE_Status_t CS_EnableEntryIDMemoryCmd(const CS_EnableEntryIDMemoryCmd_t *CmdPtr
 {
     /* command verification variables */
     CS_Res_EepromMemory_Table_Entry_t *ResultsEntry = NULL;
+    CS_Def_EepromMemory_Table_Entry_t *DefEntry     = NULL;
+    CS_TableWrapper_t *                tw           = &CS_AppData.Tbl[CS_ChecksumType_MEMORY_TABLE];
     uint16                             EntryID      = 0;
     CS_ChecksumState_Enum_t            State        = CS_ChecksumState_EMPTY;
 
     if (CS_CheckRecomputeOneshot() == false)
     {
-        EntryID = CmdPtr->Payload.EntryID;
+        EntryID      = CmdPtr->Payload.EntryID;
+        ResultsEntry = CS_GetMemoryResEntry(EntryID);
 
-        if ((EntryID < CS_MAX_NUM_MEMORY_TABLE_ENTRIES) &&
-            (CS_AppData.ResMemoryTblPtr[EntryID].State != CS_ChecksumState_EMPTY))
+        if (ResultsEntry == NULL)
         {
-            ResultsEntry = &CS_AppData.ResMemoryTblPtr[EntryID];
+            State = CS_ChecksumState_UNDEFINED;
+        }
+        else
+        {
+            State = ResultsEntry->State;
+        }
 
+        if (CS_StateValid(State))
+        {
+            DefEntry            = CS_GetMemoryDefEntry(EntryID);
             ResultsEntry->State = CS_ChecksumState_ENABLED;
 
             CFE_EVS_SendEvent(CS_ENABLE_MEMORY_ENTRY_INF_EID, CFE_EVS_EventType_INFORMATION,
                               "Checksumming of Memory Entry ID %d is Enabled", EntryID);
 
-            if (CS_AppData.DefMemoryTblPtr[EntryID].State != CS_ChecksumState_EMPTY)
-            {
-                CS_AppData.DefMemoryTblPtr[EntryID].State = CS_ChecksumState_ENABLED;
-                CS_ResetTablesTblResultEntry(CS_AppData.MemResTablesTblPtr);
-                CFE_TBL_Modified(CS_AppData.DefMemoryTableHandle);
-            }
-            else
+            State = CS_SetDefEntryState(tw, DefEntry, CS_ChecksumState_ENABLED);
+            if (!CS_StateValid(State))
             {
                 CFE_EVS_SendEvent(CS_ENABLE_MEMORY_DEF_EMPTY_DBG_EID, CFE_EVS_EventType_DEBUG,
                                   "CS unable to update memory definition table for entry %d, State: %d", EntryID,
@@ -264,15 +268,6 @@ CFE_Status_t CS_EnableEntryIDMemoryCmd(const CS_EnableEntryIDMemoryCmd_t *CmdPtr
         }
         else
         {
-            if (EntryID >= CS_MAX_NUM_MEMORY_TABLE_ENTRIES)
-            {
-                State = CS_ChecksumState_UNDEFINED;
-            }
-            else
-            {
-                State = CS_AppData.ResMemoryTblPtr[EntryID].State;
-            }
-
             CFE_EVS_SendEvent(CS_ENABLE_MEMORY_INVALID_ENTRY_ERR_EID, CFE_EVS_EventType_ERROR,
                               "Enable Memory entry failed, invalid Entry ID:  %d, State: %d, Max ID: %d", EntryID,
                               State, (CS_MAX_NUM_MEMORY_TABLE_ENTRIES - 1));
@@ -292,17 +287,28 @@ CFE_Status_t CS_DisableEntryIDMemoryCmd(const CS_DisableEntryIDMemoryCmd_t *CmdP
 {
     /* command verification variables */
     CS_Res_EepromMemory_Table_Entry_t *ResultsEntry = NULL;
+    CS_Def_EepromMemory_Table_Entry_t *DefEntry     = NULL;
+    CS_TableWrapper_t *                tw           = &CS_AppData.Tbl[CS_ChecksumType_MEMORY_TABLE];
     uint16                             EntryID      = 0;
     CS_ChecksumState_Enum_t            State        = CS_ChecksumState_EMPTY;
 
     if (CS_CheckRecomputeOneshot() == false)
     {
-        EntryID = CmdPtr->Payload.EntryID;
+        EntryID      = CmdPtr->Payload.EntryID;
+        ResultsEntry = CS_GetMemoryResEntry(EntryID);
 
-        if ((EntryID < CS_MAX_NUM_MEMORY_TABLE_ENTRIES) &&
-            (CS_AppData.ResMemoryTblPtr[EntryID].State != CS_ChecksumState_EMPTY))
+        if (ResultsEntry == NULL)
         {
-            ResultsEntry = &CS_AppData.ResMemoryTblPtr[EntryID];
+            State = CS_ChecksumState_UNDEFINED;
+        }
+        else
+        {
+            State = ResultsEntry->State;
+        }
+
+        if (CS_StateValid(State))
+        {
+            DefEntry = CS_GetMemoryDefEntry(EntryID);
 
             ResultsEntry->State             = CS_ChecksumState_DISABLED;
             ResultsEntry->TempChecksumValue = 0;
@@ -311,13 +317,8 @@ CFE_Status_t CS_DisableEntryIDMemoryCmd(const CS_DisableEntryIDMemoryCmd_t *CmdP
             CFE_EVS_SendEvent(CS_DISABLE_MEMORY_ENTRY_INF_EID, CFE_EVS_EventType_INFORMATION,
                               "Checksumming of Memory Entry ID %d is Disabled", EntryID);
 
-            if (CS_AppData.DefMemoryTblPtr[EntryID].State != CS_ChecksumState_EMPTY)
-            {
-                CS_AppData.DefMemoryTblPtr[EntryID].State = CS_ChecksumState_DISABLED;
-                CS_ResetTablesTblResultEntry(CS_AppData.MemResTablesTblPtr);
-                CFE_TBL_Modified(CS_AppData.DefMemoryTableHandle);
-            }
-            else
+            State = CS_SetDefEntryState(tw, DefEntry, CS_ChecksumState_DISABLED);
+            if (!CS_StateValid(State))
             {
                 CFE_EVS_SendEvent(CS_DISABLE_MEMORY_DEF_EMPTY_DBG_EID, CFE_EVS_EventType_DEBUG,
                                   "CS unable to update memory definition table for entry %d, State: %d", EntryID,
@@ -328,15 +329,6 @@ CFE_Status_t CS_DisableEntryIDMemoryCmd(const CS_DisableEntryIDMemoryCmd_t *CmdP
         }
         else
         {
-            if (EntryID >= CS_MAX_NUM_MEMORY_TABLE_ENTRIES)
-            {
-                State = CS_ChecksumState_UNDEFINED;
-            }
-            else
-            {
-                State = CS_AppData.ResMemoryTblPtr[EntryID].State;
-            }
-
             CFE_EVS_SendEvent(CS_DISABLE_MEMORY_INVALID_ENTRY_ERR_EID, CFE_EVS_EventType_ERROR,
                               "Disable Memory entry failed, invalid Entry ID:  %d, State: %d, Max ID: %d", EntryID,
                               State, (CS_MAX_NUM_MEMORY_TABLE_ENTRIES - 1));
@@ -356,26 +348,29 @@ CFE_Status_t CS_DisableEntryIDMemoryCmd(const CS_DisableEntryIDMemoryCmd_t *CmdP
 CFE_Status_t CS_GetEntryIDMemoryCmd(const CS_GetEntryIDMemoryCmd_t *CmdPtr)
 {
     /* command verification variables */
-    CS_Res_EepromMemory_Table_Entry_t *StartOfResultsTable = NULL;
-    CS_Res_EepromMemory_Table_Entry_t *ResultsEntry        = NULL;
-    uint16                             Loop                = 0;
-    bool                               EntryFound          = false;
+    CS_Res_EepromMemory_Table_Entry_t *ResultsEntry = NULL;
+    uint16                             Loop         = 0;
+    bool                               EntryFound   = false;
 
-    StartOfResultsTable = CS_AppData.ResMemoryTblPtr;
-
-    for (Loop = 0; Loop < CS_MAX_NUM_MEMORY_TABLE_ENTRIES; Loop++)
+    Loop = 0;
+    while (true)
     {
-        ResultsEntry = &StartOfResultsTable[Loop];
+        ResultsEntry = CS_GetMemoryResEntry(Loop);
+        if (ResultsEntry == NULL)
+        {
+            break;
+        }
 
-        if ((ResultsEntry->StartAddress <= CmdPtr->Payload.Address) &&
-            CmdPtr->Payload.Address <= (ResultsEntry->StartAddress + ResultsEntry->NumBytesToChecksum) &&
-            ResultsEntry->State != CS_ChecksumState_EMPTY)
+        if (ResultsEntry->State != CS_ChecksumState_EMPTY && ResultsEntry->StartAddress <= CmdPtr->Payload.Address &&
+            CmdPtr->Payload.Address < (ResultsEntry->StartAddress + ResultsEntry->NumBytesToChecksum))
         {
             CFE_EVS_SendEvent(CS_GET_ENTRY_ID_MEMORY_INF_EID, CFE_EVS_EventType_INFORMATION,
                               "Memory Found Address 0x%08X in Entry ID %d", (unsigned int)(CmdPtr->Payload.Address),
                               Loop);
             EntryFound = true;
         }
+
+        ++Loop;
     }
 
     if (EntryFound == false)

@@ -54,4 +54,8 @@ extern CFE_ES_WriteToSysLog_context_t context_CFE_ES_WriteToSysLog;
 void CS_Test_Setup(void);
 void CS_Test_TearDown(void);
 
+void CS_Test_ResetEventCheck(void);
+void CS_Test_Setup_SetDefEntryState(CS_ChecksumState_Enum_t OldState);
+void CS_Test_Check_SetDefEntryState(void *EntryPtr, CS_ChecksumState_Enum_t NewState);
+
 #endif

@@ -28,27 +28,6 @@
 
 /*
  * ----------------------------------------------------
- * Generated stub function for CS_AttemptTableReshare()
- * ----------------------------------------------------
- */
-CFE_Status_t CS_AttemptTableReshare(CS_Res_Tables_Table_Entry_t *ResultsEntry, CFE_TBL_Handle_t *LocalTblHandle,
-                                    CFE_TBL_Info_t *TblInfo, cpuaddr *LocalAddress, int32 *ResultGetInfo)
-{
-    UT_GenStub_SetupReturnBuffer(CS_AttemptTableReshare, CFE_Status_t);
-
-    UT_GenStub_AddParam(CS_AttemptTableReshare, CS_Res_Tables_Table_Entry_t *, ResultsEntry);
-    UT_GenStub_AddParam(CS_AttemptTableReshare, CFE_TBL_Handle_t *, LocalTblHandle);
-    UT_GenStub_AddParam(CS_AttemptTableReshare, CFE_TBL_Info_t *, TblInfo);
-    UT_GenStub_AddParam(CS_AttemptTableReshare, cpuaddr *, LocalAddress);
-    UT_GenStub_AddParam(CS_AttemptTableReshare, int32 *, ResultGetInfo);
-
-    UT_GenStub_Execute(CS_AttemptTableReshare, Basic, NULL);
-
-    return UT_GenStub_GetReturnValue(CS_AttemptTableReshare, CFE_Status_t);
-}
-
-/*
- * ----------------------------------------------------
  * Generated stub function for CS_BackgroundApp()
  * ----------------------------------------------------
  */
@@ -133,6 +112,23 @@ bool CS_BackgroundTables(void)
 
 /*
  * ----------------------------------------------------
+ * Generated stub function for CS_CheckDefTableNameMatch()
+ * ----------------------------------------------------
+ */
+bool CS_CheckDefTableNameMatch(const char *Name, uint16 TableIdx)
+{
+    UT_GenStub_SetupReturnBuffer(CS_CheckDefTableNameMatch, bool);
+
+    UT_GenStub_AddParam(CS_CheckDefTableNameMatch, const char *, Name);
+    UT_GenStub_AddParam(CS_CheckDefTableNameMatch, uint16, TableIdx);
+
+    UT_GenStub_Execute(CS_CheckDefTableNameMatch, Basic, NULL);
+
+    return UT_GenStub_GetReturnValue(CS_CheckDefTableNameMatch, bool);
+}
+
+/*
+ * ----------------------------------------------------
  * Generated stub function for CS_CheckRecomputeOneshot()
  * ----------------------------------------------------
  */
@@ -147,18 +143,33 @@ bool CS_CheckRecomputeOneshot(void)
 
 /*
  * ----------------------------------------------------
+ * Generated stub function for CS_CheckResTableNameMatch()
+ * ----------------------------------------------------
+ */
+bool CS_CheckResTableNameMatch(const char *Name, uint16 TableIdx)
+{
+    UT_GenStub_SetupReturnBuffer(CS_CheckResTableNameMatch, bool);
+
+    UT_GenStub_AddParam(CS_CheckResTableNameMatch, const char *, Name);
+    UT_GenStub_AddParam(CS_CheckResTableNameMatch, uint16, TableIdx);
+
+    UT_GenStub_Execute(CS_CheckResTableNameMatch, Basic, NULL);
+
+    return UT_GenStub_GetReturnValue(CS_CheckResTableNameMatch, bool);
+}
+
+/*
+ * ----------------------------------------------------
  * Generated stub function for CS_FindEnabledAppEntry()
  * ----------------------------------------------------
  */
-bool CS_FindEnabledAppEntry(uint16 *EnabledEntry)
+CS_Res_App_Table_Entry_t *CS_FindEnabledAppEntry(void)
 {
-    UT_GenStub_SetupReturnBuffer(CS_FindEnabledAppEntry, bool);
-
-    UT_GenStub_AddParam(CS_FindEnabledAppEntry, uint16 *, EnabledEntry);
+    UT_GenStub_SetupReturnBuffer(CS_FindEnabledAppEntry, CS_Res_App_Table_Entry_t *);
 
     UT_GenStub_Execute(CS_FindEnabledAppEntry, Basic, NULL);
 
-    return UT_GenStub_GetReturnValue(CS_FindEnabledAppEntry, bool);
+    return UT_GenStub_GetReturnValue(CS_FindEnabledAppEntry, CS_Res_App_Table_Entry_t *);
 }
 
 /*
@@ -166,15 +177,13 @@ bool CS_FindEnabledAppEntry(uint16 *EnabledEntry)
  * Generated stub function for CS_FindEnabledEepromEntry()
  * ----------------------------------------------------
  */
-bool CS_FindEnabledEepromEntry(uint16 *EnabledEntry)
+CS_Res_EepromMemory_Table_Entry_t *CS_FindEnabledEepromEntry(void)
 {
-    UT_GenStub_SetupReturnBuffer(CS_FindEnabledEepromEntry, bool);
-
-    UT_GenStub_AddParam(CS_FindEnabledEepromEntry, uint16 *, EnabledEntry);
+    UT_GenStub_SetupReturnBuffer(CS_FindEnabledEepromEntry, CS_Res_EepromMemory_Table_Entry_t *);
 
     UT_GenStub_Execute(CS_FindEnabledEepromEntry, Basic, NULL);
 
-    return UT_GenStub_GetReturnValue(CS_FindEnabledEepromEntry, bool);
+    return UT_GenStub_GetReturnValue(CS_FindEnabledEepromEntry, CS_Res_EepromMemory_Table_Entry_t *);
 }
 
 /*
@@ -182,15 +191,13 @@ bool CS_FindEnabledEepromEntry(uint16 *EnabledEntry)
  * Generated stub function for CS_FindEnabledMemoryEntry()
  * ----------------------------------------------------
  */
-bool CS_FindEnabledMemoryEntry(uint16 *EnabledEntry)
+CS_Res_EepromMemory_Table_Entry_t *CS_FindEnabledMemoryEntry(void)
 {
-    UT_GenStub_SetupReturnBuffer(CS_FindEnabledMemoryEntry, bool);
-
-    UT_GenStub_AddParam(CS_FindEnabledMemoryEntry, uint16 *, EnabledEntry);
+    UT_GenStub_SetupReturnBuffer(CS_FindEnabledMemoryEntry, CS_Res_EepromMemory_Table_Entry_t *);
 
     UT_GenStub_Execute(CS_FindEnabledMemoryEntry, Basic, NULL);
 
-    return UT_GenStub_GetReturnValue(CS_FindEnabledMemoryEntry, bool);
+    return UT_GenStub_GetReturnValue(CS_FindEnabledMemoryEntry, CS_Res_EepromMemory_Table_Entry_t *);
 }
 
 /*
@@ -198,15 +205,13 @@ bool CS_FindEnabledMemoryEntry(uint16 *EnabledEntry)
  * Generated stub function for CS_FindEnabledTablesEntry()
  * ----------------------------------------------------
  */
-bool CS_FindEnabledTablesEntry(uint16 *EnabledEntry)
+CS_Res_Tables_Table_Entry_t *CS_FindEnabledTablesEntry(void)
 {
-    UT_GenStub_SetupReturnBuffer(CS_FindEnabledTablesEntry, bool);
-
-    UT_GenStub_AddParam(CS_FindEnabledTablesEntry, uint16 *, EnabledEntry);
+    UT_GenStub_SetupReturnBuffer(CS_FindEnabledTablesEntry, CS_Res_Tables_Table_Entry_t *);
 
     UT_GenStub_Execute(CS_FindEnabledTablesEntry, Basic, NULL);
 
-    return UT_GenStub_GetReturnValue(CS_FindEnabledTablesEntry, bool);
+    return UT_GenStub_GetReturnValue(CS_FindEnabledTablesEntry, CS_Res_Tables_Table_Entry_t *);
 }
 
 /*
@@ -241,6 +246,40 @@ bool CS_GetAppResTblEntryByName(CS_Res_App_Table_Entry_t **EntryPtr, const char 
     UT_GenStub_Execute(CS_GetAppResTblEntryByName, Basic, NULL);
 
     return UT_GenStub_GetReturnValue(CS_GetAppResTblEntryByName, bool);
+}
+
+/*
+ * ----------------------------------------------------
+ * Generated stub function for CS_GetDefEntryAddr()
+ * ----------------------------------------------------
+ */
+void *CS_GetDefEntryAddr(CS_TableWrapper_t *tw, uint16 EntryIdx)
+{
+    UT_GenStub_SetupReturnBuffer(CS_GetDefEntryAddr, void *);
+
+    UT_GenStub_AddParam(CS_GetDefEntryAddr, CS_TableWrapper_t *, tw);
+    UT_GenStub_AddParam(CS_GetDefEntryAddr, uint16, EntryIdx);
+
+    UT_GenStub_Execute(CS_GetDefEntryAddr, Basic, NULL);
+
+    return UT_GenStub_GetReturnValue(CS_GetDefEntryAddr, void *);
+}
+
+/*
+ * ----------------------------------------------------
+ * Generated stub function for CS_GetResEntryAddr()
+ * ----------------------------------------------------
+ */
+void *CS_GetResEntryAddr(CS_TableWrapper_t *tw, uint16 EntryIdx)
+{
+    UT_GenStub_SetupReturnBuffer(CS_GetResEntryAddr, void *);
+
+    UT_GenStub_AddParam(CS_GetResEntryAddr, CS_TableWrapper_t *, tw);
+    UT_GenStub_AddParam(CS_GetResEntryAddr, uint16, EntryIdx);
+
+    UT_GenStub_Execute(CS_GetResEntryAddr, Basic, NULL);
+
+    return UT_GenStub_GetReturnValue(CS_GetResEntryAddr, void *);
 }
 
 /*
@@ -282,11 +321,11 @@ bool CS_GetTableResTblEntryByName(CS_Res_Tables_Table_Entry_t **EntryPtr, const 
  * Generated stub function for CS_GetTableTypeAsString()
  * ----------------------------------------------------
  */
-const char *CS_GetTableTypeAsString(CS_ChecksumType_Enum_t TableId)
+const char *CS_GetTableTypeAsString(const CS_TableWrapper_t *Tbl)
 {
     UT_GenStub_SetupReturnBuffer(CS_GetTableTypeAsString, const char *);
 
-    UT_GenStub_AddParam(CS_GetTableTypeAsString, CS_ChecksumType_Enum_t, TableId);
+    UT_GenStub_AddParam(CS_GetTableTypeAsString, const CS_TableWrapper_t *, Tbl);
 
     UT_GenStub_Execute(CS_GetTableTypeAsString, Basic, NULL);
 
@@ -339,6 +378,24 @@ void CS_ResetTablesTblResultEntry(CS_Res_Tables_Table_Entry_t *TablesTblResultEn
     UT_GenStub_AddParam(CS_ResetTablesTblResultEntry, CS_Res_Tables_Table_Entry_t *, TablesTblResultEntry);
 
     UT_GenStub_Execute(CS_ResetTablesTblResultEntry, Basic, NULL);
+}
+
+/*
+ * ----------------------------------------------------
+ * Generated stub function for CS_SetDefEntryState()
+ * ----------------------------------------------------
+ */
+CS_ChecksumState_Enum_t CS_SetDefEntryState(CS_TableWrapper_t *tw, void *EntryPtr, CS_ChecksumState_Enum_t NewState)
+{
+    UT_GenStub_SetupReturnBuffer(CS_SetDefEntryState, CS_ChecksumState_Enum_t);
+
+    UT_GenStub_AddParam(CS_SetDefEntryState, CS_TableWrapper_t *, tw);
+    UT_GenStub_AddParam(CS_SetDefEntryState, void *, EntryPtr);
+    UT_GenStub_AddParam(CS_SetDefEntryState, CS_ChecksumState_Enum_t, NewState);
+
+    UT_GenStub_Execute(CS_SetDefEntryState, Basic, NULL);
+
+    return UT_GenStub_GetReturnValue(CS_SetDefEntryState, CS_ChecksumState_Enum_t);
 }
 
 /*
