@@ -1,8 +1,7 @@
 /************************************************************************
- * NASA Docket No. GSC-18,915-1, and identified as “cFS Checksum
- * Application version 2.5.1”
+ * NASA Docket No. GSC-19,200-1, and identified as "cFS Draco"
  *
- * Copyright (c) 2021 United States Government as represented by the
+ * Copyright (c) 2023 United States Government as represented by the
  * Administrator of the National Aeronautics and Space Administration.
  * All Rights Reserved.
  *
@@ -17,22 +16,61 @@
  * limitations under the License.
  ************************************************************************/
 
-/*
- * Includes
+/**
+ * @file
+ *
+ * Auto-Generated stub implementations for functions defined in cs_app header
  */
 
 #include "cs_app.h"
+#include "utgenstub.h"
 
-/* UT includes */
-#include "uttest.h"
-#include "utassert.h"
-#include "utstubs.h"
+/*
+ * ----------------------------------------------------
+ * Generated stub function for CS_AppInit()
+ * ----------------------------------------------------
+ */
+CFE_Status_t CS_AppInit(void)
+{
+    UT_GenStub_SetupReturnBuffer(CS_AppInit, CFE_Status_t);
 
-CS_AppData_t CS_AppData;
+    UT_GenStub_Execute(CS_AppInit, Basic, NULL);
 
-#if (CS_PRESERVE_STATES_ON_PROCESSOR_RESET == true)
+    return UT_GenStub_GetReturnValue(CS_AppInit, CFE_Status_t);
+}
+
+/*
+ * ----------------------------------------------------
+ * Generated stub function for CS_AppMain()
+ * ----------------------------------------------------
+ */
+void CS_AppMain(void)
+{
+
+    UT_GenStub_Execute(CS_AppMain, Basic, NULL);
+}
+
+/*
+ * ----------------------------------------------------
+ * Generated stub function for CS_CreateRestoreStatesFromCDS()
+ * ----------------------------------------------------
+ */
+CFE_Status_t CS_CreateRestoreStatesFromCDS(void)
+{
+    UT_GenStub_SetupReturnBuffer(CS_CreateRestoreStatesFromCDS, CFE_Status_t);
+
+    UT_GenStub_Execute(CS_CreateRestoreStatesFromCDS, Basic, NULL);
+
+    return UT_GenStub_GetReturnValue(CS_CreateRestoreStatesFromCDS, CFE_Status_t);
+}
+
+/*
+ * ----------------------------------------------------
+ * Generated stub function for CS_UpdateCDS()
+ * ----------------------------------------------------
+ */
 void CS_UpdateCDS(void)
 {
-    UT_DEFAULT_IMPL(CS_UpdateCDS);
+
+    UT_GenStub_Execute(CS_UpdateCDS, Basic, NULL);
 }
-#endif /* #if (CS_PRESERVE_STATES_ON_PROCESSOR_RESET == true) */

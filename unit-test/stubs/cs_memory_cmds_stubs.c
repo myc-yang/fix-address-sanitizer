@@ -1,8 +1,7 @@
 /************************************************************************
- * NASA Docket No. GSC-18,915-1, and identified as “cFS Checksum
- * Application version 2.5.1”
+ * NASA Docket No. GSC-19,200-1, and identified as "cFS Draco"
  *
- * Copyright (c) 2021 United States Government as represented by the
+ * Copyright (c) 2023 United States Government as represented by the
  * Administrator of the National Aeronautics and Space Administration.
  * All Rights Reserved.
  *
@@ -17,55 +16,123 @@
  * limitations under the License.
  ************************************************************************/
 
-/*
- * Includes
+/**
+ * @file
+ *
+ * Auto-Generated stub implementations for functions defined in cs_memory_cmds header
  */
 
 #include "cs_memory_cmds.h"
+#include "utgenstub.h"
 
-/* UT includes */
-#include "uttest.h"
-#include "utassert.h"
-#include "utstubs.h"
-
-void CS_DisableMemoryCmd(const CS_NoArgsCmd_t *CmdPtr)
+/*
+ * ----------------------------------------------------
+ * Generated stub function for CS_DisableEntryIDMemoryCmd()
+ * ----------------------------------------------------
+ */
+CFE_Status_t CS_DisableEntryIDMemoryCmd(const CS_DisableEntryIDMemoryCmd_t *CmdPtr)
 {
-    UT_Stub_RegisterContext(UT_KEY(CS_DisableMemoryCmd), CmdPtr);
-    UT_DEFAULT_IMPL(CS_DisableMemoryCmd);
+    UT_GenStub_SetupReturnBuffer(CS_DisableEntryIDMemoryCmd, CFE_Status_t);
+
+    UT_GenStub_AddParam(CS_DisableEntryIDMemoryCmd, const CS_DisableEntryIDMemoryCmd_t *, CmdPtr);
+
+    UT_GenStub_Execute(CS_DisableEntryIDMemoryCmd, Basic, NULL);
+
+    return UT_GenStub_GetReturnValue(CS_DisableEntryIDMemoryCmd, CFE_Status_t);
 }
 
-void CS_EnableMemoryCmd(const CS_NoArgsCmd_t *CmdPtr)
+/*
+ * ----------------------------------------------------
+ * Generated stub function for CS_DisableMemoryCmd()
+ * ----------------------------------------------------
+ */
+CFE_Status_t CS_DisableMemoryCmd(const CS_DisableMemoryCmd_t *CmdPtr)
 {
-    UT_Stub_RegisterContext(UT_KEY(CS_EnableMemoryCmd), CmdPtr);
-    UT_DEFAULT_IMPL(CS_EnableMemoryCmd);
+    UT_GenStub_SetupReturnBuffer(CS_DisableMemoryCmd, CFE_Status_t);
+
+    UT_GenStub_AddParam(CS_DisableMemoryCmd, const CS_DisableMemoryCmd_t *, CmdPtr);
+
+    UT_GenStub_Execute(CS_DisableMemoryCmd, Basic, NULL);
+
+    return UT_GenStub_GetReturnValue(CS_DisableMemoryCmd, CFE_Status_t);
 }
 
-void CS_ReportBaselineEntryIDMemoryCmd(const CS_EntryCmd_t *CmdPtr)
+/*
+ * ----------------------------------------------------
+ * Generated stub function for CS_EnableEntryIDMemoryCmd()
+ * ----------------------------------------------------
+ */
+CFE_Status_t CS_EnableEntryIDMemoryCmd(const CS_EnableEntryIDMemoryCmd_t *CmdPtr)
 {
-    UT_Stub_RegisterContext(UT_KEY(CS_ReportBaselineEntryIDMemoryCmd), CmdPtr);
-    UT_DEFAULT_IMPL(CS_ReportBaselineEntryIDMemoryCmd);
+    UT_GenStub_SetupReturnBuffer(CS_EnableEntryIDMemoryCmd, CFE_Status_t);
+
+    UT_GenStub_AddParam(CS_EnableEntryIDMemoryCmd, const CS_EnableEntryIDMemoryCmd_t *, CmdPtr);
+
+    UT_GenStub_Execute(CS_EnableEntryIDMemoryCmd, Basic, NULL);
+
+    return UT_GenStub_GetReturnValue(CS_EnableEntryIDMemoryCmd, CFE_Status_t);
 }
 
-void CS_DisableEntryIDMemoryCmd(const CS_EntryCmd_t *CmdPtr)
+/*
+ * ----------------------------------------------------
+ * Generated stub function for CS_EnableMemoryCmd()
+ * ----------------------------------------------------
+ */
+CFE_Status_t CS_EnableMemoryCmd(const CS_EnableMemoryCmd_t *CmdPtr)
 {
-    UT_Stub_RegisterContext(UT_KEY(CS_DisableEntryIDMemoryCmd), CmdPtr);
-    UT_DEFAULT_IMPL(CS_DisableEntryIDMemoryCmd);
+    UT_GenStub_SetupReturnBuffer(CS_EnableMemoryCmd, CFE_Status_t);
+
+    UT_GenStub_AddParam(CS_EnableMemoryCmd, const CS_EnableMemoryCmd_t *, CmdPtr);
+
+    UT_GenStub_Execute(CS_EnableMemoryCmd, Basic, NULL);
+
+    return UT_GenStub_GetReturnValue(CS_EnableMemoryCmd, CFE_Status_t);
 }
 
-void CS_RecomputeBaselineMemoryCmd(const CS_EntryCmd_t *CmdPtr)
+/*
+ * ----------------------------------------------------
+ * Generated stub function for CS_GetEntryIDMemoryCmd()
+ * ----------------------------------------------------
+ */
+CFE_Status_t CS_GetEntryIDMemoryCmd(const CS_GetEntryIDMemoryCmd_t *CmdPtr)
 {
-    UT_Stub_RegisterContext(UT_KEY(CS_RecomputeBaselineMemoryCmd), CmdPtr);
-    UT_DEFAULT_IMPL(CS_RecomputeBaselineMemoryCmd);
+    UT_GenStub_SetupReturnBuffer(CS_GetEntryIDMemoryCmd, CFE_Status_t);
+
+    UT_GenStub_AddParam(CS_GetEntryIDMemoryCmd, const CS_GetEntryIDMemoryCmd_t *, CmdPtr);
+
+    UT_GenStub_Execute(CS_GetEntryIDMemoryCmd, Basic, NULL);
+
+    return UT_GenStub_GetReturnValue(CS_GetEntryIDMemoryCmd, CFE_Status_t);
 }
 
-void CS_EnableEntryIDMemoryCmd(const CS_EntryCmd_t *CmdPtr)
+/*
+ * ----------------------------------------------------
+ * Generated stub function for CS_RecomputeBaselineMemoryCmd()
+ * ----------------------------------------------------
+ */
+CFE_Status_t CS_RecomputeBaselineMemoryCmd(const CS_RecomputeBaselineMemoryCmd_t *CmdPtr)
 {
-    UT_Stub_RegisterContext(UT_KEY(CS_EnableEntryIDMemoryCmd), CmdPtr);
-    UT_DEFAULT_IMPL(CS_EnableEntryIDMemoryCmd);
+    UT_GenStub_SetupReturnBuffer(CS_RecomputeBaselineMemoryCmd, CFE_Status_t);
+
+    UT_GenStub_AddParam(CS_RecomputeBaselineMemoryCmd, const CS_RecomputeBaselineMemoryCmd_t *, CmdPtr);
+
+    UT_GenStub_Execute(CS_RecomputeBaselineMemoryCmd, Basic, NULL);
+
+    return UT_GenStub_GetReturnValue(CS_RecomputeBaselineMemoryCmd, CFE_Status_t);
 }
 
-void CS_GetEntryIDMemoryCmd(const CS_GetEntryIDCmd_t *CmdPtr)
+/*
+ * ----------------------------------------------------
+ * Generated stub function for CS_ReportBaselineEntryIDMemoryCmd()
+ * ----------------------------------------------------
+ */
+CFE_Status_t CS_ReportBaselineEntryIDMemoryCmd(const CS_ReportBaselineEntryIDMemoryCmd_t *CmdPtr)
 {
-    UT_Stub_RegisterContext(UT_KEY(CS_GetEntryIDMemoryCmd), CmdPtr);
-    UT_DEFAULT_IMPL(CS_GetEntryIDMemoryCmd);
+    UT_GenStub_SetupReturnBuffer(CS_ReportBaselineEntryIDMemoryCmd, CFE_Status_t);
+
+    UT_GenStub_AddParam(CS_ReportBaselineEntryIDMemoryCmd, const CS_ReportBaselineEntryIDMemoryCmd_t *, CmdPtr);
+
+    UT_GenStub_Execute(CS_ReportBaselineEntryIDMemoryCmd, Basic, NULL);
+
+    return UT_GenStub_GetReturnValue(CS_ReportBaselineEntryIDMemoryCmd, CFE_Status_t);
 }

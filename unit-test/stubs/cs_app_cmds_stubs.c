@@ -1,8 +1,7 @@
 /************************************************************************
- * NASA Docket No. GSC-18,915-1, and identified as “cFS Checksum
- * Application version 2.5.1”
+ * NASA Docket No. GSC-19,200-1, and identified as "cFS Draco"
  *
- * Copyright (c) 2021 United States Government as represented by the
+ * Copyright (c) 2023 United States Government as represented by the
  * Administrator of the National Aeronautics and Space Administration.
  * All Rights Reserved.
  *
@@ -17,49 +16,107 @@
  * limitations under the License.
  ************************************************************************/
 
-/*
- * Includes
+/**
+ * @file
+ *
+ * Auto-Generated stub implementations for functions defined in cs_app_cmds header
  */
 
 #include "cs_app_cmds.h"
+#include "utgenstub.h"
 
-/* UT includes */
-#include "uttest.h"
-#include "utassert.h"
-#include "utstubs.h"
-
-void CS_DisableAppCmd(const CS_NoArgsCmd_t *CmdPtr)
+/*
+ * ----------------------------------------------------
+ * Generated stub function for CS_DisableAppsCmd()
+ * ----------------------------------------------------
+ */
+CFE_Status_t CS_DisableAppsCmd(const CS_DisableAppsCmd_t *CmdPtr)
 {
-    UT_Stub_RegisterContext(UT_KEY(CS_DisableAppCmd), CmdPtr);
-    UT_DEFAULT_IMPL(CS_DisableAppCmd);
+    UT_GenStub_SetupReturnBuffer(CS_DisableAppsCmd, CFE_Status_t);
+
+    UT_GenStub_AddParam(CS_DisableAppsCmd, const CS_DisableAppsCmd_t *, CmdPtr);
+
+    UT_GenStub_Execute(CS_DisableAppsCmd, Basic, NULL);
+
+    return UT_GenStub_GetReturnValue(CS_DisableAppsCmd, CFE_Status_t);
 }
 
-void CS_EnableAppCmd(const CS_NoArgsCmd_t *CmdPtr)
+/*
+ * ----------------------------------------------------
+ * Generated stub function for CS_DisableNameAppCmd()
+ * ----------------------------------------------------
+ */
+CFE_Status_t CS_DisableNameAppCmd(const CS_DisableNameAppCmd_t *CmdPtr)
 {
-    UT_Stub_RegisterContext(UT_KEY(CS_EnableAppCmd), CmdPtr);
-    UT_DEFAULT_IMPL(CS_EnableAppCmd);
+    UT_GenStub_SetupReturnBuffer(CS_DisableNameAppCmd, CFE_Status_t);
+
+    UT_GenStub_AddParam(CS_DisableNameAppCmd, const CS_DisableNameAppCmd_t *, CmdPtr);
+
+    UT_GenStub_Execute(CS_DisableNameAppCmd, Basic, NULL);
+
+    return UT_GenStub_GetReturnValue(CS_DisableNameAppCmd, CFE_Status_t);
 }
 
-void CS_ReportBaselineAppCmd(const CS_AppNameCmd_t *CmdPtr)
+/*
+ * ----------------------------------------------------
+ * Generated stub function for CS_EnableAppsCmd()
+ * ----------------------------------------------------
+ */
+CFE_Status_t CS_EnableAppsCmd(const CS_EnableAppsCmd_t *CmdPtr)
 {
-    UT_Stub_RegisterContext(UT_KEY(CS_ReportBaselineAppCmd), CmdPtr);
-    UT_DEFAULT_IMPL(CS_ReportBaselineAppCmd);
+    UT_GenStub_SetupReturnBuffer(CS_EnableAppsCmd, CFE_Status_t);
+
+    UT_GenStub_AddParam(CS_EnableAppsCmd, const CS_EnableAppsCmd_t *, CmdPtr);
+
+    UT_GenStub_Execute(CS_EnableAppsCmd, Basic, NULL);
+
+    return UT_GenStub_GetReturnValue(CS_EnableAppsCmd, CFE_Status_t);
 }
 
-void CS_RecomputeBaselineAppCmd(const CS_AppNameCmd_t *CmdPtr)
+/*
+ * ----------------------------------------------------
+ * Generated stub function for CS_EnableNameAppCmd()
+ * ----------------------------------------------------
+ */
+CFE_Status_t CS_EnableNameAppCmd(const CS_EnableNameAppCmd_t *CmdPtr)
 {
-    UT_Stub_RegisterContext(UT_KEY(CS_RecomputeBaselineAppCmd), CmdPtr);
-    UT_DEFAULT_IMPL(CS_RecomputeBaselineAppCmd);
+    UT_GenStub_SetupReturnBuffer(CS_EnableNameAppCmd, CFE_Status_t);
+
+    UT_GenStub_AddParam(CS_EnableNameAppCmd, const CS_EnableNameAppCmd_t *, CmdPtr);
+
+    UT_GenStub_Execute(CS_EnableNameAppCmd, Basic, NULL);
+
+    return UT_GenStub_GetReturnValue(CS_EnableNameAppCmd, CFE_Status_t);
 }
 
-void CS_DisableNameAppCmd(const CS_AppNameCmd_t *CmdPtr)
+/*
+ * ----------------------------------------------------
+ * Generated stub function for CS_RecomputeBaselineAppCmd()
+ * ----------------------------------------------------
+ */
+CFE_Status_t CS_RecomputeBaselineAppCmd(const CS_RecomputeBaselineAppCmd_t *CmdPtr)
 {
-    UT_Stub_RegisterContext(UT_KEY(CS_DisableNameAppCmd), CmdPtr);
-    UT_DEFAULT_IMPL(CS_DisableNameAppCmd);
+    UT_GenStub_SetupReturnBuffer(CS_RecomputeBaselineAppCmd, CFE_Status_t);
+
+    UT_GenStub_AddParam(CS_RecomputeBaselineAppCmd, const CS_RecomputeBaselineAppCmd_t *, CmdPtr);
+
+    UT_GenStub_Execute(CS_RecomputeBaselineAppCmd, Basic, NULL);
+
+    return UT_GenStub_GetReturnValue(CS_RecomputeBaselineAppCmd, CFE_Status_t);
 }
 
-void CS_EnableNameAppCmd(const CS_AppNameCmd_t *CmdPtr)
+/*
+ * ----------------------------------------------------
+ * Generated stub function for CS_ReportBaselineAppCmd()
+ * ----------------------------------------------------
+ */
+CFE_Status_t CS_ReportBaselineAppCmd(const CS_ReportBaselineAppCmd_t *CmdPtr)
 {
-    UT_Stub_RegisterContext(UT_KEY(CS_EnableNameAppCmd), CmdPtr);
-    UT_DEFAULT_IMPL(CS_EnableNameAppCmd);
+    UT_GenStub_SetupReturnBuffer(CS_ReportBaselineAppCmd, CFE_Status_t);
+
+    UT_GenStub_AddParam(CS_ReportBaselineAppCmd, const CS_ReportBaselineAppCmd_t *, CmdPtr);
+
+    UT_GenStub_Execute(CS_ReportBaselineAppCmd, Basic, NULL);
+
+    return UT_GenStub_GetReturnValue(CS_ReportBaselineAppCmd, CFE_Status_t);
 }
