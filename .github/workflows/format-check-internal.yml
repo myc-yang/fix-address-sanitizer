@@ -3,7 +3,15 @@ name: Internal Format Check
 # Run on all push and pull requests
 on:
   push:
+    branches:
+      - dev
+      - main
   pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
+  workflow_dispatch:
 
 jobs:
   format-check:
