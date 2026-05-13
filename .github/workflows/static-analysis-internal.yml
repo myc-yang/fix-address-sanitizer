@@ -1,4 +1,4 @@
-name: Static Analysis
+name: Internal Static Analysis
 
 on:
   push:
@@ -15,4 +15,6 @@ on:
 jobs:
   static-analysis:
     name: Static Analysis
-    uses: cFS/workflows/.github/workflows/app-static-analysis-reusable-internal.yml@dev
+    uses: cFS/workflows/.github/workflows/static-analysis-reusable-internal.yml@dev
+    with:
+      source-dir: 'source/fsw'
