@@ -177,7 +177,7 @@
  *       This can either be CS_ChecksumState_ENABLED or CS_ChecksumState_DISABLED
  */
 #define CS_OSCS_CHECKSUM_STATE                  CS_INTERNAL_CFGVAL(OSCS_CHECKSUM_STATE)
-#define DEFAULT_CS_INTERNAL_OSCS_CHECKSUM_STATE CS_ChecksumState_ENABLED
+#define DEFAULT_CS_INTERNAL_OSCS_CHECKSUM_STATE CS_ChecksumState_DISABLED
 
 /**
  * \brief Desired state of the checksumming of CFE core checksum at power on
@@ -190,7 +190,7 @@
  *       This can either be CS_ChecksumState_ENABLED or CS_ChecksumState_DISABLED
  */
 #define CS_CFECORE_CHECKSUM_STATE                  CS_INTERNAL_CFGVAL(CFECORE_CHECKSUM_STATE)
-#define DEFAULT_CS_INTERNAL_CFECORE_CHECKSUM_STATE CS_ChecksumState_ENABLED
+#define DEFAULT_CS_INTERNAL_CFECORE_CHECKSUM_STATE CS_ChecksumState_DISABLED
 
 /**
  * \brief Desired state of the EEPROM table at power on
@@ -203,7 +203,7 @@
  *       This can either be CS_ChecksumState_ENABLED or CS_ChecksumState_DISABLED
  */
 #define CS_EEPROM_TBL_POWERON_STATE                  CS_INTERNAL_CFGVAL(EEPROM_TBL_POWERON_STATE)
-#define DEFAULT_CS_INTERNAL_EEPROM_TBL_POWERON_STATE CS_ChecksumState_ENABLED
+#define DEFAULT_CS_INTERNAL_EEPROM_TBL_POWERON_STATE CS_ChecksumState_DISABLED
 
 /**
  * \brief Desired state of the Memory table at power on
@@ -216,7 +216,7 @@
  *       This can either be CS_ChecksumState_ENABLED or CS_ChecksumState_DISABLED
  */
 #define CS_MEMORY_TBL_POWERON_STATE                  CS_INTERNAL_CFGVAL(MEMORY_TBL_POWERON_STATE)
-#define DEFAULT_CS_INTERNAL_MEMORY_TBL_POWERON_STATE CS_ChecksumState_ENABLED
+#define DEFAULT_CS_INTERNAL_MEMORY_TBL_POWERON_STATE CS_ChecksumState_DISABLED
 
 /**
  * \brief Desired state of the Applications table at power on
@@ -229,7 +229,7 @@
  *       This can either be CS_ChecksumState_ENABLED or CS_ChecksumState_DISABLED
  */
 #define CS_APPS_TBL_POWERON_STATE                  CS_INTERNAL_CFGVAL(APPS_TBL_POWERON_STATE)
-#define DEFAULT_CS_INTERNAL_APPS_TBL_POWERON_STATE CS_ChecksumState_ENABLED
+#define DEFAULT_CS_INTERNAL_APPS_TBL_POWERON_STATE CS_ChecksumState_DISABLED
 
 /**
  * \brief Desired state of the Tables table at power on
@@ -242,7 +242,7 @@
  *       This can either be CS_ChecksumState_ENABLED or CS_ChecksumState_DISABLED
  */
 #define CS_TABLES_TBL_POWERON_STATE                  CS_INTERNAL_CFGVAL(TABLES_TBL_POWERON_STATE)
-#define DEFAULT_CS_INTERNAL_TABLES_TBL_POWERON_STATE CS_ChecksumState_ENABLED
+#define DEFAULT_CS_INTERNAL_TABLES_TBL_POWERON_STATE CS_ChecksumState_DISABLED
 
 /**
  * \brief Whether to preserve checksum states on processor reset

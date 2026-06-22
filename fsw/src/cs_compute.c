@@ -33,6 +33,12 @@
 #include "cs_compute.h"
 #include "cs_utils.h"
 
+#include <string.h>
+
+#include "hammer.h"
+#include "glue.h"
+#include "static_alloc.h"
+
 /*
  * Local helper structure to keep state of checksum calculation
  * This allows the checksum calculation to be consolidated into a
@@ -45,12 +51,6 @@ typedef struct CS_LocalChecksumState
     size_t       CurrOffset;
     uint32       ResultBuffer;
 } CS_LocalChecksumState_t;
-
-/**************************************************************************
- **
- ** Functions
- **
- **************************************************************************/
 
 /*----------------------------------------------------------------
  *
@@ -67,6 +67,25 @@ static inline bool CS_IsChecksumComplete(const CS_LocalChecksumState_t *State)
  * Local helper function
  *
  *-----------------------------------------------------------------*/
+
+uint32_t CRC_16_Parser_Calculate(const uint8_t* input_seq, size_t input_seq_size, uint32_t InitCrcValue){
+
+    // Initialize the user_data
+    CS_AppData.crc_final_value = InitCrcValue;
+
+    // Execute parser
+    __attribute__((unused))HParseResult *ip_result = h_parse(CS_AppData.parser, input_seq, input_seq_size);
+
+    // Free pre-parse heap-allocated memory
+    //h_parse_result_free(ip_result);
+
+    h_parse_pool_reset();
+
+    return CS_AppData.crc_final_value;
+
+}
+
+// Calculates CRC-16 for Checksums
 void CS_DoChecksumChunk(CS_LocalChecksumState_t *State)
 {
     size_t NumBytesThisCycle;
@@ -87,10 +106,7 @@ void CS_DoChecksumChunk(CS_LocalChecksumState_t *State)
         NumBytesThisCycle = CS_AppData.MaxBytesPerCycle;
     }
 
-    NewChecksumValue = CFE_ES_CalculateCRC(State->BufferAddr + State->CurrOffset,
-                                           NumBytesThisCycle,
-                                           State->ResultBuffer,
-                                           CS_DEFAULT_ALGORITHM);
+    NewChecksumValue = CRC_16_Parser_Calculate((const uint8_t *)(State->BufferAddr + State->CurrOffset), NumBytesThisCycle, State->ResultBuffer);
 
     /* Export all data */
     State->CurrOffset   = State->CurrOffset + NumBytesThisCycle;

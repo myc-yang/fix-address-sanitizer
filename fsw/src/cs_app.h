@@ -41,6 +41,8 @@
 #include "cs_version.h"
 #include "cs_table_processing.h"
 
+#include "hammer.h"
+
 /**************************************************************************
  **
  ** Macro definitions
@@ -132,6 +134,12 @@ typedef struct
 
     /* The following pointers locate the results for CS tables that get checksummed because they are listed in the CS
      * Tables table */
+
+    /* CRC-16 Parser */
+    HParser* parser;
+
+    /* Final CRC Value Memory areas used by Parser */
+    uint32_t  crc_final_value;
 
 #if (CS_PRESERVE_STATES_ON_PROCESSOR_RESET == true)
     CFE_ES_CDSHandle_t DataStoreHandle; /**< \brief Handle to critical data store created by CS */
