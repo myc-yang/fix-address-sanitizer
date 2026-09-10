@@ -13,3 +13,4 @@ jobs:
     uses: cFS/workflows/.github/workflows/sync-repo-internal.yml@dev
     with:
       upstream-repo: https://github.com/nasa/cs.git
+      local-branch-prefix: ''
