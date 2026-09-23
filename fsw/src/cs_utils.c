@@ -649,14 +649,16 @@ bool CS_BackgroundCfeCore(void)
 
     if (CS_AppData.HkPacket.Payload.CfeCoreCSState == CS_ChecksumState_ENABLED)
     {
+        /* Performance Log (start time counter)  */
+        CFE_ES_PerfLogEntry(CS_CRC_PERF_ID);
+
         ResultsEntry = CS_GetCfeCoreCodeSegResTable();
 
         /* Check if the code segment state is enabled (could be disabled for
            a ground-commanded recompute) */
         if (ResultsEntry->State == CS_ChecksumState_ENABLED)
         {
-            /* Performance Log (start time counter)  */
-            CFE_ES_PerfLogEntry(CS_CRC_PERF_ID);
+
 
             /* If we complete an entry's checksum, this function will update it for us */
             Status = CS_ComputeEepromMemory(ResultsEntry, &ComputedCSValue, &DoneWithEntry);
@@ -691,14 +693,16 @@ bool CS_BackgroundCfeCore(void)
                 CS_AppData.HkPacket.Payload.CfeCoreBaseline = ResultsEntry->ComparisonValue;
                 CS_GoToNextTable();
             }
-            /* Performance Log (start time counter)  */
-            CFE_ES_PerfLogExit(CS_CRC_PERF_ID);
+
         }
         else
         {
             /* Currently disabled, so skip it */
             CS_GoToNextTable();
         }
+
+        /* Performance Log (start time counter)  */
+        CFE_ES_PerfLogExit(CS_CRC_PERF_ID);
     }
     else /* Table is disabled, skip it */
     {
