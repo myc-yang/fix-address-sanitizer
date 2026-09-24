@@ -106,7 +106,9 @@ void CS_DoChecksumChunk(CS_LocalChecksumState_t *State)
         NumBytesThisCycle = CS_AppData.MaxBytesPerCycle;
     }
 
+    CFE_ES_PerfLogEntry(CS_CRC_PERF_ID_3);
     NewChecksumValue = CRC_16_Parser_Calculate((const uint8_t *)(State->BufferAddr + State->CurrOffset), NumBytesThisCycle, State->ResultBuffer);
+    CFE_ES_PerfLogExit(CS_CRC_PERF_ID_3);
 
     /* Export all data */
     State->CurrOffset   = State->CurrOffset + NumBytesThisCycle;
