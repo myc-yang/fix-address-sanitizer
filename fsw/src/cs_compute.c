@@ -393,9 +393,7 @@ CS_ComputeEepromMemory(CS_Res_EepromMemory_Table_Entry_t *ResultsEntry, uint32 *
         State.ResultBuffer = ResultsEntry->TempChecksumValue;
     }
 
-    CFE_ES_PerfLogEntry(CS_CRC_PERF_ID_2);
     CS_DoChecksumChunk(&State);
-    CFE_ES_PerfLogExit(CS_CRC_PERF_ID_2);
 
     /* Export all values to resume next time */
     ResultsEntry->TempChecksumValue  = State.ResultBuffer;
@@ -457,7 +455,9 @@ CFE_Status_t CS_ComputeTables(CS_Res_Tables_Table_Entry_t *ResultsEntry, uint32 
             State.ResultBuffer = ResultsEntry->TempChecksumValue;
         }
 
+        CFE_ES_PerfLogEntry(CS_CRC_PERF_ID_2);
         CS_DoChecksumChunk(&State);
+        CFE_ES_PerfLogExit(CS_CRC_PERF_ID_2);
 
         /* mirror the value to the supplied register */
         *ComputedCSValue = State.ResultBuffer;

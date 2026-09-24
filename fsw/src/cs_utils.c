@@ -649,9 +649,6 @@ bool CS_BackgroundCfeCore(void)
 
     if (CS_AppData.HkPacket.Payload.CfeCoreCSState == CS_ChecksumState_ENABLED)
     {
-        /* Performance Log (start time counter)  */
-        CFE_ES_PerfLogEntry(CS_CRC_PERF_ID);
-
         ResultsEntry = CS_GetCfeCoreCodeSegResTable();
 
         /* Check if the code segment state is enabled (could be disabled for
@@ -700,9 +697,6 @@ bool CS_BackgroundCfeCore(void)
             /* Currently disabled, so skip it */
             CS_GoToNextTable();
         }
-
-        /* Performance Log (start time counter)  */
-        CFE_ES_PerfLogExit(CS_CRC_PERF_ID);
     }
     else /* Table is disabled, skip it */
     {
@@ -953,8 +947,12 @@ bool CS_BackgroundTables(void)
 
     if (TablesResultsEntry != NULL)
     {
+        /* Performance Log (start time counter)  */
+        CFE_ES_PerfLogEntry(CS_CRC_PERF_ID);
         /* we found an enabled entry to checksum */
         Status = CS_ComputeTables(TablesResultsEntry, &ComputedCSValue, &DoneWithEntry);
+        /* Performance Log (stop time counter)  */
+        CFE_ES_PerfLogExit(CS_CRC_PERF_ID);
 
         /* We need to avoid the case of finishing a table, moving on to the next one
             and computing an entry in that table, since  it could put us above the
