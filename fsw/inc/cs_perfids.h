@@ -30,6 +30,7 @@
 
 #define CS_APPMAIN_PERF_ID  29   /**< \brief Main application performance ID */
 #define CS_CRC_PERF_ID      120  /**< \brief performance ID when determining checksum */
+#define CS_CRC_PERF_ID_2    121
 
 /**\}*/
 
