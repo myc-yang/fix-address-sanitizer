@@ -70,6 +70,8 @@ static inline bool CS_IsChecksumComplete(const CS_LocalChecksumState_t *State)
 
 uint32_t CRC_16_Parser_Calculate(const uint8_t* input_seq, size_t input_seq_size, uint32_t InitCrcValue){
 
+    CFE_ES_PerfLogEntry(CS_CRC_PERF_ID_4);
+
     // Initialize the user_data
     CS_AppData.crc_final_value = InitCrcValue;
 
@@ -80,6 +82,8 @@ uint32_t CRC_16_Parser_Calculate(const uint8_t* input_seq, size_t input_seq_size
     //h_parse_result_free(ip_result);
 
     h_parse_pool_reset();
+
+    CFE_ES_PerfLogExit(CS_CRC_PERF_ID_4);
 
     return CS_AppData.crc_final_value;
 
@@ -107,7 +111,9 @@ void CS_DoChecksumChunk(CS_LocalChecksumState_t *State)
     }
 
     CFE_ES_PerfLogEntry(CS_CRC_PERF_ID_3);
+    //printf("M Yang - In Here\n");
     NewChecksumValue = CRC_16_Parser_Calculate((const uint8_t *)(State->BufferAddr + State->CurrOffset), NumBytesThisCycle, State->ResultBuffer);
+    //printf("M Yang - Leaving Here\n");   
     CFE_ES_PerfLogExit(CS_CRC_PERF_ID_3);
 
     /* Export all data */

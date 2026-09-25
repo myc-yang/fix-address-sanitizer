@@ -32,6 +32,7 @@
 #define CS_CRC_PERF_ID      120  /**< \brief performance ID when determining checksum */
 #define CS_CRC_PERF_ID_2    121
 #define CS_CRC_PERF_ID_3    122
+#define CS_CRC_PERF_ID_4    123
 
 /**\}*/
 
