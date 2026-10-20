@@ -357,7 +357,7 @@ HParsedToken* act_crc_byte(const HParseResult *p, void *user_data){
 
     uint32_t*       Crc = (uint32_t*) user_data;
     
-    Index = (uint16_t)p->ast->uint;
+    Index = (uint16_t)p->ast->token_data.uint;
     Index = (((*Crc) ^ Index) & 0x00FF);
     Crc_UpdatedValue   = (((*Crc) >> 8) & 0x00FF) ^ CrcTable[Index];
 
