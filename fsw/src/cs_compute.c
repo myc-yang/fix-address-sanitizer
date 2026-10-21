@@ -81,6 +81,8 @@ uint32_t CRC_16_Parser_Calculate(const uint8_t* input_seq, size_t input_seq_size
     // Free pre-parse heap-allocated memory
     //h_parse_result_free(ip_result);
 
+    // Add a check for check ip_result != NULL
+
     h_parse_pool_reset();
 
     CFE_ES_PerfLogExit(CS_CRC_PERF_ID_4);
