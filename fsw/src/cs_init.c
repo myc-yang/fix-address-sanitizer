@@ -44,7 +44,7 @@
     #error "Both RTEMS_BUILD and STATIC_BUILD must be defined together, or neither should be defined"
 #endif
 
-#define CRC_INPUT_SIZE     192
+#define CRC_INPUT_SIZE     4
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                 */
