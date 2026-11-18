@@ -41,6 +41,8 @@
 #include "cs_version.h"
 #include "cs_table_processing.h"
 
+#include "hammer.h"
+
 /**************************************************************************
  **
  ** Macro definitions
@@ -133,6 +135,13 @@ typedef struct
     /* Startup configuration and critical data store state */
     bool PreserveStatesOnProcessorReset; /**< \brief Initialized from CS_PRESERVE_STATES_ON_PROCESSOR_RESET */
     CFE_ES_CDSHandle_t DataStoreHandle;  /**< \brief Handle to critical data store created by CS */
+
+    /* CRC-16 Parser */
+    HParser* parser;
+
+    /* Final CRC Value Memory areas used by Parser */
+    uint32_t  crc_final_value;
+
 } CS_AppData_t;
 
 /**************************************************************************

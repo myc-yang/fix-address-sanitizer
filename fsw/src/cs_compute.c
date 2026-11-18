@@ -33,6 +33,20 @@
 #include "cs_compute.h"
 #include "cs_utils.h"
 
+#include <string.h>
+
+#include "hammer.h"
+#include "glue.h"
+
+#if defined(RTEMS_BUILD) && defined(STATIC_BUILD)
+#include "static_alloc.h"
+#elif !defined(RTEMS_BUILD) && !defined(STATIC_BUILD)
+    // Neither are defined - this is OK
+#else
+    // Error: One is defined but not the other
+    #error "Both RTEMS_BUILD and STATIC_BUILD must be defined together, or neither should be defined"
+#endif
+
 /*
  * Local helper structure to keep state of checksum calculation
  * This allows the checksum calculation to be consolidated into a
@@ -45,12 +59,6 @@ typedef struct CS_LocalChecksumState
     size_t       CurrOffset;
     uint32       ResultBuffer;
 } CS_LocalChecksumState_t;
-
-/**************************************************************************
- **
- ** Functions
- **
- **************************************************************************/
 
 /*----------------------------------------------------------------
  *
@@ -67,6 +75,33 @@ static inline bool CS_IsChecksumComplete(const CS_LocalChecksumState_t *State)
  * Local helper function
  *
  *-----------------------------------------------------------------*/
+
+uint32_t CRC_16_Parser_Calculate(const uint8_t* input_seq, size_t input_seq_size, uint32_t InitCrcValue){
+
+    CFE_ES_PerfLogEntry(CS_CRC_PERF_ID_4);
+
+    // Initialize the user_data
+    CS_AppData.crc_final_value = InitCrcValue;
+
+    // Execute parser
+    __attribute__((unused))HParseResult *ip_result = h_parse(CS_AppData.parser, input_seq, input_seq_size);
+
+#if defined(RTEMS_BUILD) && defined(STATIC_BUILD)
+    h_parse_pool_reset();
+#elif !defined(RTEMS_BUILD) && !defined(STATIC_BUILD)
+    h_parse_result_free(ip_result);
+#else
+    // Error: One is defined but not the other
+    #error "Both RTEMS_BUILD and STATIC_BUILD must be defined together, or neither should be defined"
+#endif
+
+    CFE_ES_PerfLogExit(CS_CRC_PERF_ID_4);
+
+    return CS_AppData.crc_final_value;
+
+}
+
+// Calculates CRC-16 for Checksums
 void CS_DoChecksumChunk(CS_LocalChecksumState_t *State)
 {
     size_t NumBytesThisCycle;
@@ -87,10 +122,11 @@ void CS_DoChecksumChunk(CS_LocalChecksumState_t *State)
         NumBytesThisCycle = CS_AppData.MaxBytesPerCycle;
     }
 
-    NewChecksumValue = CFE_ES_CalculateCRC(State->BufferAddr + State->CurrOffset,
-                                           NumBytesThisCycle,
-                                           State->ResultBuffer,
-                                           CS_DEFAULT_ALGORITHM);
+    CFE_ES_PerfLogEntry(CS_CRC_PERF_ID_3);
+    //printf("M Yang - In Here\n");
+    NewChecksumValue = CRC_16_Parser_Calculate((const uint8_t *)(State->BufferAddr + State->CurrOffset), NumBytesThisCycle, State->ResultBuffer);
+    //printf("M Yang - Leaving Here\n");   
+    CFE_ES_PerfLogExit(CS_CRC_PERF_ID_3);
 
     /* Export all data */
     State->CurrOffset   = State->CurrOffset + NumBytesThisCycle;
@@ -437,7 +473,9 @@ CFE_Status_t CS_ComputeTables(CS_Res_Tables_Table_Entry_t *ResultsEntry, uint32 
             State.ResultBuffer = ResultsEntry->TempChecksumValue;
         }
 
+        CFE_ES_PerfLogEntry(CS_CRC_PERF_ID_2);
         CS_DoChecksumChunk(&State);
+        CFE_ES_PerfLogExit(CS_CRC_PERF_ID_2);
 
         /* mirror the value to the supplied register */
         *ComputedCSValue = State.ResultBuffer;

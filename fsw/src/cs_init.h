@@ -70,4 +70,15 @@ CFE_Status_t CS_InitAllTables(void);
  */
 void CS_InitSegments(void);
 
+/**
+ * \brief Initializes the CRC-16 parser using Hammer for table data for the Checksum Application
+ *
+ *  \par Description
+ *       Initializes the CRC-16 parser using Hammer for table data for the Checksum Application.
+ *
+ *  \par Assumptions, External Events, and Notes:
+ *       None
+ */
+void CS_InitParsers(void);
+
 #endif

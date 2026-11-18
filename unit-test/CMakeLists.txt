@@ -24,12 +24,21 @@ add_cfe_coverage_stubs("cs_internal"
 )
 
 # Link with the cfe core stubs and unit test assert libs
-target_link_libraries(coverage-cs_internal-stubs ut_core_api_stubs ut_assert)
+target_link_libraries(coverage-cs_internal-stubs ut_core_api_stubs ut_assert hammer_parse)
 
 # Include and expose unit test utilities, fsw/inc, and fsw/src includes
 target_include_directories(coverage-cs_internal-stubs PUBLIC utilities)
 target_include_directories(coverage-cs_internal-stubs PUBLIC ../fsw/inc)
 target_include_directories(coverage-cs_internal-stubs PUBLIC ../fsw/src)
+
+# Get current compile options
+get_directory_property(CURRENT_OPTIONS COMPILE_OPTIONS)
+
+# Remove -pedantic
+list(REMOVE_ITEM CURRENT_OPTIONS "-pedantic")
+
+# Set the modified list back
+set_directory_properties(PROPERTIES COMPILE_OPTIONS "${CURRENT_OPTIONS}")
 
 # Generate a dedicated "testrunner" executable for each test file
 # Accomplish this by cycling through all the app's source files, there must be

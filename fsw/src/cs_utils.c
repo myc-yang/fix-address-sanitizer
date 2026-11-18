@@ -653,6 +653,8 @@ bool CS_BackgroundCfeCore(void)
            a ground-commanded recompute) */
         if (ResultsEntry->State == CS_ChecksumState_ENABLED)
         {
+
+
             /* If we complete an entry's checksum, this function will update it for us */
             Status = CS_ComputeEepromMemory(ResultsEntry, &ComputedCSValue, &DoneWithEntry);
 
@@ -686,6 +688,7 @@ bool CS_BackgroundCfeCore(void)
                 CS_AppData.HkPacket.Payload.CfeCoreBaseline = ResultsEntry->ComparisonValue;
                 CS_GoToNextTable();
             }
+
         }
         else
         {
@@ -942,8 +945,12 @@ bool CS_BackgroundTables(void)
 
     if (TablesResultsEntry != NULL)
     {
+        /* Performance Log (start time counter)  */
+        CFE_ES_PerfLogEntry(CS_CRC_PERF_ID);
         /* we found an enabled entry to checksum */
         Status = CS_ComputeTables(TablesResultsEntry, &ComputedCSValue, &DoneWithEntry);
+        /* Performance Log (stop time counter)  */
+        CFE_ES_PerfLogExit(CS_CRC_PERF_ID);
 
         /* We need to avoid the case of finishing a table, moving on to the next one
             and computing an entry in that table, since  it could put us above the
